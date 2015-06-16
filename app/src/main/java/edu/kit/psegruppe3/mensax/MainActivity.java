@@ -23,29 +23,29 @@ public class MainActivity extends ActionBarActivity {
         ActionBar.Tab tab = actionBar.newTab()
                 .setText(R.string.monday)
                 .setTabListener(new TabListener<MainActivityFragment>(
-                        this, "artist", MainActivityFragment.class));
+                        this, "1", MainActivityFragment.class));
         actionBar.addTab(tab);
 
         tab = actionBar.newTab()
                 .setText(R.string.tuesday)
                 .setTabListener(new TabListener<MainActivityFragment>(
-                        this, "album", MainActivityFragment.class));
+                        this, "2", MainActivityFragment.class));
         actionBar.addTab(tab);
 
         tab = actionBar.newTab()
                 .setText(R.string.wednesday)
                 .setTabListener(new TabListener<MainActivityFragment>(
-                        this, "album", MainActivityFragment.class));
+                        this, "3", MainActivityFragment.class));
         actionBar.addTab(tab);
         tab = actionBar.newTab()
                 .setText(R.string.thursday)
                 .setTabListener(new TabListener<MainActivityFragment>(
-                        this, "album", MainActivityFragment.class));
+                        this, "4", MainActivityFragment.class));
         actionBar.addTab(tab);
         tab = actionBar.newTab()
                 .setText(R.string.friday)
                 .setTabListener(new TabListener<MainActivityFragment>(
-                        this, "album", MainActivityFragment.class));
+                        this, "5", MainActivityFragment.class));
         actionBar.addTab(tab);
     }
 
