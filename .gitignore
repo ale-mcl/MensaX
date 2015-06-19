@@ -7,13 +7,12 @@
 /captures
 /.idea/compiler.xml
 /.idea/encodings.xml
-/.idea/gradle.xml
 /.idea/misc.xml
 /.idea/modules.xml
 /.idea/scopes/scope_settings.xml
 /.idea/vcs.xml
-/app/app.iml
 
 
-
-
+.idea/gradle.xml
+app/app.iml
+MensaX.iml
