@@ -9,6 +9,8 @@
     <string name="friday">Friday</string>
     <string name="title_activity_detail">DetailActivity</string>
     <string name="title_activity_settings">Settings</string>
+
     <string name="content_authority">edu.kit.psegruppe3.mensax</string>
+    <string name="sync_account_type">mensax.kit.edu</string>
 
 </resources>
