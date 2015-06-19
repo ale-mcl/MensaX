@@ -1,5 +1,6 @@
 package edu.kit.psegruppe3.mensax;
 
+import android.content.Intent;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
@@ -22,29 +23,29 @@ public class MainActivity extends ActionBarActivity {
 
         ActionBar.Tab tab = actionBar.newTab()
                 .setText(R.string.monday)
-                .setTabListener(new TabListener<MainActivityFragment>(
+                .setTabListener(new TabListener<>(
                         this, "1", MainActivityFragment.class));
         actionBar.addTab(tab);
 
         tab = actionBar.newTab()
                 .setText(R.string.tuesday)
-                .setTabListener(new TabListener<MainActivityFragment>(
+                .setTabListener(new TabListener<>(
                         this, "2", MainActivityFragment.class));
         actionBar.addTab(tab);
 
         tab = actionBar.newTab()
                 .setText(R.string.wednesday)
-                .setTabListener(new TabListener<MainActivityFragment>(
+                .setTabListener(new TabListener<>(
                         this, "3", MainActivityFragment.class));
         actionBar.addTab(tab);
         tab = actionBar.newTab()
                 .setText(R.string.thursday)
-                .setTabListener(new TabListener<MainActivityFragment>(
+                .setTabListener(new TabListener<>(
                         this, "4", MainActivityFragment.class));
         actionBar.addTab(tab);
         tab = actionBar.newTab()
                 .setText(R.string.friday)
-                .setTabListener(new TabListener<MainActivityFragment>(
+                .setTabListener(new TabListener<>(
                         this, "5", MainActivityFragment.class));
         actionBar.addTab(tab);
     }
@@ -66,6 +67,7 @@ public class MainActivity extends ActionBarActivity {
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
+            startActivity(new Intent(this, SettingsActivity.class));
             return true;
         }
 
