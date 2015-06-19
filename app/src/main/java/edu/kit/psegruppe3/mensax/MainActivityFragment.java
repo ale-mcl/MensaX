@@ -18,11 +18,15 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import edu.kit.psegruppe3.mensax.datamodels.DailyMenu;
+
 
 /**
  * A placeholder fragment containing a simple view.
  */
 public class MainActivityFragment extends Fragment implements AdapterView.OnItemClickListener {
+
+    private DailyMenu dailyMenu;
 
     private ArrayAdapter<String> mainActivityFragmentAdapter;
 //    ListView mListView;
