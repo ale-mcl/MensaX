@@ -24,6 +24,14 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="edu.kit.psegruppe3.mensax.MainActivity" />
         </activity>
+        <activity
+            android:name=".SettingsActivity"
+            android:label="@string/title_activity_settings"
+            android:parentActivityName=".MainActivity" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="edu.kit.psegruppe3.mensax.MainActivity" />
+        </activity>
         <provider
             android:authorities="@string/content_authority"
             android:name=".data.CanteenProvider"

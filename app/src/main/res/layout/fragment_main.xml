@@ -9,7 +9,7 @@
     tools:context=".MainActivityFragment">
 
     <ListView
-        android:id="@+id/menu_listview"
+        android:id="@+id/offer_listview"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 

@@ -1,19 +1,38 @@
 package edu.kit.psegruppe3.mensax;
 
+import android.content.Intent;
+import android.support.v4.app.Fragment;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.TextView;
 
 
 public class DetailActivity extends ActionBarActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        Intent intent = getIntent();
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_detail);
-    }
 
+        Bundle bundle = new Bundle();
+        bundle.putString("offer_data",intent.getStringExtra(intent.EXTRA_TEXT) );
+
+        PlaceholderFragment placehold = new PlaceholderFragment();
+        placehold.setArguments(bundle);
+
+        if (savedInstanceState == null) {
+            getSupportFragmentManager().beginTransaction()
+                    .add(R.id.container, placehold)
+                    .commit();
+        }
+    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -35,5 +54,24 @@ public class DetailActivity extends ActionBarActivity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    public static class PlaceholderFragment extends Fragment {
+
+        public PlaceholderFragment() {
+        }
+
+        @Override
+        public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                                 Bundle savedInstanceState) {
+
+            String offer_data = getArguments().getString("offer_data");
+
+            View rootView = inflater.inflate(R.layout.fragment_detail, container, false);
+            TextView textView = (TextView) rootView.findViewById(R.id.textview_details);
+            textView.setText(offer_data);
+
+            return rootView;
+        }
     }
 }
