@@ -1,21 +1,17 @@
 package edu.kit.psegruppe3.mensax.datamodels;
 
-import java.util.ArrayList;
-
-public class Line {
-    private String name;
-    private ArrayList<Offer> offerList;
-
-    public Line(String name, ArrayList<Offer> offerList) {
-        this.name = name;
-        this.offerList = offerList;
-    }
-
-    public void addOffer() {
-    }
-
-    public String getName(){
-        return name;
-    }
-
+/**
+ * Created by ekremsenturk on 20.06.15.
+ */
+public enum Line {
+    l1,
+    l2,
+    l3,
+    l45,
+    schnitzelbar,
+    update,
+    abend,
+    aktion,
+    heisstheke,
+    nmtisch
 }

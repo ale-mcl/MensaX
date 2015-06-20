@@ -1,5 +1,6 @@
 package edu.kit.psegruppe3.mensax;
 
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -7,10 +8,14 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import edu.kit.psegruppe3.mensax.datamodels.Meal;
+
 /**
  * Created by ekremsenturk on 20.06.15.
  */
 public class DetailFragment extends Fragment {
+
+    private Meal meal;
 
     public DetailFragment() {
     }
@@ -26,5 +31,29 @@ public class DetailFragment extends Fragment {
 
 
         return rootView;
+    }
+
+    private void loadImage(Uri imageUri) {
+        
+    }
+
+    private void uploadImage(Uri imageUri) {
+
+    }
+
+    private void rate(int rating) {
+
+    }
+
+    private void mergeMeals(Meal secondMeal) {
+
+    }
+
+    private Uri selectImageUri() {
+        return null;
+    }
+
+    private Meal selectMeal() {
+        return null;
     }
 }

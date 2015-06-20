@@ -4,17 +4,22 @@ import java.util.ArrayList;
 
 public class DailyMenu {
     private long timestamp;
-    private ArrayList<Line> lineList;
+    private Offer[] offers;
 
-    public DailyMenu(long timestamp, ArrayList<Line> lineList) {
+    public DailyMenu(long timestamp, Offer[] offers) {
         this.timestamp = timestamp;
-        this.lineList = lineList;
+        this.offers = offers;
     }
 
-    public void addLinie() {
-    }
 
     public long getTimestamp() {
         return timestamp;
+    }
+
+    public Offer getOffer(int position) {
+        if (position < offers.length) {
+            return offers[position];
+        }
+        return null;
     }
 }

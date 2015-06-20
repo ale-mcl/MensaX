@@ -16,13 +16,6 @@ public class Meal {
         this.mealId = mealId;
     }
 
-    public void rate(){}
-
-    public void uploadPicture() {}
-
-    public void mergeMeals() {}
-
-    public void suche(){}
 
     public String getName(){
         return name;
