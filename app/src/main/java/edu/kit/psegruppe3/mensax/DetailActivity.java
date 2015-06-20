@@ -1,5 +1,6 @@
 package edu.kit.psegruppe3.mensax;
 
+import android.content.Intent;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.view.Menu;
@@ -10,8 +11,22 @@ public class DetailActivity extends ActionBarActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        Intent intent = getIntent();
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_detail);
+
+        Bundle bundle = new Bundle();
+        bundle.putString("offer_data",intent.getStringExtra(intent.EXTRA_TEXT) );
+
+        DetailFragment detailData = new DetailFragment();
+        detailData.setArguments(bundle);
+
+        if (savedInstanceState == null) {
+            getSupportFragmentManager().beginTransaction()
+                    .add(R.id.container, detailData)
+                    .commit();
+            }
     }
 
     @Override
