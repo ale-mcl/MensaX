@@ -16,5 +16,16 @@
     <string name="search_hint">Search for meals</string>
     <string name="action_search">Search</string>
 
+    <string name="l1">Linie 1</string>
+    <string name="l2">Linie 2</string>
+    <string name="l3">Linie 3</string>
+    <string name="l45">Linie 4/5</string>
+    <string name="schnitzelbar">Schnitzelbar</string>
+    <string name="update">L6 Update</string>
+    <string name="abend">Abend</string>
+    <string name="aktion">Curry Queen</string>
+    <string name="heisstheke">Cafeteria Heiße Theke</string>
+    <string name="nmtisch">Cafeteria ab 14:30</string>
+
 
 </resources>

@@ -1,6 +1,7 @@
 package edu.kit.psegruppe3.mensax;
 
 import android.content.Intent;
+import android.os.SystemClock;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -11,6 +12,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.ExpandableListAdapter;
+import android.widget.ExpandableListView;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -19,6 +22,9 @@ import java.util.Arrays;
 import java.util.List;
 
 import edu.kit.psegruppe3.mensax.datamodels.DailyMenu;
+import edu.kit.psegruppe3.mensax.datamodels.Line;
+import edu.kit.psegruppe3.mensax.datamodels.Meal;
+import edu.kit.psegruppe3.mensax.datamodels.Offer;
 
 
 /**
@@ -26,10 +32,8 @@ import edu.kit.psegruppe3.mensax.datamodels.DailyMenu;
  */
 public class MainActivityFragment extends Fragment implements AdapterView.OnItemClickListener {
 
-    private DailyMenu dailyMenu;
+    private DailyMenu mDailyMenu;
 
-    private ArrayAdapter<String> mainActivityFragmentAdapter;
-//    ListView mListView;
 
     public MainActivityFragment() {
     }
@@ -61,34 +65,22 @@ public class MainActivityFragment extends Fragment implements AdapterView.OnItem
                              Bundle savedInstanceState) {
         View rootView =  inflater.inflate(R.layout.fragment_main, container, false);
 
-        String[] data = {
-                "Linseneintopf",
-                "Grüner Salat",
-                "Pizza",
-        };
-        List<String> offerExample = new ArrayList<String>(Arrays.asList(data));
-
-
-        mainActivityFragmentAdapter =
-                new ArrayAdapter<String>(
-                        getActivity(), // The current context (this activity)
-                        R.layout.list_item_mainactivityfragment, // The name of the layout ID.
-                        R.id.list_item_mainActivityFragment_textview, // The ID of the textview to populate.
-                        offerExample);
+        mDailyMenu = createExampleDailyMenu();
+        ExpandableListAdapter mainActivityFragmentAdapter = new OfferListAdapter(getActivity(), mDailyMenu);
 
         // Get a reference to the ListView, and attach this adapter to it.
-        ListView listView = (ListView) rootView.findViewById(R.id.offer_listview);
+        ExpandableListView listView = (ExpandableListView) rootView.findViewById(R.id.offer_listview);
         listView.setAdapter(mainActivityFragmentAdapter);
 
-        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        /*listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
-                String forecast = mainActivityFragmentAdapter.getItem(position);
+                String forecast = mainActivityFragmentAdapter.g
                 Intent intent = new Intent(getActivity(), DetailActivity.class)
                         .putExtra(Intent.EXTRA_TEXT, forecast);
                 startActivity(intent);
             }
-        });
+        });*/
 
         return rootView;
     }
@@ -97,5 +89,30 @@ public class MainActivityFragment extends Fragment implements AdapterView.OnItem
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
         Intent intent = new Intent(getActivity(), DetailActivity.class);
         startActivity(intent);
+    }
+
+    private DailyMenu createExampleDailyMenu() {
+        Meal meal1 = new Meal("Linseneintopf", 324);
+        Meal meal2 = new Meal("Spaghetti Carbonara", 234);
+        Meal meal3 = new Meal("Pommes", 254);
+        Meal meal4 = new Meal("Grüner Salat", 456);
+        Meal meal5 = new Meal("Currywurst", 765);
+        Meal meal6 = new Meal("Kroketten", 453);
+        Meal meal7 = new Meal("Gebratene Hänchenkeule", 893);
+        Offer offer1 = new Offer(meal1, Line.l1, 250, 123, 231, 432);
+        Offer offer2 = new Offer(meal2, Line.l1, 250, 123, 231, 432);
+        Offer offer3 = new Offer(meal3, Line.l2, 100, 123, 231, 432);
+        Offer offer4 = new Offer(meal4, Line.l3, 50, 123, 231, 432);
+        Offer offer5 = new Offer(meal5, Line.aktion, 350, 123, 231, 432);
+        Offer offer6 = new Offer(meal6, Line.l45, 100, 123, 231, 432);
+        Offer offer7 = new Offer(meal3, Line.l3, 100, 123, 231, 432);
+        Offer offer8 = new Offer(meal7, Line.l1, 285, 123, 231, 432);
+        Offer offer9 = new Offer(meal7, Line.l1, 285, 123, 231, 432);
+        Offer offer10 = new Offer(meal3, Line.l45, 100, 123, 231, 432);
+        Offer offer11 = new Offer(meal3, Line.schnitzelbar, 100, 123, 231, 432);
+        Offer offer12 = new Offer(meal4, Line.l45, 100, 123, 231, 432);
+        Offer offer13 = new Offer(meal4, Line.l2, 100, 123, 231, 432);
+        Offer[] offers = {offer1, offer2, offer3, offer4, offer5, offer6, offer7, offer8, offer9, offer10, offer11, offer12, offer12, offer13};
+        return new DailyMenu(System.currentTimeMillis(), offers);
     }
 }
