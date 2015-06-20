@@ -35,8 +35,11 @@ public class CanteenDbHelper extends SQLiteOpenHelper {
                 OfferEntry.COLUMN_MEAL_KEY + " INTEGER NOT NULL, " +
                 OfferEntry.COLUMN_DATE + " INTEGER NOT NULL, " +
                 OfferEntry.COLUMN_LINE + " TEXT NOT NULL, " +
-                OfferEntry.COLUMN_PRICE + " INTEGER NOT NULL," +
-                OfferEntry.COLUMN_RATING + " INTEGER NOT NULL," +
+                OfferEntry.COLUMN_PRICE_STUDENTS + " INTEGER NOT NULL," +
+                OfferEntry.COLUMN_PRICE_GUESTS + " INTEGER NOT NULL," +
+                OfferEntry.COLUMN_PRICE_STAFF + " INTEGER NOT NULL," +
+                OfferEntry.COLUMN_PRICE_PUPILS + " INTEGER NOT NULL," +
+                OfferEntry.COLUMN_GLOBAL_RATING + " INTEGER NOT NULL," +
 
                 // Set up the location column as a foreign key to location table.
                 " FOREIGN KEY (" + OfferEntry.COLUMN_MEAL_KEY + ") REFERENCES " +
@@ -59,8 +62,8 @@ public class CanteenDbHelper extends SQLiteOpenHelper {
 
 
                 MealEntry.COLUMN_MEAL_NAME + " TEXT UNIQUE NOT NULL, " +
-                MealEntry.COLUMN_MEAL_ID + " INTEGER NOT NULL " +
-                ");";
+                MealEntry.COLUMN_MEAL_ID + " INTEGER NOT NULL, " +
+                " UNIQUE (" + MealEntry.COLUMN_MEAL_NAME + ") ON CONFLICT REPLACE);";
 
         sqLiteDatabase.execSQL(SQL_CREATE_MEAL_TABLE);
     }

@@ -53,9 +53,15 @@ public class CanteenContract {
 
         public static final String COLUMN_LINE = "line";
 
-        public static final String COLUMN_PRICE = "price";
+        public static final String COLUMN_PRICE_STUDENTS = "price_students";
 
-        public static final String COLUMN_RATING = "rating";
+        public static final String COLUMN_PRICE_GUESTS = "price_guests";
+
+        public static final String COLUMN_PRICE_STAFF = "price_staff";
+
+        public static final String COLUMN_PRICE_PUPILS = "price_pupils";
+
+        public static final String COLUMN_GLOBAL_RATING = "global_rating";
 
         public static final Uri CONTENT_URI =
                 BASE_CONTENT_URI.buildUpon().appendPath(PATH_OFFER).build();
@@ -69,36 +75,16 @@ public class CanteenContract {
             return ContentUris.withAppendedId(CONTENT_URI, id);
         }
 
-        public static Uri buildOfferLine(String line) {
-            return CONTENT_URI.buildUpon().appendPath(line).build();
-        }
-
-        public static Uri buildOfferLineWithStartDate(
-                String line, long startDate) {
-            long normalizedDate = normalizeDate(startDate);
-            return CONTENT_URI.buildUpon().appendPath(line)
-                    .appendQueryParameter(COLUMN_DATE, Long.toString(normalizedDate)).build();
-        }
-
-        public static Uri buildOfferLineWithDate(String line, long date) {
-            return CONTENT_URI.buildUpon().appendPath(line)
-                    .appendPath(Long.toString(normalizeDate(date))).build();
+        public static Uri buildOfferDate(long date) {
+            return CONTENT_URI.buildUpon().appendPath(Long.toString(normalizeDate(date))).build();
         }
 
         public static String getLineFromUri(Uri uri) {
-            return uri.getPathSegments().get(1);
+            return uri.getPathSegments().get(2);
         }
 
         public static long getDateFromUri(Uri uri) {
-            return Long.parseLong(uri.getPathSegments().get(2));
-        }
-
-        public static long getStartDateFromUri(Uri uri) {
-            String dateString = uri.getQueryParameter(COLUMN_DATE);
-            if (null != dateString && dateString.length() > 0)
-                return Long.parseLong(dateString);
-            else
-                return 0;
+            return Long.parseLong(uri.getPathSegments().get(1));
         }
     }
 
@@ -124,6 +110,14 @@ public class CanteenContract {
 
         public static Uri buildMealUri(long id) {
             return ContentUris.withAppendedId(CONTENT_URI, id);
+        }
+
+        public static Uri buildMealWithMealNameUri(String mealName) {
+            return CONTENT_URI.buildUpon().appendPath(mealName).build();
+        }
+
+        public static String getNameFromUri(Uri uri) {
+            return uri.getPathSegments().get(1);
         }
     }
 

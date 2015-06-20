@@ -19,59 +19,54 @@ public class CanteenProvider extends ContentProvider {
     private CanteenDbHelper mOpenHelper;
 
     static final int OFFER = 100;
-    static final int OFFER_WITH_LINE = 101;
-    static final int OFFER_WITH_LINE_AND_DATE = 102;
+    static final int OFFER_WITH_DATE = 101;
     static final int MEAL = 300;
+    static final int MEAL_WITH_NAME = 301;
 
-    private static final SQLiteQueryBuilder sOfferByLineQueryBuilder;
+    private static final SQLiteQueryBuilder sOfferByDateQueryBuilder;
+    private static final SQLiteQueryBuilder sMealByNameQueryBuilder;
 
     static{
-        sOfferByLineQueryBuilder = new SQLiteQueryBuilder();
+        sOfferByDateQueryBuilder = new SQLiteQueryBuilder();
 
         //This is an inner join which looks like
         //offer INNER JOIN meal ON offer.meal_key = meal._id
-        sOfferByLineQueryBuilder.setTables(
+        sOfferByDateQueryBuilder.setTables(
                 CanteenContract.OfferEntry.TABLE_NAME + " INNER JOIN " +
                         CanteenContract.MealEntry.TABLE_NAME +
                         " ON " + CanteenContract.OfferEntry.TABLE_NAME +
                         "." + CanteenContract.OfferEntry.COLUMN_MEAL_KEY +
                         " = " + CanteenContract.MealEntry.TABLE_NAME +
                         "." + CanteenContract.MealEntry._ID);
+        sMealByNameQueryBuilder = new SQLiteQueryBuilder();
+
+        //This is an inner join which looks like
+        //offer INNER JOIN meal ON offer.meal_key = meal._id
+        sMealByNameQueryBuilder.setTables(
+                CanteenContract.MealEntry.TABLE_NAME);
     }
 
+    //meal.meal_name = ?
+    private static final String sNameSelection =
+            CanteenContract.MealEntry.TABLE_NAME +
+                    "." + CanteenContract.MealEntry.COLUMN_MEAL_NAME + " = ? ";
+
     //offer.line = ?
-    private static final String sLineSelection =
-            CanteenContract.OfferEntry.TABLE_NAME+
-                    "." + CanteenContract.OfferEntry.COLUMN_LINE + " = ? ";
-
-    //offer.line = ? AND date >= ?
-    private static final String sLineWithStartDateSelection =
-            CanteenContract.OfferEntry.TABLE_NAME+
-                    "." + CanteenContract.OfferEntry.COLUMN_LINE + " = ? AND " +
-                    CanteenContract.OfferEntry.COLUMN_DATE + " >= ? ";
-
-    //offer.line = ? AND date = ?
-    private static final String sLineAndDaySelection =
+    private static final String sDateSelection =
             CanteenContract.OfferEntry.TABLE_NAME +
-                    "." + CanteenContract.OfferEntry.COLUMN_LINE + " = ? AND " +
-                    CanteenContract.OfferEntry.COLUMN_DATE + " = ? ";
+                    "." + CanteenContract.OfferEntry.COLUMN_DATE + " = ? ";
 
-    private Cursor getOfferByLine(Uri uri, String[] projection, String sortOrder) {
-        String line = CanteenContract.OfferEntry.getLineFromUri(uri);
-        long startDate = CanteenContract.OfferEntry.getStartDateFromUri(uri);
+    private Cursor getOfferByDate(Uri uri, String[] projection, String sortOrder) {
+        long date = CanteenContract.OfferEntry.getDateFromUri(uri);
 
         String[] selectionArgs;
         String selection;
 
-        if (startDate == 0) {
-            selection = sLineSelection;
-            selectionArgs = new String[]{line};
-        } else {
-            selectionArgs = new String[]{line, Long.toString(startDate)};
-            selection = sLineWithStartDateSelection;
-        }
 
-        return sOfferByLineQueryBuilder.query(mOpenHelper.getReadableDatabase(),
+        selectionArgs = new String[]{Long.toString(date)};
+        selection = sDateSelection;
+
+        return sOfferByDateQueryBuilder.query(mOpenHelper.getReadableDatabase(),
                 projection,
                 selection,
                 selectionArgs,
@@ -81,15 +76,14 @@ public class CanteenProvider extends ContentProvider {
         );
     }
 
-    private Cursor getOfferByLineAndDate(
-            Uri uri, String[] projection, String sortOrder) {
-        String locationSetting = CanteenContract.OfferEntry.getLineFromUri(uri);
-        long date = CanteenContract.OfferEntry.getDateFromUri(uri);
 
-        return sOfferByLineQueryBuilder.query(mOpenHelper.getReadableDatabase(),
+    private Cursor getMealByName(Uri uri, String[] projection, String sortOrder) {
+        String mealName = CanteenContract.MealEntry.getNameFromUri(uri);
+
+        return sMealByNameQueryBuilder.query(mOpenHelper.getReadableDatabase(),
                 projection,
-                sLineAndDaySelection,
-                new String[]{locationSetting, Long.toString(date)},
+                sNameSelection,
+                new String[]{mealName},
                 null,
                 null,
                 sortOrder
@@ -110,9 +104,9 @@ public class CanteenProvider extends ContentProvider {
         // 2) Use the addURI function to match each of the types.  Use the constants from
         // WeatherContract to help define the types to the UriMatcher.
         uriMatcher.addURI(CanteenContract.CONTENT_AUTHORITY, CanteenContract.PATH_OFFER, OFFER);
-        uriMatcher.addURI(CanteenContract.CONTENT_AUTHORITY, CanteenContract.PATH_OFFER + "/*", OFFER_WITH_LINE);
-        uriMatcher.addURI(CanteenContract.CONTENT_AUTHORITY, CanteenContract.PATH_OFFER + "/*/#", OFFER_WITH_LINE_AND_DATE);
+        uriMatcher.addURI(CanteenContract.CONTENT_AUTHORITY, CanteenContract.PATH_OFFER + "/#", OFFER_WITH_DATE);
         uriMatcher.addURI(CanteenContract.CONTENT_AUTHORITY, CanteenContract.PATH_MEAL, MEAL);
+        uriMatcher.addURI(CanteenContract.CONTENT_AUTHORITY, CanteenContract.PATH_MEAL + "/*", MEAL_WITH_NAME);
 
 
         // 3) Return the new matcher!
@@ -131,15 +125,9 @@ public class CanteenProvider extends ContentProvider {
         // and query the database accordingly.
         Cursor retCursor;
         switch (sUriMatcher.match(uri)) {
-            // "offer/*/#"
-            case OFFER_WITH_LINE_AND_DATE:
-            {
-                retCursor = getOfferByLineAndDate(uri, projection, sortOrder);
-                break;
-            }
             // "offer/*"
-            case OFFER_WITH_LINE: {
-                retCursor = getOfferByLine(uri, projection, sortOrder);
+            case OFFER_WITH_DATE: {
+                retCursor = getOfferByDate(uri, projection, sortOrder);
                 break;
             }
             // "offer"
@@ -150,6 +138,11 @@ public class CanteenProvider extends ContentProvider {
             // "meal"
             case MEAL: {
                 retCursor = mOpenHelper.getReadableDatabase().query(CanteenContract.MealEntry.TABLE_NAME, projection, selection, selectionArgs, null, null, sortOrder);
+                break;
+            }
+
+            case MEAL_WITH_NAME: {
+                retCursor = getMealByName(uri, projection, sortOrder);
                 break;
             }
 
@@ -167,14 +160,14 @@ public class CanteenProvider extends ContentProvider {
 
         switch (match) {
 
-            case OFFER_WITH_LINE_AND_DATE:
-                return CanteenContract.OfferEntry.CONTENT_ITEM_TYPE;
-            case OFFER_WITH_LINE:
+            case OFFER_WITH_DATE:
                 return  CanteenContract.OfferEntry.CONTENT_TYPE;
             case OFFER:
                 return CanteenContract.OfferEntry.CONTENT_TYPE;
             case MEAL:
                 return CanteenContract.MealEntry.CONTENT_TYPE;
+            case MEAL_WITH_NAME:
+                return CanteenContract.MealEntry.CONTENT_ITEM_TYPE;
             default:
                 throw new UnsupportedOperationException("Unknown uri: " + uri);
         }
