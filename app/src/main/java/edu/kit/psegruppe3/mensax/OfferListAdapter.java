@@ -14,7 +14,7 @@ import edu.kit.psegruppe3.mensax.datamodels.Line;
 import edu.kit.psegruppe3.mensax.datamodels.Offer;
 
 /**
- * Created by ekremsenturk on 20.06.15.
+ * ExpandableListAdapter that shows the daily menu.
  */
 public class OfferListAdapter extends BaseExpandableListAdapter {
 
@@ -70,6 +70,16 @@ public class OfferListAdapter extends BaseExpandableListAdapter {
 
     @Override
     public long getChildId(int groupPosition, int childPosition) {
+        Line currentLine = getLine(groupPosition);
+        for (int i = 0; i < mDailyMenu.getOfferCount(); i++) {
+            if (mDailyMenu.getOffer(i).getLine().equals(currentLine)) {
+                if (childPosition == 0) {
+                    return mDailyMenu.getOffer(i).getMeal().getMealId();
+                } else {
+                    childPosition--;
+                }
+            }
+        }
         return 0;
     }
 
@@ -101,7 +111,7 @@ public class OfferListAdapter extends BaseExpandableListAdapter {
 
     @Override
     public boolean isChildSelectable(int groupPosition, int childPosition) {
-        return false;
+        return true;
     }
 
     private Line getLine(int position) {

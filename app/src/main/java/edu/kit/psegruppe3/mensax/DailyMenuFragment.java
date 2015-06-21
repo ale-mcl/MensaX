@@ -28,6 +28,7 @@ import edu.kit.psegruppe3.mensax.datamodels.Offer;
 public class DailyMenuFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor> {
 
     private DailyMenu mDailyMenu;
+    private ExpandableListAdapter mainActivityFragmentAdapter;
 
 
     public DailyMenuFragment() {
@@ -43,7 +44,6 @@ public class DailyMenuFragment extends Fragment implements LoaderManager.LoaderC
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         //this menu is not done yet
-        //inflater.inflate(R.menu.mainactivityfragment, menu);
     }
 
     @Override
@@ -61,24 +61,30 @@ public class DailyMenuFragment extends Fragment implements LoaderManager.LoaderC
         View rootView =  inflater.inflate(R.layout.fragment_daily_menu, container, false);
 
         mDailyMenu = createExampleDailyMenu();
-        ExpandableListAdapter mainActivityFragmentAdapter = new OfferListAdapter(getActivity(), mDailyMenu);
+        mainActivityFragmentAdapter = new OfferListAdapter(getActivity(), mDailyMenu);
 
         // Get a reference to the ListView, and attach this adapter to it.
         ExpandableListView listView = (ExpandableListView) rootView.findViewById(R.id.offer_listview);
         listView.setAdapter(mainActivityFragmentAdapter);
 
-        /*listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
-                String forecast = mainActivityFragmentAdapter.g
-                Intent intent = new Intent(getActivity(), DetailActivity.class)
-                        .putExtra(Intent.EXTRA_TEXT, forecast);
-                startActivity(intent);
-            }
-        });*/
+        listView.setOnChildClickListener(myListItemClicked);
 
         return rootView;
     }
+
+    private ExpandableListView.OnChildClickListener myListItemClicked =  new ExpandableListView.OnChildClickListener() {
+        public boolean onChildClick(ExpandableListView parent, View v,
+                                    int groupPosition, int childPosition, long id) {
+
+            long selectedMealId_long = parent.getExpandableListAdapter().getChildId(groupPosition, childPosition);
+            int selectedMealId = (int) selectedMealId_long;
+            //at this point you have the id of the meal that the user clicked in the ExpandableListView.
+            Intent intent = new Intent(getActivity(), DetailActivity.class)
+                    .putExtra("selectedMealId", selectedMealId);
+            startActivity(intent);
+            return false;
+        }
+    };
 
     private DailyMenu createExampleDailyMenu() {
         Meal meal1 = new Meal("Linseneintopf", 324);

@@ -53,7 +53,7 @@ public class Meal {
         this.ingredients = ingredients;
     }
 
-    public void setGlobarRating(int globalRating) {
+    public void setGlobalRating(int globalRating) {
         this.globalRating = globalRating;
     }
 

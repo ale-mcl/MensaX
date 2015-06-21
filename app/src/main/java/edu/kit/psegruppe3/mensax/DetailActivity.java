@@ -12,12 +12,13 @@ public class DetailActivity extends ActionBarActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         Intent intent = getIntent();
+        int selectedMealId = intent.getIntExtra("selectedMealId", 0);
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_detail);
 
         Bundle bundle = new Bundle();
-        bundle.putString("offer_data",intent.getStringExtra(intent.EXTRA_TEXT) );
+        bundle.putInt("selectedMealId", selectedMealId);
 
         DetailFragment detailData = new DetailFragment();
         detailData.setArguments(bundle);
