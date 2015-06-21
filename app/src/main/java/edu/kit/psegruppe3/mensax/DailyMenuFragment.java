@@ -1,8 +1,11 @@
 package edu.kit.psegruppe3.mensax;
 
 import android.content.Intent;
+import android.database.Cursor;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
+import android.support.v4.app.LoaderManager;
+import android.support.v4.content.Loader;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -22,7 +25,7 @@ import edu.kit.psegruppe3.mensax.datamodels.Offer;
 /**
  * A placeholder fragment containing a simple view.
  */
-public class DailyMenuFragment extends Fragment implements AdapterView.OnItemClickListener {
+public class DailyMenuFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor> {
 
     private DailyMenu mDailyMenu;
 
@@ -77,12 +80,6 @@ public class DailyMenuFragment extends Fragment implements AdapterView.OnItemCli
         return rootView;
     }
 
-    @Override
-    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-        Intent intent = new Intent(getActivity(), DetailActivity.class);
-        startActivity(intent);
-    }
-
     private DailyMenu createExampleDailyMenu() {
         Meal meal1 = new Meal("Linseneintopf", 324);
         Meal meal2 = new Meal("Spaghetti Carbonara", 234);
@@ -106,5 +103,20 @@ public class DailyMenuFragment extends Fragment implements AdapterView.OnItemCli
         Offer offer13 = new Offer(meal4, Line.l2, 100, 123, 231, 432);
         Offer[] offers = {offer1, offer2, offer3, offer4, offer5, offer6, offer7, offer8, offer9, offer10, offer11, offer12, offer12, offer13};
         return new DailyMenu(System.currentTimeMillis(), offers);
+    }
+
+    @Override
+    public Loader<Cursor> onCreateLoader(int id, Bundle args) {
+        return null;
+    }
+
+    @Override
+    public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
+
+    }
+
+    @Override
+    public void onLoaderReset(Loader<Cursor> loader) {
+
     }
 }
