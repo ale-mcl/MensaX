@@ -1,12 +1,15 @@
 package edu.kit.psegruppe3.mensax;
 
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+
+import java.net.URL;
 
 import edu.kit.psegruppe3.mensax.datamodels.Meal;
 
@@ -33,10 +36,6 @@ public class DetailFragment extends Fragment {
         return rootView;
     }
 
-    private void loadImage(Uri imageUri) {
-        
-    }
-
     private void uploadImage(Uri imageUri) {
 
     }
@@ -55,5 +54,18 @@ public class DetailFragment extends Fragment {
 
     private Meal selectMeal() {
         return null;
+    }
+
+    static class FetchMealDataTask extends AsyncTask<Integer, Void, String> {
+
+        @Override
+        protected String doInBackground(Integer... params) {
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(String s) {
+            super.onPostExecute(s);
+        }
     }
 }

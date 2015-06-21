@@ -116,7 +116,7 @@ public class MainActivity extends ActionBarActivity {
 
         @Override
         public Fragment getItem(int position) {
-            Fragment f = new MainActivityFragment();
+            Fragment f = new DailyMenuFragment();
             Bundle bundle = new Bundle();
             bundle.putInt("num", position);
             f.setArguments(bundle);

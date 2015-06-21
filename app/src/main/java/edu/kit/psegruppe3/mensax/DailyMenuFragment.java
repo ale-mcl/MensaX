@@ -1,7 +1,6 @@
 package edu.kit.psegruppe3.mensax;
 
 import android.content.Intent;
-import android.os.SystemClock;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -11,15 +10,8 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.ExpandableListAdapter;
 import android.widget.ExpandableListView;
-import android.widget.ListView;
-import android.widget.TextView;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 
 import edu.kit.psegruppe3.mensax.datamodels.DailyMenu;
 import edu.kit.psegruppe3.mensax.datamodels.Line;
@@ -30,12 +22,12 @@ import edu.kit.psegruppe3.mensax.datamodels.Offer;
 /**
  * A placeholder fragment containing a simple view.
  */
-public class MainActivityFragment extends Fragment implements AdapterView.OnItemClickListener {
+public class DailyMenuFragment extends Fragment implements AdapterView.OnItemClickListener {
 
     private DailyMenu mDailyMenu;
 
 
-    public MainActivityFragment() {
+    public DailyMenuFragment() {
     }
 
     @Override
@@ -63,7 +55,7 @@ public class MainActivityFragment extends Fragment implements AdapterView.OnItem
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View rootView =  inflater.inflate(R.layout.fragment_main, container, false);
+        View rootView =  inflater.inflate(R.layout.fragment_daily_menu, container, false);
 
         mDailyMenu = createExampleDailyMenu();
         ExpandableListAdapter mainActivityFragmentAdapter = new OfferListAdapter(getActivity(), mDailyMenu);
