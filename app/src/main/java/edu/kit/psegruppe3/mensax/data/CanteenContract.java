@@ -63,6 +63,10 @@ public class CanteenContract {
 
         public static final String COLUMN_GLOBAL_RATING = "global_rating";
 
+        public static final String COLUMN_TAG = "tag";
+
+        public static final String COLUMN_INGREDIENTS = "ingredients";
+
         public static final Uri CONTENT_URI =
                 BASE_CONTENT_URI.buildUpon().appendPath(PATH_OFFER).build();
 
