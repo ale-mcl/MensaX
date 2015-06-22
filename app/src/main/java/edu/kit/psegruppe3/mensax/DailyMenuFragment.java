@@ -64,15 +64,26 @@ public class DailyMenuFragment extends Fragment implements LoaderManager.LoaderC
         mainActivityFragmentAdapter = new OfferListAdapter(getActivity(), mDailyMenu);
 
         // Get a reference to the ListView, and attach this adapter to it.
-        ExpandableListView listView = (ExpandableListView) rootView.findViewById(R.id.offer_listview);
+        final ExpandableListView listView = (ExpandableListView) rootView.findViewById(R.id.offer_listview);
         listView.setAdapter(mainActivityFragmentAdapter);
 
-        listView.setOnChildClickListener(myListItemClicked);
+        listView.setOnChildClickListener(myChildItemClicked);
 
+        listView.setOnGroupExpandListener(new ExpandableListView.OnGroupExpandListener() {
+            @Override
+            public void onGroupExpand(int groupPosition) {
+                int groupCount = mainActivityFragmentAdapter.getGroupCount();
+                for (int i = 0; i < groupCount; i++) {
+                    if (i != groupPosition) {
+                        listView.collapseGroup(i);
+                    }
+                }
+            }
+        });
         return rootView;
     }
 
-    private ExpandableListView.OnChildClickListener myListItemClicked =  new ExpandableListView.OnChildClickListener() {
+    private ExpandableListView.OnChildClickListener myChildItemClicked =  new ExpandableListView.OnChildClickListener() {
         public boolean onChildClick(ExpandableListView parent, View v,
                                     int groupPosition, int childPosition, long id) {
 

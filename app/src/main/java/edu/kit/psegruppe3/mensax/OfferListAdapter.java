@@ -104,8 +104,13 @@ public class OfferListAdapter extends BaseExpandableListAdapter {
             convertView = LayoutInflater.from(mContext).inflate(R.layout.list_item_offer, parent, false);
         }
         Offer offer = (Offer) getChild(groupPosition, childPosition);
-        TextView textView = (TextView) convertView.findViewById(R.id.list_item_offer_textview);
-        textView.setText(offer.getMeal().getName());
+        TextView textViewName = (TextView) convertView.findViewById(R.id.list_item_offer_textview_name);
+        textViewName.setText(offer.getMeal().getName());
+
+        String price = offer.getPrice(0) + "€";
+        TextView textViewPrice = (TextView) convertView.findViewById(R.id.list_item_offer_textview_price);
+        textViewPrice.setText(price);
+
         return convertView;
     }
 
