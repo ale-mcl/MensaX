@@ -1,10 +1,13 @@
 package edu.kit.psegruppe3.mensax;
 
 import android.content.Context;
+import android.content.res.Resources;
+import android.graphics.drawable.Drawable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseExpandableListAdapter;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import java.util.zip.Inflater;
@@ -12,6 +15,7 @@ import java.util.zip.Inflater;
 import edu.kit.psegruppe3.mensax.datamodels.DailyMenu;
 import edu.kit.psegruppe3.mensax.datamodels.Line;
 import edu.kit.psegruppe3.mensax.datamodels.Offer;
+import edu.kit.psegruppe3.mensax.datamodels.Tag;
 
 /**
  * ExpandableListAdapter that shows the daily menu.
@@ -104,12 +108,18 @@ public class OfferListAdapter extends BaseExpandableListAdapter {
             convertView = LayoutInflater.from(mContext).inflate(R.layout.list_item_offer, parent, false);
         }
         Offer offer = (Offer) getChild(groupPosition, childPosition);
+
+        ImageView image = (ImageView) convertView.findViewById(R.id.tagDrawable);
+        image.setImageDrawable(getTagDrawable(mContext, offer));
+
         TextView textViewName = (TextView) convertView.findViewById(R.id.list_item_offer_textview_name);
         textViewName.setText(offer.getMeal().getName());
 
-        String price = offer.getPrice(0) + "€";
+        float price = (float) offer.getPrice(0) / 100;
+        String priceFloat = String.format("%.2f", price);
+        String real_price = priceFloat + "€";
         TextView textViewPrice = (TextView) convertView.findViewById(R.id.list_item_offer_textview_price);
-        textViewPrice.setText(price);
+        textViewPrice.setText(real_price);
 
         return convertView;
     }
@@ -117,6 +127,37 @@ public class OfferListAdapter extends BaseExpandableListAdapter {
     @Override
     public boolean isChildSelectable(int groupPosition, int childPosition) {
         return true;
+    }
+
+    private Drawable getTagDrawable(Context context, Offer offer){
+        String uri;
+        if (offer.getMeal().getTag() == Tag.BEEF){
+            uri = "@drawable/tag_beef";
+        }
+        else if (offer.getMeal().getTag() == Tag.BEEF_WELFARE){
+            uri = "@drawable/tag_beef_welfare";
+        }
+        else if (offer.getMeal().getTag() == Tag.PORK){
+            uri = "@drawable/tag_pork";
+        }
+        else if (offer.getMeal().getTag() == Tag.VEGETARIAN){
+            uri = "@drawable/tag_vegetarian";
+        }
+        else if (offer.getMeal().getTag() == Tag.VEGAN){
+            uri = "@drawable/tag_vegan";
+        }
+        else if (offer.getMeal().getTag() == Tag.FISH){
+            uri = "@drawable/tag_fish";
+        }
+        else if (offer.getMeal().getTag() == Tag.BIO){
+            uri = "@drawable/tag_bio";
+        }
+        else {
+            uri = "@drawable/tag_blank";
+        }
+        int imageResource = mContext.getResources().getIdentifier(uri, null, mContext.getPackageName());
+        Drawable res = mContext.getResources().getDrawable(imageResource);
+        return res;
     }
 
     private Line getLine(int position) {

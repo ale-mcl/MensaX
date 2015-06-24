@@ -6,6 +6,6 @@ public enum Tag {
     PORK,
     VEGETARIAN,
     VEGAN,
-    FISCH,
+    FISH,
     BIO
 }

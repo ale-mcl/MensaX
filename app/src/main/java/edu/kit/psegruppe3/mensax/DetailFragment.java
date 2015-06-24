@@ -29,9 +29,16 @@ public class DetailFragment extends Fragment {
         int selectedMealId = getArguments().getInt("selectedMealId");
 
         //HERE goes the code to: from the mealId select the meal from the table.
-        
+
         TextView textView = (TextView) rootView.findViewById(R.id.textview_details);
-        textView.setText(meal.getName());
+        //catching NullPointerException because atm we have
+        // no real data of a meal to give to the detailActivity.
+        try {
+            textView.setText(meal.getName());
+        } catch (NullPointerException e) {
+            String ops = "no real data yet";
+            textView.setText(ops);
+        }
 
 
         return rootView;

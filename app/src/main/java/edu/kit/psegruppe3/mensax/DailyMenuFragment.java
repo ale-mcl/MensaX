@@ -7,20 +7,12 @@ import android.os.Bundle;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.ExpandableListAdapter;
 import android.widget.ExpandableListView;
 
-import edu.kit.psegruppe3.mensax.datamodels.DailyMenu;
-import edu.kit.psegruppe3.mensax.datamodels.Line;
-import edu.kit.psegruppe3.mensax.datamodels.Meal;
-import edu.kit.psegruppe3.mensax.datamodels.Offer;
-
+import edu.kit.psegruppe3.mensax.datamodels.*;
 
 /**
  * A placeholder fragment containing a simple view.
@@ -65,7 +57,7 @@ public class DailyMenuFragment extends Fragment implements LoaderManager.LoaderC
     private ExpandableListView.OnChildClickListener myChildItemClicked =  new ExpandableListView.OnChildClickListener() {
         public boolean onChildClick(ExpandableListView parent, View v,
                                     int groupPosition, int childPosition, long id) {
-
+            //the method getChildId from the ExpandableListAdapter returns a primitive type long
             long selectedMealId_long = parent.getExpandableListAdapter().getChildId(groupPosition, childPosition);
             int selectedMealId = (int) selectedMealId_long;
             //at this point you have the id of the meal that the user clicked in the ExpandableListView.
@@ -78,12 +70,32 @@ public class DailyMenuFragment extends Fragment implements LoaderManager.LoaderC
 
     private DailyMenu createExampleDailyMenu() {
         Meal meal1 = new Meal("Linseneintopf", 324);
+        meal1.setGlobalRating(3);
+        meal1.setTag(Tag.BEEF);
+
         Meal meal2 = new Meal("Spaghetti Carbonara", 234);
+        meal2.setGlobalRating(1);
+        meal2.setTag(Tag.VEGAN);
+
         Meal meal3 = new Meal("Pommes", 254);
+        meal3.setGlobalRating(5);
+        meal3.setTag(Tag.VEGAN);
+
         Meal meal4 = new Meal("Grüner Salat", 456);
+        meal4.setGlobalRating(2);
+        meal4.setTag(Tag.VEGETARIAN);
+
         Meal meal5 = new Meal("Currywurst", 765);
+        meal5.setGlobalRating(3);
+        meal5.setTag(Tag.PORK);
+
         Meal meal6 = new Meal("Kroketten", 453);
+        meal6.setGlobalRating(4);
+        meal6.setTag(Tag.PORK);
+
         Meal meal7 = new Meal("Gebratene Hänchenkeule", 893);
+        meal7.setTag(Tag.BEEF_WELFARE);
+
         Offer offer1 = new Offer(meal1, Line.l1, 250, 123, 231, 432);
         Offer offer2 = new Offer(meal2, Line.l1, 250, 123, 231, 432);
         Offer offer3 = new Offer(meal3, Line.l2, 100, 123, 231, 432);
