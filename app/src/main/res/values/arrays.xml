@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string-array name="pref_priceGroup_options">
+        <item>@string/pref_priceGroup_label_students</item>
+        <item>@string/pref_priceGroup_label_guest</item>
+        <item>@string/pref_priceGroup_label_staff</item>
+        <item>@string/pref_priceGroup_label_pupil</item>
+    </string-array>
+
+    <string-array name="pref_priceGroup_values">
+        <item>@string/pref_priceGroup_student</item>
+        <item>@string/pref_priceGroup_staff</item>
+        <item>@string/pref_priceGroup_guest</item>
+        <item>@string/pref_priceGroup_pupil</item>
+    </string-array>
+
+</resources>

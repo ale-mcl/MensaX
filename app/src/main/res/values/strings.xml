@@ -2,20 +2,27 @@
     <string name="app_name">MensaX</string>
     <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
+
+    <!-- TabListener strings -->
     <string name="monday">Monday</string>
     <string name="tuesday">Tuesday</string>
     <string name="wednesday">Wednesday</string>
     <string name="thursday">Thursday</string>
     <string name="friday">Friday</string>
+
+    <!-- AndroidManifest strings -->
     <string name="title_activity_detail">DetailActivity</string>
     <string name="title_activity_settings">Settings</string>
 
+    <!-- MensaXsync strings -->
     <string name="content_authority">edu.kit.psegruppe3.mensax</string>
     <string name="sync_account_type">mensax.kit.edu</string>
 
+    <!-- SearchableActivity strings -->
     <string name="search_hint">Search for meals</string>
     <string name="action_search">Search</string>
 
+    <!-- OfferListAdapter strings -->
     <string name="l1">Linie 1</string>
     <string name="l2">Linie 2</string>
     <string name="l3">Linie 3</string>
@@ -27,5 +34,17 @@
     <string name="heisstheke">Cafeteria Heiße Theke</string>
     <string name="nmtisch">Cafeteria ab 14:30</string>
 
+    <!-- Settings strings -->
+    <string name="pref_priceGroup_label">Price Group</string>
+    <string name="pref_priceGroup_key" translatable="false">price_group</string>
+    <string name="pref_priceGroup_default" translatable="false">student</string>
+    <string name="pref_priceGroup_label_students">Student</string>
+    <string name="pref_priceGroup_label_guest">Guest</string>
+    <string name="pref_priceGroup_label_staff">Staff</string>
+    <string name="pref_priceGroup_label_pupil">Pupil</string>
+    <string name="pref_priceGroup_student" translatable="false">student</string>
+    <string name="pref_priceGroup_guest" translatable="false">guest</string>
+    <string name="pref_priceGroup_staff" translatable="false">staff</string>
+    <string name="pref_priceGroup_pupil" translatable="false">pupil</string>
 
 </resources>

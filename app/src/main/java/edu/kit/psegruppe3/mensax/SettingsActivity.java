@@ -18,7 +18,7 @@ public class SettingsActivity extends PreferenceActivity
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         addPreferencesFromResource(R.xml.pref_general);
-
+        bindPreferenceSummaryToValue(findPreference(getString(R.string.pref_priceGroup_key)));
     }
 
     /**

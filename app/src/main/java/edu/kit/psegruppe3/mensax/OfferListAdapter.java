@@ -1,16 +1,15 @@
 package edu.kit.psegruppe3.mensax;
 
 import android.content.Context;
-import android.content.res.Resources;
+import android.content.SharedPreferences;
 import android.graphics.drawable.Drawable;
+import android.preference.PreferenceManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseExpandableListAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
-
-import java.util.zip.Inflater;
 
 import edu.kit.psegruppe3.mensax.datamodels.DailyMenu;
 import edu.kit.psegruppe3.mensax.datamodels.Line;
@@ -115,7 +114,21 @@ public class OfferListAdapter extends BaseExpandableListAdapter {
         TextView textViewName = (TextView) convertView.findViewById(R.id.list_item_offer_textview_name);
         textViewName.setText(offer.getMeal().getName());
 
-        float price = (float) offer.getPrice(0) / 100;
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(mContext);
+        String priceGroup = prefs.getString(mContext.getString(R.string.pref_priceGroup_key),
+                mContext.getString(R.string.pref_priceGroup_default));
+
+        float price = 0;
+        if (priceGroup.equals(mContext.getString(R.string.pref_priceGroup_student))) {
+            price = (float) offer.getPrice(0) / 100;
+        } else if (priceGroup.equals(mContext.getString(R.string.pref_priceGroup_guest))) {
+            price = (float) offer.getPrice(1) / 100;
+        } else if (priceGroup.equals(mContext.getString(R.string.pref_priceGroup_staff))) {
+            price = (float) offer.getPrice(2) / 100;
+        } else if (priceGroup.equals(mContext.getString(R.string.pref_priceGroup_pupil)) ) {
+            price = (float) offer.getPrice(3) / 100;
+        }
+
         String priceFloat = String.format("%.2f", price);
         String real_price = priceFloat + "€";
         TextView textViewPrice = (TextView) convertView.findViewById(R.id.list_item_offer_textview_price);

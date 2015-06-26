@@ -1,15 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
-<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
-    <!--
-    <CheckBoxPreference
-        android:key="pref_sync"
-        android:title="@string/pref_sync"
-        android:="@string/pref_sync_summ"
-        android:defaultValue="true" />
-    -->
+<PreferenceScreen
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
     <PreferenceCategory
         android:title="General Settings"
         android:key="pref_key_storage_settings">
+
+        <ListPreference
+            android:title="@string/pref_priceGroup_label"
+            android:key="@string/pref_priceGroup_key"
+            android:defaultValue="@string/pref_priceGroup_student"
+            android:entryValues="@array/pref_priceGroup_values"
+            android:entries="@array/pref_priceGroup_options" />
+
     </PreferenceCategory>
 
 </PreferenceScreen>
