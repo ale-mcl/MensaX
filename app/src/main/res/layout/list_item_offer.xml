@@ -10,20 +10,31 @@ android:stretchColumns="1">
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:baselineAlignBottom="true"
+        android:layout_marginLeft="2dp"
         android:layout_marginRight="8dp" />
     <TextView
         android:id="@+id/list_item_offer_textview_name"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:fontFamily="sans-serif-condensed"
+        android:textColor="@color/Black"
         android:textSize="20sp" />
     <TextView
         android:id="@+id/list_item_offer_textview_price"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:fontFamily="sans-serif-condensed"
+        android:textColor="@color/Black"
         android:gravity="right"
         android:textSize="20sp" />
 </TableRow>
+
+    <View
+        android:id="@+id/tableSeparator"
+        android:layout_width="fill_parent"
+        android:layout_height="1dp"
+        android:layout_marginTop="20dp"
+        android:layout_marginBottom="0dp"
+        android:background="@color/LightGrey"/>
 
 </TableLayout>

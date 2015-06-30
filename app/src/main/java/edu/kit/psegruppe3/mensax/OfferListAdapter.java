@@ -109,7 +109,7 @@ public class OfferListAdapter extends BaseExpandableListAdapter {
         Offer offer = (Offer) getChild(groupPosition, childPosition);
 
         ImageView image = (ImageView) convertView.findViewById(R.id.tagDrawable);
-        image.setImageDrawable(getTagDrawable(mContext, offer));
+        image.setImageDrawable(getTagDrawable(offer));
 
         TextView textViewName = (TextView) convertView.findViewById(R.id.list_item_offer_textview_name);
         textViewName.setText(offer.getMeal().getName());
@@ -134,6 +134,13 @@ public class OfferListAdapter extends BaseExpandableListAdapter {
         TextView textViewPrice = (TextView) convertView.findViewById(R.id.list_item_offer_textview_price);
         textViewPrice.setText(real_price);
 
+        View separator = convertView.findViewById(R.id.tableSeparator);
+        if (childPosition != (getChildrenCount(groupPosition) - 1)) {
+            separator.setVisibility(View.GONE);
+        } else {
+            separator.setVisibility(View.VISIBLE);
+        }
+
         return convertView;
     }
 
@@ -142,7 +149,7 @@ public class OfferListAdapter extends BaseExpandableListAdapter {
         return true;
     }
 
-    private Drawable getTagDrawable(Context context, Offer offer){
+    private Drawable getTagDrawable(Offer offer){
         String uri;
         if (offer.getMeal().getTag() == Tag.BEEF){
             uri = "@drawable/tag_beef";
