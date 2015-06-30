@@ -47,4 +47,7 @@
     <string name="pref_priceGroup_staff" translatable="false">staff</string>
     <string name="pref_priceGroup_pupil" translatable="false">pupil</string>
 
+    <!-- DetailFragment strings -->
+    <string name="button_foodMerge">Essen Zusammenlegen</string>
+    <string name="button_takePicture">Bild nehmen</string>
 </resources>

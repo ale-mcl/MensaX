@@ -1,12 +1,15 @@
 package edu.kit.psegruppe3.mensax;
 
+import android.content.Intent;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.TextView;
 
 import edu.kit.psegruppe3.mensax.datamodels.Meal;
@@ -26,34 +29,27 @@ public class DetailFragment extends Fragment {
                              Bundle savedInstanceState) {
         View rootView =  inflater.inflate(R.layout.fragment_detail, container, false);
 
-        int selectedMealId = getArguments().getInt("selectedMealId");
+        int mealId = getArguments().getInt("selectedMealId");
+        /* HERE CODE TO:
+                use the mealId to select the meal from the sql table;
+         */
 
-        //HERE goes the code to: from the mealId select the meal from the table.
+        Button button1 = (Button) rootView.findViewById(R.id.button_foodMerge);
+        Button button2 = (Button) rootView.findViewById(R.id.button_takePicture);
 
         TextView textView = (TextView) rootView.findViewById(R.id.textview_details);
-        //catching NullPointerException because atm we have
-        // no real data of a meal to give to the detailActivity.
-        try {
-            textView.setText(meal.getName());
-        } catch (NullPointerException e) {
-            String ops = "no real data yet";
-            textView.setText(ops);
-        }
-
+        //textView.setText(meal.getName());
 
         return rootView;
     }
 
     private void uploadImage(Uri imageUri) {
-
     }
 
     private void rate(int rating) {
-
     }
 
     private void mergeMeals(Meal secondMeal) {
-
     }
 
     private Uri selectImageUri() {

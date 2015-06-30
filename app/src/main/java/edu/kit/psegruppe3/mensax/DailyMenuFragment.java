@@ -15,7 +15,7 @@ import android.widget.ExpandableListView;
 import edu.kit.psegruppe3.mensax.datamodels.*;
 
 /**
- * A placeholder fragment containing a simple view.
+ * The fragment of the MainActivity. It shows the daily menu.
  */
 public class DailyMenuFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor> {
 
@@ -60,7 +60,7 @@ public class DailyMenuFragment extends Fragment implements LoaderManager.LoaderC
             //the method getChildId from the ExpandableListAdapter returns a primitive type long
             long selectedMealId_long = parent.getExpandableListAdapter().getChildId(groupPosition, childPosition);
             int selectedMealId = (int) selectedMealId_long;
-            //at this point you have the id of the meal that the user clicked in the ExpandableListView.
+            //send the id of the meal clicked to the DetailActivity and start it.
             Intent intent = new Intent(getActivity(), DetailActivity.class)
                     .putExtra("selectedMealId", selectedMealId);
             startActivity(intent);

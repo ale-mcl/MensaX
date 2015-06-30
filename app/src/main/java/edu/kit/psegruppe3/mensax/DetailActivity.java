@@ -1,18 +1,24 @@
 package edu.kit.psegruppe3.mensax;
 
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.provider.MediaStore;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 
 
 public class DetailActivity extends ActionBarActivity {
 
+    static final int REQUEST_IMAGE_CAPTURE = 1;
+    private int selectedMealId;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         Intent intent = getIntent();
-        int selectedMealId = intent.getIntExtra("selectedMealId", 0);
+        selectedMealId = intent.getIntExtra("selectedMealId", 0);
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_detail);
@@ -28,6 +34,26 @@ public class DetailActivity extends ActionBarActivity {
                     .add(R.id.container, detailData)
                     .commit();
             }
+    }
+
+    public void foodMerge(View view) {
+    }
+
+    public void takePicture(View view) {
+        Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
+            startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
+        }
+    }
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
+            Bundle extras = data.getExtras();
+            Bitmap imageBitmap = (Bitmap) extras.get("data");
+            /* HERE CODE TO:
+                     send picture to the server;
+             */
+        }
     }
 
     @Override
@@ -46,6 +72,7 @@ public class DetailActivity extends ActionBarActivity {
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
+            startActivity(new Intent(this, SettingsActivity.class));
             return true;
         }
 
