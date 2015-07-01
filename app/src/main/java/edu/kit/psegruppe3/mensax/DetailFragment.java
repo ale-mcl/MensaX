@@ -13,6 +13,7 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import edu.kit.psegruppe3.mensax.datamodels.Meal;
+import edu.kit.psegruppe3.mensax.datamodels.Tag;
 
 /**
  * Fragment of the activity DetailActivity that shows all info about a meal.
@@ -29,16 +30,32 @@ public class DetailFragment extends Fragment {
                              Bundle savedInstanceState) {
         View rootView =  inflater.inflate(R.layout.fragment_detail, container, false);
 
-        int mealId = getArguments().getInt("selectedMealId");
+        meal = new Meal("Linseneintopf", 324);
+        meal.setTag(Tag.BEEF);
+        meal.setIngredients("2,3,Gl,Se,Sf,Sn,So");
+        meal.setGlobalRating(3);
+
+
+        //int mealId = getArguments().getInt("selectedMealId");
         /* HERE CODE TO:
                 use the mealId to select the meal from the sql table;
          */
 
-        Button button1 = (Button) rootView.findViewById(R.id.button_foodMerge);
-        Button button2 = (Button) rootView.findViewById(R.id.button_takePicture);
+        TextView textView1 = (TextView) rootView.findViewById(R.id.mealName);
+        textView1.setText(meal.getName());
 
-        TextView textView = (TextView) rootView.findViewById(R.id.textview_details);
-        //textView.setText(meal.getName());
+        TextView textView2 = (TextView) rootView.findViewById(R.id.mealIngredients);
+        textView2.setText("Ingredients:");
+
+        TextView textView3 = (TextView) rootView.findViewById(R.id.showIngredients);
+        textView3.setText("[" + meal.getIngredients() + "]");
+
+        TextView textView4 = (TextView) rootView.findViewById(R.id.mealGlobalRating);
+        textView4.setText("Rating:");
+
+        String globalRating = String.valueOf(meal.getGlobalRating());
+        TextView textView5 = (TextView) rootView.findViewById(R.id.showGlobalRating);
+        textView5.setText(globalRating);
 
         return rootView;
     }
