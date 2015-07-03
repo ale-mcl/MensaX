@@ -1,17 +1,14 @@
 package edu.kit.psegruppe3.mensax;
 
-import android.content.Intent;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.provider.MediaStore;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
+import android.widget.RatingBar;
 import android.widget.TextView;
-
 import edu.kit.psegruppe3.mensax.datamodels.Meal;
 import edu.kit.psegruppe3.mensax.datamodels.Tag;
 
@@ -33,7 +30,7 @@ public class DetailFragment extends Fragment {
         meal = new Meal("Linseneintopf", 324);
         meal.setTag(Tag.BEEF);
         meal.setIngredients("2,3,Gl,Se,Sf,Sn,So");
-        meal.setGlobalRating(3);
+        meal.setGlobalRating(3.5f);
 
 
         //int mealId = getArguments().getInt("selectedMealId");
@@ -41,21 +38,20 @@ public class DetailFragment extends Fragment {
                 use the mealId to select the meal from the sql table;
          */
 
-        TextView textView1 = (TextView) rootView.findViewById(R.id.mealName);
-        textView1.setText(meal.getName());
+        TextView txtMealName = (TextView) rootView.findViewById(R.id.mealName);
+        txtMealName.setText(meal.getName());
 
-        TextView textView2 = (TextView) rootView.findViewById(R.id.mealIngredients);
-        textView2.setText("Ingredients:");
+        TextView txtMealIngredients = (TextView) rootView.findViewById(R.id.mealIngredients);
+        txtMealIngredients.setText("Ingredients:");
 
-        TextView textView3 = (TextView) rootView.findViewById(R.id.showIngredients);
-        textView3.setText("[" + meal.getIngredients() + "]");
+        TextView txtShowIngredients = (TextView) rootView.findViewById(R.id.showIngredients);
+        txtShowIngredients.setText("[" + meal.getIngredients() + "]");
 
-        TextView textView4 = (TextView) rootView.findViewById(R.id.mealGlobalRating);
-        textView4.setText("Rating:");
+        TextView txtMealGlobalRating = (TextView) rootView.findViewById(R.id.mealGlobalRating);
+        txtMealGlobalRating.setText("Rating:");
 
-        String globalRating = String.valueOf(meal.getGlobalRating());
-        TextView textView5 = (TextView) rootView.findViewById(R.id.showGlobalRating);
-        textView5.setText(globalRating);
+        RatingBar rtbarShowGlobalRating = (RatingBar) rootView.findViewById(R.id.showGlobalRating);
+        rtbarShowGlobalRating.setRating(meal.getGlobalRating());
 
         return rootView;
     }

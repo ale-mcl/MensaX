@@ -7,8 +7,8 @@ public class Meal {
     private int mealId;
     private Tag tag;
     private String ingredients;
-    private int globalRating;
-    private int userRating;
+    private float globalRating;
+    private float userRating;
     private Uri[] images;
 
     public Meal(String name, int mealId) {
@@ -33,11 +33,11 @@ public class Meal {
         return ingredients;
     }
 
-    public int getGlobalRating() {
+    public float getGlobalRating() {
         return globalRating;
     }
 
-    public int getUserRating() {
+    public float getUserRating() {
         return userRating;
     }
 
@@ -53,11 +53,11 @@ public class Meal {
         this.ingredients = ingredients;
     }
 
-    public void setGlobalRating(int globalRating) {
+    public void setGlobalRating(float globalRating) {
         this.globalRating = globalRating;
     }
 
-    public void setUserRating(int userRating) {
+    public void setUserRating(float userRating) {
         this.userRating = userRating;
     }
 
