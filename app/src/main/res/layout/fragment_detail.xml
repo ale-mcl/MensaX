@@ -1,4 +1,4 @@
-<RelativeLayout
+<LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="fill_parent"
@@ -15,73 +15,144 @@
         android:textSize="30sp"
         android:layout_marginBottom="25dp" />
 
-    <TextView
-        android:id="@+id/mealIngredients"
+    <TableLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textSize="20sp"
-        android:layout_marginBottom="10dp"
-        android:layout_below="@id/mealName" />
+        android:stretchColumns="0">
 
-    <TextView
-        android:id="@+id/showIngredients"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentRight="true"
-        android:textSize="20sp"
-        android:layout_marginBottom="10dp"
-        android:layout_below="@id/mealName" />
+        <TableRow>
+            <TextView
+                android:id="@+id/mealIngredients"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="20sp"
+                android:layout_marginBottom="10dp" />
 
-    <TextView
-        android:id="@+id/mealGlobalRating"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textSize="20sp"
-        android:layout_marginBottom="10dp"
-        android:layout_below="@id/mealIngredients" />
+            <TextView
+                android:id="@+id/showIngredients"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="right"
+                android:textSize="20sp"
+                android:layout_marginBottom="10dp"/>
+        </TableRow>
 
-    <RatingBar
-        android:id="@+id/showGlobalRating"
-        android:isIndicator="true"
-        android:numStars="5"
-        android:rating="2.5"
-        style = "?android:attr/ratingBarStyleSmall"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true"
-        android:textSize="20sp"
-        android:layout_below="@id/mealIngredients" />
+        <TableRow>
+            <TextView
+                android:id="@+id/mealGlobalRating"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="20sp"
+                android:layout_marginBottom="10dp" />
+
+            <RelativeLayout>
+            <RatingBar
+                android:id="@+id/showGlobalRating"
+                android:isIndicator="true"
+                android:numStars="5"
+                android:rating="2.5"
+                style = "?android:attr/ratingBarStyleSmall"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="right"
+                android:layout_alignParentRight="true"
+                android:layout_alignParentEnd="true"
+                android:textSize="20sp"/>
+            </RelativeLayout>
+        </TableRow>
+
+        <TableRow>
+            <TextView
+                android:id="@+id/mealUserRating"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="20sp"
+                android:layout_marginBottom="10dp"/>
+
+            <RelativeLayout>
+            <RatingBar
+                android:id="@+id/showUserRating"
+                android:isIndicator="true"
+                android:numStars="5"
+                android:rating="0"
+                style = "?android:attr/ratingBarStyleSmall"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="right"
+                android:layout_alignParentRight="true"
+                android:layout_alignParentEnd="true"
+                android:textSize="20sp"/>
+            </RelativeLayout>
+        </TableRow>
+
+        <TableRow>
+            <TextView
+                android:text=""
+                android:layout_weight=".25"
+                android:layout_width="0dip"
+                />
+            <Button
+                android:id="@+id/button_giveRating"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/button_giveRating"
+                android:layout_marginTop="35dp"/>
+            <TextView
+                android:text=""
+                android:layout_weight=".25"
+                android:layout_width="0dip"
+                />
+       </TableRow>
+
+        <TableRow>
+            <TextView
+                android:text=""
+                android:layout_weight=".25"
+                android:layout_width="0dip"
+                />
+            <Button
+                android:id="@+id/button_takePicture"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/button_takePicture"
+                android:drawableLeft="@drawable/ic_menu_camera"
+                android:onClick="takePicture"/>
+            <TextView
+                android:text=""
+                android:layout_weight=".25"
+                android:layout_width="0dip"
+                />
+        </TableRow>
+
+        <TableRow>
+            <TextView
+                android:text=""
+                android:layout_weight=".25"
+                android:layout_width="0dip"
+                />
+            <Button
+                android:id="@+id/button_mergeFood"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/button_foodMerge"
+                android:onClick="mergeFood"/>
+            <TextView
+                android:text=""
+                android:layout_weight=".25"
+                android:layout_width="0dip"
+                />
+        </TableRow>
+
+    </TableLayout>
 
 
-    <Button
-        android:id="@+id/button_giveRating"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/button_giveRating"
-        android:onClick="giveRating"
-        android:layout_below="@id/mealGlobalRating"
-        android:layout_marginTop="40dp"
-        android:layout_centerHorizontal="true"/>
-
-    <Button
-        android:id="@+id/button_takePicture"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/button_takePicture"
-        android:drawableLeft="@drawable/ic_menu_camera"
-        android:onClick="takePicture"
-        android:layout_below="@id/button_giveRating"
-        android:layout_centerHorizontal="true" />
-
-    <Button
-        android:id="@+id/button_mergeFood"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/button_foodMerge"
-        android:onClick="mergeFood"
-        android:layout_below="@id/button_takePicture"
-        android:layout_centerHorizontal="true"/>
 
 
-</RelativeLayout>
+
+
+
+
+
+
+</LinearLayout>

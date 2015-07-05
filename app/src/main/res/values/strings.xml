@@ -50,4 +50,15 @@
     <string name="button_giveRating">Rate this meal</string>
     <string name="button_foodMerge">Merge two meals</string>
     <string name="button_takePicture">Take a photo</string>
+    <string name="ingredients">Ingredients:</string>
+    <string name="global_rating">Average Rating:</string>
+    <string name="user_rating">Your Rating:</string>
+
+    <!-- GiveRatingFragment strings -->
+    <string name="dialog_giveRating">Rate this meal</string>
+    <string name="confirm">Confirm</string>
+    <string name="cancel">Cancel</string>
+
+
+
 </resources>

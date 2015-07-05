@@ -36,9 +36,6 @@ public class DetailActivity extends ActionBarActivity {
             }
     }
 
-    public void giveRating(View view) {
-    }
-
     public void mergeFood(View view) {
     }
 
