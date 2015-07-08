@@ -1,13 +1,13 @@
 package edu.kit.psegruppe3.mensax;
 
+import android.content.Context;
 import android.content.Intent;
 import android.preference.PreferenceManager;
+import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
-import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.ViewPager;
-import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.view.Menu;
@@ -26,63 +26,14 @@ public class MainActivity extends ActionBarActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
         PreferenceManager.setDefaultValues(this, R.xml.pref_general, false);
-        mAdapter = new TabAdapter(getSupportFragmentManager());
+        mAdapter = new TabAdapter(getSupportFragmentManager(), this);
         mPager = (ViewPager) findViewById(R.id.pager);
         mPager.setAdapter(mAdapter);
-        ActionBar.TabListener tabListener = new ActionBar.TabListener() {
 
-            public void onTabSelected(ActionBar.Tab tab, FragmentTransaction ft) {
-                // When the tab is selected, switch to the
-                // corresponding page in the ViewPager.
-                mPager.setCurrentItem(tab.getPosition());
-            }
-
-            @Override
-            public void onTabUnselected(ActionBar.Tab tab, FragmentTransaction ft) {
-
-            }
-
-            @Override
-            public void onTabReselected(ActionBar.Tab tab, FragmentTransaction ft) {
-
-            }
-        };
-
-        // setup action bar for tabs
-        ActionBar actionBar = getSupportActionBar();
-        actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
-
-        ActionBar.Tab tab = actionBar.newTab()
-                .setText(R.string.monday)
-                .setTabListener(tabListener);
-        actionBar.addTab(tab);
-
-        tab = actionBar.newTab()
-                .setText(R.string.tuesday)
-                .setTabListener(tabListener);
-        actionBar.addTab(tab);
-
-        tab = actionBar.newTab()
-                .setText(R.string.wednesday)
-                .setTabListener(tabListener);
-        actionBar.addTab(tab);
-        tab = actionBar.newTab()
-                .setText(R.string.thursday)
-                .setTabListener(tabListener);
-        actionBar.addTab(tab);
-        tab = actionBar.newTab()
-                .setText(R.string.friday)
-                .setTabListener(tabListener);
-        actionBar.addTab(tab);
-        mPager.setOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener() {
-            @Override
-            public void onPageSelected(int position) {
-                // When swiping between pages, select the
-                // corresponding tab.
-                getSupportActionBar().setSelectedNavigationItem(position);
-            }
-        });
+        TabLayout tabLayout = (TabLayout) findViewById(R.id.tab_layout);
+        tabLayout.setupWithViewPager(mPager);
     }
 
 
@@ -112,8 +63,11 @@ public class MainActivity extends ActionBarActivity {
 
     public static class TabAdapter extends FragmentPagerAdapter {
 
-        public TabAdapter(FragmentManager fm) {
+        private Context context;
+
+        public TabAdapter(FragmentManager fm, Context context) {
             super(fm);
+            this.context = context;
         }
 
         @Override
@@ -129,6 +83,30 @@ public class MainActivity extends ActionBarActivity {
         @Override
         public int getCount() {
             return NUM_TABS;
+        }
+
+        @Override
+        public CharSequence getPageTitle(int position) {
+            switch (position) {
+                case 0: {
+                    return context.getString(R.string.monday);
+                }
+                case 1: {
+                    return context.getString(R.string.tuesday);
+                }
+                case 2: {
+                    return context.getString(R.string.wednesday);
+                }
+                case 3: {
+                    return context.getString(R.string.thursday);
+                }
+                case 4: {
+                    return context.getString(R.string.friday);
+                }
+                default: {
+                    return super.getPageTitle(position);
+                }
+            }
         }
     }
 

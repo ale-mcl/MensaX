@@ -27,6 +27,12 @@ public class DailyMenuFragment extends Fragment implements LoaderManager.LoaderC
     }
 
     @Override
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        //initialize loader here
+    }
+
+    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View rootView =  inflater.inflate(R.layout.fragment_daily_menu, container, false);
