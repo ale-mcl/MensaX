@@ -63,7 +63,19 @@ public class CanteenContract {
 
         public static final String COLUMN_GLOBAL_RATING = "global_rating";
 
-        public static final String COLUMN_TAG = "tag";
+        public static final String COLUMN_TAG_BIO = "bio";
+
+        public static final String COLUMN_TAG_FISH = "fish";
+
+        public static final String COLUMN_TAG_PORK = "pork";
+
+        public static final String COLUMN_TAG_COW = "cow";
+
+        public static final String COLUMN_TAG_COW_AW = "cow_aw";
+
+        public static final String COLUMN_TAG_VEGAN = "vegan";
+
+        public static final String COLUMN_TAG_VEG = "veg";
 
         public static final String COLUMN_INGREDIENTS = "ingredients";
 

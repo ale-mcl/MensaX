@@ -13,8 +13,8 @@ import android.widget.TextView;
 
 import edu.kit.psegruppe3.mensax.datamodels.DailyMenu;
 import edu.kit.psegruppe3.mensax.datamodels.Line;
+import edu.kit.psegruppe3.mensax.datamodels.Meal;
 import edu.kit.psegruppe3.mensax.datamodels.Offer;
-import edu.kit.psegruppe3.mensax.datamodels.Tag;
 
 /**
  * ExpandableListAdapter that shows the daily menu.
@@ -149,27 +149,28 @@ public class OfferListAdapter extends BaseExpandableListAdapter {
         return true;
     }
 
+    //TODO: Meal could have multiple tags!
     private Drawable getTagDrawable(Offer offer){
         String uri;
-        if (offer.getMeal().getTag() == Tag.BEEF){
+        if (offer.getMeal().hasTag(Meal.TAG_COW)){
             uri = "@drawable/tag_beef";
         }
-        else if (offer.getMeal().getTag() == Tag.BEEF_WELFARE){
+        else if (offer.getMeal().hasTag(Meal.TAG_COW_AW)){
             uri = "@drawable/tag_beef_welfare";
         }
-        else if (offer.getMeal().getTag() == Tag.PORK){
+        else if (offer.getMeal().hasTag(Meal.TAG_PORK)){
             uri = "@drawable/tag_pork";
         }
-        else if (offer.getMeal().getTag() == Tag.VEGETARIAN){
+        else if (offer.getMeal().hasTag(Meal.TAG_VEG)){
             uri = "@drawable/tag_vegetarian";
         }
-        else if (offer.getMeal().getTag() == Tag.VEGAN){
+        else if (offer.getMeal().hasTag(Meal.TAG_VEGAN)){
             uri = "@drawable/tag_vegan";
         }
-        else if (offer.getMeal().getTag() == Tag.FISH){
+        else if (offer.getMeal().hasTag(Meal.TAG_FISH)){
             uri = "@drawable/tag_fish";
         }
-        else if (offer.getMeal().getTag() == Tag.BIO){
+        else if (offer.getMeal().hasTag(Meal.TAG_BIO)){
             uri = "@drawable/tag_bio";
         }
         else {

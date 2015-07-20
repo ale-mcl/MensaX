@@ -40,7 +40,13 @@ public class CanteenDbHelper extends SQLiteOpenHelper {
                 OfferEntry.COLUMN_PRICE_STAFF + " INTEGER NOT NULL," +
                 OfferEntry.COLUMN_PRICE_PUPILS + " INTEGER NOT NULL," +
                 OfferEntry.COLUMN_GLOBAL_RATING + " INTEGER NOT NULL," +
-                OfferEntry.COLUMN_TAG + " TEXT NOT NULL," +
+                OfferEntry.COLUMN_TAG_BIO + " INTEGER NOT NULL," +
+                OfferEntry.COLUMN_TAG_FISH + " INTEGER NOT NULL," +
+                OfferEntry.COLUMN_TAG_PORK + " INTEGER NOT NULL," +
+                OfferEntry.COLUMN_TAG_COW + " INTEGER NOT NULL," +
+                OfferEntry.COLUMN_TAG_COW_AW + " INTEGER NOT NULL," +
+                OfferEntry.COLUMN_TAG_VEGAN + " INTEGER NOT NULL," +
+                OfferEntry.COLUMN_TAG_VEG + " INTEGER NOT NULL," +
                 OfferEntry.COLUMN_INGREDIENTS + " TEXT NOT NULL," +
 
                 // Set up the location column as a foreign key to location table.

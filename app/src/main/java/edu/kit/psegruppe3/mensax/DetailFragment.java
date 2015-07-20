@@ -13,7 +13,6 @@ import android.widget.Button;
 import android.widget.RatingBar;
 import android.widget.TextView;
 import edu.kit.psegruppe3.mensax.datamodels.Meal;
-import edu.kit.psegruppe3.mensax.datamodels.Tag;
 
 /**
  * Fragment of the activity DetailActivity that shows all info about a meal.
@@ -31,7 +30,7 @@ public class DetailFragment extends Fragment {
         final View rootView =  inflater.inflate(R.layout.fragment_detail, container, false);
 
         meal = new Meal("Linseneintopf", 324);
-        meal.setTag(Tag.BEEF);
+        meal.setTag(Meal.TAG_COW, true);
         meal.setIngredients("2,3,Gl,Se,Sf,Sn,So");
         meal.setGlobalRating(3.5f);
 

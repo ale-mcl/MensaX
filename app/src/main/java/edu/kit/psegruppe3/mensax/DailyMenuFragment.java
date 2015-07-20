@@ -77,30 +77,30 @@ public class DailyMenuFragment extends Fragment implements LoaderManager.LoaderC
     private DailyMenu createExampleDailyMenu() {
         Meal meal1 = new Meal("Linseneintopf", 324);
         meal1.setGlobalRating(3);
-        meal1.setTag(Tag.BEEF);
+        meal1.setTag(Meal.TAG_COW, true);
 
         Meal meal2 = new Meal("Spaghetti Carbonara", 234);
         meal2.setGlobalRating(1);
-        meal2.setTag(Tag.VEGAN);
+        meal2.setTag(Meal.TAG_VEGAN, true);
 
         Meal meal3 = new Meal("Pommes", 254);
         meal3.setGlobalRating(5);
-        meal3.setTag(Tag.VEGAN);
+        meal3.setTag(Meal.TAG_VEGAN, true);
 
         Meal meal4 = new Meal("Grüner Salat", 456);
         meal4.setGlobalRating(2);
-        meal4.setTag(Tag.VEGETARIAN);
+        meal4.setTag(Meal.TAG_VEG, true);
 
         Meal meal5 = new Meal("Currywurst", 765);
         meal5.setGlobalRating(3);
-        meal5.setTag(Tag.PORK);
+        meal5.setTag(Meal.TAG_PORK, true);
 
         Meal meal6 = new Meal("Kroketten", 453);
         meal6.setGlobalRating(4);
-        meal6.setTag(Tag.PORK);
+        meal6.setTag(Meal.TAG_PORK, true);
 
         Meal meal7 = new Meal("Gebratene Hänchenkeule", 893);
-        meal7.setTag(Tag.BEEF_WELFARE);
+        meal7.setTag(Meal.TAG_COW_AW, true);
 
         Offer offer1 = new Offer(meal1, Line.l1, 250, 123, 231, 432);
         Offer offer2 = new Offer(meal2, Line.l1, 250, 123, 231, 432);
