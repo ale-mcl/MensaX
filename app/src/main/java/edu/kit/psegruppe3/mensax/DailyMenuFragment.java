@@ -76,11 +76,11 @@ public class DailyMenuFragment extends Fragment implements LoaderManager.LoaderC
         String sortOrder = CanteenContract.OfferEntry.COLUMN_PRICE_STUDENTS + " DESC";
 
 
-        Uri weatherForLocationUri = CanteenContract.OfferEntry.buildOfferDate(
+        Uri mensaOfferUri = CanteenContract.OfferEntry.buildOfferDate(
                 System.currentTimeMillis());
 
         return new CursorLoader(getActivity(),
-                weatherForLocationUri,
+                mensaOfferUri,
                 null,
                 null,
                 null,
