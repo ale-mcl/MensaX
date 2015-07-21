@@ -60,7 +60,7 @@ public class DailyMenuFragment extends Fragment implements LoaderManager.LoaderC
             int selectedMealId = (int) selectedMealId_long;
             //send the id of the meal clicked to the DetailActivity and start it.
             Intent intent = new Intent(getActivity(), DetailActivity.class)
-                    .putExtra("selectedMealId", selectedMealId);
+                    .putExtra(DetailActivity.ARG_MEAL_ID, selectedMealId);
             startActivity(intent);
             return false;
         }
@@ -69,15 +69,12 @@ public class DailyMenuFragment extends Fragment implements LoaderManager.LoaderC
 
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-        Calendar calendar = Calendar.getInstance();
-
-        calendar.add(Calendar.DAY_OF_WEEK, args.getInt(MainActivity.ARG_TAB_NUM));
+        Long date = args.getLong(MainActivity.ARG_DATE);
 
         String sortOrder = CanteenContract.OfferEntry.COLUMN_PRICE_STUDENTS + " DESC";
 
 
-        Uri mensaOfferUri = CanteenContract.OfferEntry.buildOfferDate(
-                System.currentTimeMillis());
+        Uri mensaOfferUri = CanteenContract.OfferEntry.buildOfferDate(date);
 
         return new CursorLoader(getActivity(),
                 mensaOfferUri,

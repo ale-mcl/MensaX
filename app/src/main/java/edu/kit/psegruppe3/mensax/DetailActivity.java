@@ -13,18 +13,19 @@ import android.view.View;
 public class DetailActivity extends ActionBarActivity {
 
     static final int REQUEST_IMAGE_CAPTURE = 1;
-    private int selectedMealId;
+    static final String ARG_MEAL_ID = "mealId";
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         Intent intent = getIntent();
-        selectedMealId = intent.getIntExtra("selectedMealId", 0);
+        int selectedMealId = intent.getIntExtra(ARG_MEAL_ID, 0);
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_detail);
 
         Bundle bundle = new Bundle();
-        bundle.putInt("selectedMealId", selectedMealId);
+        bundle.putInt(ARG_MEAL_ID, selectedMealId);
 
         DetailFragment detailData = new DetailFragment();
         detailData.setArguments(bundle);

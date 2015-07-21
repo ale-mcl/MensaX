@@ -13,7 +13,9 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Date;
 
 import edu.kit.psegruppe3.mensax.sync.MensaXSyncAdapter;
 
@@ -21,7 +23,7 @@ import edu.kit.psegruppe3.mensax.sync.MensaXSyncAdapter;
 public class MainActivity extends ActionBarActivity {
 
     static final int NUM_TABS = 5;
-    static final String ARG_TAB_NUM = "num";
+    static final String ARG_DATE = "date";
 
     private TabAdapter mAdapter;
     private ViewPager mPager;
@@ -79,9 +81,17 @@ public class MainActivity extends ActionBarActivity {
 
         @Override
         public Fragment getItem(int position) {
+            Calendar calendar = Calendar.getInstance();
+            int currentDay = calendar.get(Calendar.DAY_OF_WEEK);
+            if (currentDay + position > 6) {
+                calendar.add(Calendar.DATE, position + 2);
+            } else {
+                calendar.add(Calendar.DATE, position);
+            }
+
             Fragment f = new DailyMenuFragment();
             Bundle bundle = new Bundle();
-            bundle.putInt(ARG_TAB_NUM, position);
+            bundle.putLong(ARG_DATE, calendar.getTimeInMillis());
             f.setArguments(bundle);
             return f;
         }
@@ -95,25 +105,32 @@ public class MainActivity extends ActionBarActivity {
         @Override
         public CharSequence getPageTitle(int position) {
             Calendar calendar = Calendar.getInstance();
+            String dayOfWeek = "";
             int currentDay = calendar.get(Calendar.DAY_OF_WEEK);
             int day = (currentDay + position);
-            if (day > 6) {
-                day = day - 5;
+            if (day > Calendar.FRIDAY) {
+                day = day - Calendar.THURSDAY;
+                calendar.add(Calendar.DATE, position + 2); //skip weekend
+            } else {
+                calendar.add(Calendar.DATE, position);
             }
+
             if (day == currentDay) {
-                return context.getString(R.string.today);
+                dayOfWeek = context.getString(R.string.today);
             } else if (day == currentDay + 1) {
-                return context.getString(R.string.tomorrow);
+                dayOfWeek = context.getString(R.string.tomorrow);
             } else {
                 switch (day) {
-                    case Calendar.MONDAY: return context.getString(R.string.monday);
-                    case Calendar.TUESDAY: return context.getString(R.string.tuesday);
-                    case Calendar.WEDNESDAY: return context.getString(R.string.wednesday);
-                    case Calendar.THURSDAY: return context.getString(R.string.thursday);
-                    case Calendar.FRIDAY: return context.getString(R.string.friday);
-                    default: return super.getPageTitle(position);
+                    case Calendar.MONDAY: dayOfWeek = context.getString(R.string.monday); break;
+                    case Calendar.TUESDAY: dayOfWeek = context.getString(R.string.tuesday); break;
+                    case Calendar.WEDNESDAY: dayOfWeek = context.getString(R.string.wednesday); break;
+                    case Calendar.THURSDAY: dayOfWeek = context.getString(R.string.thursday); break;
+                    case Calendar.FRIDAY: dayOfWeek = context.getString(R.string.friday);
                 }
             }
+            SimpleDateFormat dateFormat = new SimpleDateFormat("dd.MM");
+            Date currentDate = calendar.getTime();
+            return dayOfWeek + " (" + dateFormat.format(currentDate) + ")";
         }
     }
 
