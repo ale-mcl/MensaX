@@ -5,14 +5,36 @@ import android.accounts.AccountManager;
 import android.content.AbstractThreadedSyncAdapter;
 import android.content.ContentProviderClient;
 import android.content.ContentResolver;
+import android.content.ContentUris;
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.SyncRequest;
 import android.content.SyncResult;
+import android.database.Cursor;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.SystemClock;
+import android.provider.Settings;
+import android.text.format.Time;
 import android.util.Log;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.util.Calendar;
+import java.util.GregorianCalendar;
+import java.util.Vector;
+
 import edu.kit.psegruppe3.mensax.R;
+import edu.kit.psegruppe3.mensax.data.CanteenContract;
 
 /**
  * Created by ekremsenturk on 19.06.15.
@@ -31,9 +53,332 @@ public class MensaXSyncAdapter extends AbstractThreadedSyncAdapter {
     @Override
     public void onPerformSync(Account account, Bundle extras, String authority, ContentProviderClient provider, SyncResult syncResult) {
         Log.d(LOG_TAG, "Starting sync");
+        getMealNames();
+        getMenu();
     }
 
+    private void getMealNames() {
+        // These two need to be declared outside the try/catch
+        // so that they can be closed in the finally block.
+        HttpURLConnection urlConnection = null;
+        BufferedReader reader = null;
 
+        // Will contain the raw JSON response as a string.
+        String mealNamesJsonStr = null;
+
+        try {
+            // Construct the URL for the MenuGetterApi query
+            final String MEAL_NAMES_URL =
+                    "https://i43pc164.ipd.kit.edu/PSESoSe15Gruppe3/mensa/api/names";
+
+            URL url = new URL(MEAL_NAMES_URL);
+
+            // Create the request to OpenWeatherMap, and open the connection
+            urlConnection = (HttpURLConnection) url.openConnection();
+            urlConnection.setRequestMethod("GET");
+            urlConnection.connect();
+
+            // Read the input stream into a String
+            InputStream inputStream = urlConnection.getInputStream();
+            StringBuffer buffer = new StringBuffer();
+            if (inputStream == null) {
+                // Nothing to do.
+                return;
+            }
+            reader = new BufferedReader(new InputStreamReader(inputStream));
+
+            String line;
+            while ((line = reader.readLine()) != null) {
+                // Since it's JSON, adding a newline isn't necessary (it won't affect parsing)
+                // But it does make debugging a *lot* easier if you print out the completed
+                // buffer for debugging.
+                buffer.append(line + "\n");
+            }
+
+            if (buffer.length() == 0) {
+                // Stream was empty.  No point in parsing.
+                return;
+            }
+            mealNamesJsonStr = buffer.toString();
+            getMealNamesFromJson(mealNamesJsonStr);
+        } catch (IOException e) {
+            Log.e(LOG_TAG, "Error ", e);
+            // If the code didn't successfully get the meal names data, there's no point in attempting
+            // to parse it.
+        } catch (JSONException e) {
+            Log.e(LOG_TAG, e.getMessage(), e);
+            e.printStackTrace();
+        } finally {
+            if (urlConnection != null) {
+                urlConnection.disconnect();
+            }
+            if (reader != null) {
+                try {
+                    reader.close();
+                } catch (final IOException e) {
+                    Log.e(LOG_TAG, "Error closing stream", e);
+                }
+            }
+        }
+    }
+
+    private void getMenu() {
+        Time dayTime = new Time();
+        dayTime.setToNow();
+
+        // we start at the day returned by local time. Otherwise this is a mess.
+        int julianStartDay = Time.getJulianDay(System.currentTimeMillis(), dayTime.gmtoff);
+        int numDays = (julianStartDay == Time.MONDAY) ? 4 : 6;
+        // now we work exclusively in UTC
+        dayTime = new Time();
+
+        // These two need to be declared outside the try/catch
+        // so that they can be closed in the finally block.
+        HttpURLConnection urlConnection = null;
+        BufferedReader reader = null;
+
+        // Will contain the raw JSON response as a string.
+        String menuJsonStr = null;
+
+        try {
+            // Construct the URL for the MenuGetterApi query
+            final String MENU_BASE_URL =
+                    "https://i43pc164.ipd.kit.edu/PSESoSe15Gruppe3/mensa/api/plan";
+
+            Uri builtUri = Uri.parse(MENU_BASE_URL).buildUpon()
+                    .appendPath(Long.toString(dayTime.setJulianDay(julianStartDay) / 1000))
+                    .appendPath(Long.toString(dayTime.setJulianDay(julianStartDay + numDays) / 1000))
+                    .build();
+
+            URL url = new URL(builtUri.toString());
+
+            // Create the request to OpenWeatherMap, and open the connection
+            urlConnection = (HttpURLConnection) url.openConnection();
+            urlConnection.setRequestMethod("GET");
+            urlConnection.connect();
+
+            // Read the input stream into a String
+            InputStream inputStream = urlConnection.getInputStream();
+            StringBuffer buffer = new StringBuffer();
+            if (inputStream == null) {
+                // Nothing to do.
+                return;
+            }
+            reader = new BufferedReader(new InputStreamReader(inputStream));
+
+            String line;
+            while ((line = reader.readLine()) != null) {
+                // Since it's JSON, adding a newline isn't necessary (it won't affect parsing)
+                // But it does make debugging a *lot* easier if you print out the completed
+                // buffer for debugging.
+                buffer.append(line + "\n");
+            }
+
+            if (buffer.length() == 0) {
+                // Stream was empty.  No point in parsing.
+                return;
+            }
+            menuJsonStr = buffer.toString();
+            getMenuDataFromJson(menuJsonStr, julianStartDay);
+        } catch (IOException e) {
+            Log.e(LOG_TAG, "Error ", e);
+            // If the code didn't successfully get the menu data, there's no point in attempting
+            // to parse it.
+        } catch (JSONException e) {
+            Log.e(LOG_TAG, e.getMessage(), e);
+            e.printStackTrace();
+        } finally {
+            if (urlConnection != null) {
+                urlConnection.disconnect();
+            }
+            if (reader != null) {
+                try {
+                    reader.close();
+                } catch (final IOException e) {
+                    Log.e(LOG_TAG, "Error closing stream", e);
+                }
+            }
+        }
+    }
+
+    private void getMealNamesFromJson(String mealNamesJsonStr) throws JSONException {
+        final String API_MEAL_NAME = "name";
+        final String API_MEAL_ID = "id";
+
+        try {
+            JSONArray list = new JSONArray(mealNamesJsonStr);
+            Vector<ContentValues> cVVector = new Vector<ContentValues>(list.length());
+            for (int i = 0; i < list.length(); i++) {
+                JSONObject item = list.getJSONObject(i);
+                String name = item.getString(API_MEAL_NAME);
+                int id = item.getInt(API_MEAL_ID);
+                Cursor mealCursor = getContext().getContentResolver().query(
+                        CanteenContract.MealEntry.CONTENT_URI,
+                        new String[]{CanteenContract.MealEntry._ID},
+                        CanteenContract.MealEntry.COLUMN_MEAL_NAME + " = ?",
+                        new String[]{name},
+                        null);
+
+                if (!mealCursor.moveToFirst()) {
+                    ContentValues mealValues = new ContentValues();
+
+                    // Then add the data, along with the corresponding name of the data type,
+                    // so the content provider knows what kind of value is being inserted.
+                    mealValues.put(CanteenContract.MealEntry.COLUMN_MEAL_NAME, name);
+                    mealValues.put(CanteenContract.MealEntry.COLUMN_MEAL_ID, id);
+
+                    cVVector.add(mealValues);
+                }
+
+                mealCursor.close();
+            }
+
+            int inserted = 0;
+            // add to database
+            if ( cVVector.size() > 0 ) {
+                ContentValues[] cvArray = new ContentValues[cVVector.size()];
+                cVVector.toArray(cvArray);
+                getContext().getContentResolver().bulkInsert(CanteenContract.MealEntry.CONTENT_URI, cvArray);
+            }
+
+            Log.d(LOG_TAG, cVVector.size() + " Meals Inserted");
+        } catch (JSONException e) {
+            Log.e(LOG_TAG, e.getMessage(), e);
+            e.printStackTrace();
+        }
+    }
+
+    private void getMenuDataFromJson(String menuJsonStr, int julianStartDay) throws JSONException {
+
+        final String API_MEAL = "meal";
+        final String API_MEAL_NAME = "name";
+        final String API_DATA = "data";
+        final String API_MEAL_RATINGS = "ratings";
+        final String API_MEAL_TAG = "tags";
+        final String API_TAG_BIO = "bio";
+        final String API_TAG_FISH = "fish";
+        final String API_TAG_PORK = "pork";
+        final String API_TAG_COW = "cow";
+        final String API_TAG_COW_AW = "cow_aw";
+        final String API_TAG_VEGAN = "vegan";
+        final String API_TAG_VEG = "veg";
+        final String API_MEAL_INGREDIENTS = "add";
+        final String API_MEAL_IMAGES = "images";
+        final String API_ACTIVE = "active";
+        final String API_LINE = "line";
+        final String API_PRICES = "price";
+        final String API_PRICE_STUDENTS = "studentPrice";
+        final String API_PRICE_GUESTS = "visitorPrice";
+        final String API_PRICE_STAFF = "workerPrice";
+        final String API_PRICE_PUPILS = "childPrice";
+        final String API_DATE = "timestamp";
+
+        final int TRUE = 1;
+        final int FALSE = 0;
+
+        try {
+            JSONArray menuJson = new JSONArray(menuJsonStr);
+            Vector<ContentValues> cVVector = new Vector<ContentValues>(menuJson.length());
+            for (int i = 0; i < menuJson.length(); i++) {
+                String mealName;
+                String ingredients;
+                String line;
+                long mealKey;
+                long date;
+                int tagBio;
+                int tagFish;
+                int tagPork;
+                int tagCow;
+                int tagCowAw;
+                int tagVegan;
+                int tagVeg;
+                int priceStudents;
+                int priceStaff;
+                int priceGuests;
+                int pricePupils;
+
+                JSONObject offer = menuJson.getJSONObject(i);
+                JSONObject meal = offer.getJSONObject(API_MEAL);
+                JSONObject data = meal.getJSONObject(API_DATA);
+                JSONObject prices = offer.getJSONObject(API_PRICES);
+                JSONObject tags = data.getJSONObject(API_MEAL_TAG);
+
+                mealName = meal.getString(API_MEAL_NAME);
+
+                tagBio = (tags.getBoolean(API_TAG_BIO)) ? TRUE : FALSE;
+                tagFish = (tags.getBoolean(API_TAG_FISH)) ? TRUE : FALSE;
+                tagPork = (tags.getBoolean(API_TAG_PORK)) ? TRUE : FALSE;
+                tagCow = (tags.getBoolean(API_TAG_COW)) ? TRUE : FALSE;
+                tagCowAw = (tags.getBoolean(API_TAG_COW_AW)) ? TRUE : FALSE;
+                tagVegan = (tags.getBoolean(API_TAG_VEGAN)) ? TRUE : FALSE;
+                tagVeg = (tags.getBoolean(API_TAG_VEG)) ? TRUE : FALSE;
+
+                ingredients = tags.getString(API_MEAL_INGREDIENTS);
+
+                Cursor mealCursor = getContext().getContentResolver().query(
+                        CanteenContract.MealEntry.CONTENT_URI,
+                        new String[]{CanteenContract.MealEntry._ID},
+                        CanteenContract.MealEntry.COLUMN_MEAL_NAME + " = ?",
+                        new String[]{mealName},
+                        null);
+
+                if (!mealCursor.moveToFirst()) {
+                    return;
+                }
+                int mealKeyIndex = mealCursor.getColumnIndex(CanteenContract.MealEntry._ID);
+                mealKey = mealCursor.getLong(mealKeyIndex);
+                mealCursor.close();
+                line = offer.getString(API_LINE);
+                date = offer.getLong(API_DATE) * 1000;
+
+                priceStudents = (int) (prices.getDouble(API_PRICE_STUDENTS) * 100);
+                priceGuests = (int) (prices.getDouble(API_PRICE_GUESTS) * 100);
+                priceStaff = (int) (prices.getDouble(API_PRICE_STAFF) * 100);
+                pricePupils = (int) (prices.getDouble(API_PRICE_PUPILS) * 100);
+
+                ContentValues offerValues = new ContentValues();
+                offerValues.put(CanteenContract.OfferEntry.COLUMN_DATE, date);
+                offerValues.put(CanteenContract.OfferEntry.COLUMN_MEAL_KEY, mealKey);
+                offerValues.put(CanteenContract.OfferEntry.COLUMN_LINE, line);
+                offerValues.put(CanteenContract.OfferEntry.COLUMN_PRICE_STUDENTS, priceStudents);
+                offerValues.put(CanteenContract.OfferEntry.COLUMN_PRICE_GUESTS, priceGuests);
+                offerValues.put(CanteenContract.OfferEntry.COLUMN_PRICE_STAFF, priceStaff);
+                offerValues.put(CanteenContract.OfferEntry.COLUMN_PRICE_PUPILS, pricePupils);
+                offerValues.put(CanteenContract.OfferEntry.COLUMN_GLOBAL_RATING, 0);
+                offerValues.put(CanteenContract.OfferEntry.COLUMN_TAG_BIO, tagBio);
+                offerValues.put(CanteenContract.OfferEntry.COLUMN_TAG_FISH, tagFish);
+                offerValues.put(CanteenContract.OfferEntry.COLUMN_TAG_PORK, tagPork);
+                offerValues.put(CanteenContract.OfferEntry.COLUMN_TAG_COW, tagCow);
+                offerValues.put(CanteenContract.OfferEntry.COLUMN_TAG_COW_AW, tagCowAw);
+                offerValues.put(CanteenContract.OfferEntry.COLUMN_TAG_VEGAN, tagVegan);
+                offerValues.put(CanteenContract.OfferEntry.COLUMN_TAG_VEG, tagVeg);
+                offerValues.put(CanteenContract.OfferEntry.COLUMN_INGREDIENTS, ingredients);
+
+                cVVector.add(offerValues);
+            }
+
+            int inserted = 0;
+            int deleted = 0;
+            // add to database
+            if ( cVVector.size() > 0 ) {
+                ContentValues[] cvArray = new ContentValues[cVVector.size()];
+                cVVector.toArray(cvArray);
+                inserted =  getContext().getContentResolver().bulkInsert(CanteenContract.OfferEntry.CONTENT_URI, cvArray);
+
+                Time time = new Time();
+                time.setToNow();
+                // delete old data so we don't build up an endless history
+                deleted = getContext().getContentResolver().delete(CanteenContract.OfferEntry.CONTENT_URI,
+                        CanteenContract.OfferEntry.COLUMN_DATE + " <= ?",
+                        new String[]{Long.toString(time.setJulianDay(julianStartDay - 1))});
+            }
+
+            Log.d(LOG_TAG, "Sync Complete. " + inserted + " Offers Inserted and " + deleted + "Offers deleted");
+        } catch (JSONException e) {
+            Log.e(LOG_TAG, e.getMessage(), e);
+            e.printStackTrace();
+        }
+    }
 
     /**
      * Helper method to schedule the sync adapter periodic execution

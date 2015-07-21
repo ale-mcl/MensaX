@@ -3,6 +3,8 @@
     <string name="action_settings">Settings</string>
 
     <!-- TabListener strings -->
+    <string name="today">Today</string>
+    <string name="tomorrow">Tomorrow</string>
     <string name="monday">Monday</string>
     <string name="tuesday">Tuesday</string>
     <string name="wednesday">Wednesday</string>

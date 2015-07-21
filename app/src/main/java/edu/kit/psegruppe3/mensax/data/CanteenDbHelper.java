@@ -55,7 +55,8 @@ public class CanteenDbHelper extends SQLiteOpenHelper {
 
                 // To assure the application have just one weather entry per day
                 // per location, it's created a UNIQUE constraint with REPLACE strategy
-                " UNIQUE (" + OfferEntry.COLUMN_LINE + ", " +
+                " UNIQUE (" + OfferEntry.COLUMN_DATE + ", " +
+                OfferEntry.COLUMN_LINE + ", " +
                 OfferEntry.COLUMN_MEAL_KEY + ") ON CONFLICT REPLACE);";
 
         sqLiteDatabase.execSQL(SQL_CREATE_OFFER_TABLE);

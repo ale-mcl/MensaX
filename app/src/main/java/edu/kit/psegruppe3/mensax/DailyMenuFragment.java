@@ -2,16 +2,22 @@ package edu.kit.psegruppe3.mensax;
 
 import android.content.Intent;
 import android.database.Cursor;
+import android.net.Uri;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
 import android.support.v4.app.LoaderManager;
+import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ExpandableListAdapter;
 import android.widget.ExpandableListView;
 
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.List;
+
+import edu.kit.psegruppe3.mensax.data.CanteenContract;
 import edu.kit.psegruppe3.mensax.datamodels.*;
 
 /**
@@ -20,16 +26,18 @@ import edu.kit.psegruppe3.mensax.datamodels.*;
 public class DailyMenuFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor> {
 
     private DailyMenu mDailyMenu;
-    private ExpandableListAdapter mainActivityFragmentAdapter;
+    private ExpandableListView mListView;
 
+    private static final int MENU_LOADER = 0;
 
     public DailyMenuFragment() {
     }
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
+        Bundle bundle = getArguments();
+        getLoaderManager().initLoader(MENU_LOADER, bundle, this);
         super.onActivityCreated(savedInstanceState);
-        //initialize loader here
     }
 
     @Override
@@ -37,26 +45,10 @@ public class DailyMenuFragment extends Fragment implements LoaderManager.LoaderC
                              Bundle savedInstanceState) {
         View rootView =  inflater.inflate(R.layout.fragment_daily_menu, container, false);
 
-        mDailyMenu = createExampleDailyMenu();
-        mainActivityFragmentAdapter = new OfferListAdapter(getActivity(), mDailyMenu);
 
         // Get a reference to the ListView, and attach this adapter to it.
-        final ExpandableListView listView = (ExpandableListView) rootView.findViewById(R.id.offer_listview);
-        listView.setAdapter(mainActivityFragmentAdapter);
+        mListView = (ExpandableListView) rootView.findViewById(R.id.offer_listview);
 
-        listView.setOnChildClickListener(myChildItemClicked);
-
-        listView.setOnGroupExpandListener(new ExpandableListView.OnGroupExpandListener() {
-            @Override
-            public void onGroupExpand(int groupPosition) {
-                int groupCount = mainActivityFragmentAdapter.getGroupCount();
-                for (int i = 0; i < groupCount; i++) {
-                    if (i != groupPosition) {
-                        listView.collapseGroup(i);
-                    }
-                }
-            }
-        });
         return rootView;
     }
 
@@ -74,63 +66,127 @@ public class DailyMenuFragment extends Fragment implements LoaderManager.LoaderC
         }
     };
 
-    private DailyMenu createExampleDailyMenu() {
-        Meal meal1 = new Meal("Linseneintopf", 324);
-        meal1.setGlobalRating(3);
-        meal1.setTag(Meal.TAG_COW, true);
-
-        Meal meal2 = new Meal("Spaghetti Carbonara", 234);
-        meal2.setGlobalRating(1);
-        meal2.setTag(Meal.TAG_VEGAN, true);
-
-        Meal meal3 = new Meal("Pommes", 254);
-        meal3.setGlobalRating(5);
-        meal3.setTag(Meal.TAG_VEGAN, true);
-
-        Meal meal4 = new Meal("Grüner Salat", 456);
-        meal4.setGlobalRating(2);
-        meal4.setTag(Meal.TAG_VEG, true);
-
-        Meal meal5 = new Meal("Currywurst", 765);
-        meal5.setGlobalRating(3);
-        meal5.setTag(Meal.TAG_PORK, true);
-
-        Meal meal6 = new Meal("Kroketten", 453);
-        meal6.setGlobalRating(4);
-        meal6.setTag(Meal.TAG_PORK, true);
-
-        Meal meal7 = new Meal("Gebratene Hänchenkeule", 893);
-        meal7.setTag(Meal.TAG_COW_AW, true);
-
-        Offer offer1 = new Offer(meal1, Line.l1, 250, 123, 231, 432);
-        Offer offer2 = new Offer(meal2, Line.l1, 250, 123, 231, 432);
-        Offer offer3 = new Offer(meal3, Line.l2, 100, 123, 231, 432);
-        Offer offer4 = new Offer(meal4, Line.l3, 50, 123, 231, 432);
-        Offer offer5 = new Offer(meal5, Line.aktion, 350, 123, 231, 432);
-        Offer offer6 = new Offer(meal6, Line.l45, 100, 123, 231, 432);
-        Offer offer7 = new Offer(meal3, Line.l3, 100, 123, 231, 432);
-        Offer offer8 = new Offer(meal7, Line.l1, 285, 123, 231, 432);
-        Offer offer9 = new Offer(meal7, Line.l1, 285, 123, 231, 432);
-        Offer offer10 = new Offer(meal3, Line.l45, 100, 123, 231, 432);
-        Offer offer11 = new Offer(meal3, Line.schnitzelbar, 100, 123, 231, 432);
-        Offer offer12 = new Offer(meal4, Line.l45, 100, 123, 231, 432);
-        Offer offer13 = new Offer(meal4, Line.l2, 100, 123, 231, 432);
-        Offer[] offers = {offer1, offer2, offer3, offer4, offer5, offer6, offer7, offer8, offer9, offer10, offer11, offer12, offer12, offer13};
-        return new DailyMenu(System.currentTimeMillis(), offers);
-    }
 
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-        return null;
+        Calendar calendar = Calendar.getInstance();
+
+        calendar.add(Calendar.DAY_OF_WEEK, args.getInt(MainActivity.ARG_TAB_NUM));
+
+        String sortOrder = CanteenContract.OfferEntry.COLUMN_PRICE_STUDENTS + " DESC";
+
+
+        Uri weatherForLocationUri = CanteenContract.OfferEntry.buildOfferDate(
+                System.currentTimeMillis());
+
+        return new CursorLoader(getActivity(),
+                weatherForLocationUri,
+                null,
+                null,
+                null,
+                sortOrder);
     }
 
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
-
+        if (!data.moveToFirst()) {
+            return;
+        }
+        int columnMealName = data.getColumnIndex(CanteenContract.MealEntry.COLUMN_MEAL_NAME);
+        int columnMealId = data.getColumnIndex(CanteenContract.MealEntry.COLUMN_MEAL_ID);
+        int columnLine = data.getColumnIndex(CanteenContract.OfferEntry.COLUMN_LINE);
+        int columnPriceStudents = data.getColumnIndex(CanteenContract.OfferEntry.COLUMN_PRICE_STUDENTS);
+        int columnPriceStaff = data.getColumnIndex(CanteenContract.OfferEntry.COLUMN_PRICE_STAFF);
+        int columnPricePupils = data.getColumnIndex(CanteenContract.OfferEntry.COLUMN_PRICE_PUPILS);
+        int columnPriceGuests = data.getColumnIndex(CanteenContract.OfferEntry.COLUMN_PRICE_GUESTS);
+        int columnRating = data.getColumnIndex(CanteenContract.OfferEntry.COLUMN_GLOBAL_RATING);
+        int columnTagBio = data.getColumnIndex(CanteenContract.OfferEntry.COLUMN_TAG_BIO);
+        int columnTagFish = data.getColumnIndex(CanteenContract.OfferEntry.COLUMN_TAG_FISH);
+        int columnTagPork = data.getColumnIndex(CanteenContract.OfferEntry.COLUMN_TAG_PORK);
+        int columnTagCow = data.getColumnIndex(CanteenContract.OfferEntry.COLUMN_TAG_COW);
+        int columnTagCowAw = data.getColumnIndex(CanteenContract.OfferEntry.COLUMN_TAG_COW_AW);
+        int columnTagVegan = data.getColumnIndex(CanteenContract.OfferEntry.COLUMN_TAG_VEGAN);
+        int columnTagVeg = data.getColumnIndex(CanteenContract.OfferEntry.COLUMN_TAG_VEG);
+        int columnIngredients = data.getColumnIndex(CanteenContract.OfferEntry.COLUMN_INGREDIENTS);
+        List<Offer> offerList = new ArrayList<Offer>();
+        do {
+            String mealName = data.getString(columnMealName);
+            int mealId = data.getInt(columnMealId);
+            int priceStudents = data.getInt(columnPriceStudents);
+            int priceStaff = data.getInt(columnPriceStaff);
+            int pricePupils = data.getInt(columnPricePupils);
+            int priceGuests = data.getInt(columnPriceGuests);
+            boolean tagBio = (data.getInt(columnTagBio) != 0);
+            boolean tagFish = (data.getInt(columnTagFish) != 0);
+            boolean tagPork = (data.getInt(columnTagPork) != 0);
+            boolean tagCow = (data.getInt(columnTagCow) != 0);
+            boolean tagCowAw = (data.getInt(columnTagCowAw) != 0);
+            boolean tagVegan = (data.getInt(columnTagVegan) != 0);
+            boolean tagVeg = (data.getInt(columnTagVeg) != 0);
+            String ingredients = data.getString(columnIngredients);
+            String line = data.getString(columnLine);
+            Meal meal = new Meal(mealName, mealId);
+            meal.setTag(Meal.TAG_BIO, tagBio);
+            meal.setTag(Meal.TAG_FISH, tagFish);
+            meal.setTag(Meal.TAG_PORK, tagPork);
+            meal.setTag(Meal.TAG_COW, tagCow);
+            meal.setTag(Meal.TAG_COW_AW, tagCowAw);
+            meal.setTag(Meal.TAG_VEGAN, tagVegan);
+            meal.setTag(Meal.TAG_VEG, tagVeg);
+            meal.setIngredients(ingredients);
+            offerList.add(new Offer(meal, getLine(line), priceStudents, priceGuests, priceStaff, pricePupils));
+        } while (data.moveToNext());
+        Offer[] offers = offerList.toArray(new Offer[offerList.size()]);
+        mDailyMenu = new DailyMenu(0, offers);
+        updateList();
     }
 
     @Override
     public void onLoaderReset(Loader<Cursor> loader) {
 
+    }
+
+    private void updateList() {
+        final OfferListAdapter mainActivityFragmentAdapter = new OfferListAdapter(getActivity(), mDailyMenu);
+
+        mListView.setAdapter(mainActivityFragmentAdapter);
+
+        mListView.setOnChildClickListener(myChildItemClicked);
+
+        mListView.setOnGroupExpandListener(new ExpandableListView.OnGroupExpandListener() {
+            @Override
+            public void onGroupExpand(int groupPosition) {
+                int groupCount = mainActivityFragmentAdapter.getGroupCount();
+                for (int i = 0; i < groupCount; i++) {
+                    if (i != groupPosition) {
+                        mListView.collapseGroup(i);
+                    }
+                }
+            }
+        });
+    }
+
+    private Line getLine(String line) {
+        if (line.equals("l1")) {
+            return Line.l1;
+        } else if (line.equals("l2")) {
+            return Line.l2;
+        } else if (line.equals("l3")) {
+            return Line.l3;
+        } else if (line.equals("l45")) {
+            return Line.l45;
+        } else if (line.equals("schnitzelbar")) {
+            return Line.schnitzelbar;
+        } else if (line.equals("update")) {
+            return Line.update;
+        } else if (line.equals("abend")) {
+            return Line.abend;
+        } else if (line.equals("aktion")) {
+            return Line.aktion;
+        } else if (line.equals("heisstheke")) {
+            return Line.heisstheke;
+        } else {
+            return Line.nmtisch;
+        }
     }
 }
