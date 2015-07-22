@@ -108,7 +108,8 @@ public class OfferListAdapter extends BaseExpandableListAdapter {
         }
         Offer offer = (Offer) getChild(groupPosition, childPosition);
 
-        ImageView image = (ImageView) convertView.findViewById(R.id.tagDrawable);
+        //TODO: View second tag!
+        ImageView image = (ImageView) convertView.findViewById(R.id.firstTagDrawable);
         image.setImageDrawable(getTagDrawable(offer));
 
         TextView textViewName = (TextView) convertView.findViewById(R.id.list_item_offer_textview_name);
@@ -134,12 +135,7 @@ public class OfferListAdapter extends BaseExpandableListAdapter {
         TextView textViewPrice = (TextView) convertView.findViewById(R.id.list_item_offer_textview_price);
         textViewPrice.setText(real_price);
 
-        View separator = convertView.findViewById(R.id.tableSeparator);
-        if (childPosition != (getChildrenCount(groupPosition) - 1)) {
-            separator.setVisibility(View.GONE);
-        } else {
-            separator.setVisibility(View.VISIBLE);
-        }
+
 
         return convertView;
     }
@@ -149,32 +145,25 @@ public class OfferListAdapter extends BaseExpandableListAdapter {
         return true;
     }
 
-    //TODO: Meal could have multiple tags!
+
     private Drawable getTagDrawable(Offer offer){
         String uri;
-        if (offer.getMeal().hasTag(Meal.TAG_COW)){
-            uri = "@drawable/tag_beef";
-        }
-        else if (offer.getMeal().hasTag(Meal.TAG_COW_AW)){
-            uri = "@drawable/tag_beef_welfare";
-        }
-        else if (offer.getMeal().hasTag(Meal.TAG_PORK)){
-            uri = "@drawable/tag_pork";
-        }
-        else if (offer.getMeal().hasTag(Meal.TAG_VEG)){
-            uri = "@drawable/tag_vegetarian";
-        }
-        else if (offer.getMeal().hasTag(Meal.TAG_VEGAN)){
-            uri = "@drawable/tag_vegan";
-        }
-        else if (offer.getMeal().hasTag(Meal.TAG_FISH)){
-            uri = "@drawable/tag_fish";
-        }
-        else if (offer.getMeal().hasTag(Meal.TAG_BIO)){
-            uri = "@drawable/tag_bio";
-        }
-        else {
-            uri = "@drawable/tag_blank";
+        if (offer.getMeal().hasTag(Meal.TAG_BIO)) {
+            uri = "@drawable/ic_meal_bio";
+        } else if (offer.getMeal().hasTag(Meal.TAG_COW_AW)) {
+            uri = "@drawable/ic_meal_cow_aw";
+        } else if (offer.getMeal().hasTag(Meal.TAG_PORK)) {
+            uri = "@drawable/ic_meal_pork";
+        } else if (offer.getMeal().hasTag(Meal.TAG_VEG)) {
+            uri = "@drawable/ic_meal_veg";
+        } else if (offer.getMeal().hasTag(Meal.TAG_VEGAN)) {
+            uri = "@drawable/ic_meal_vegan";
+        } else if (offer.getMeal().hasTag(Meal.TAG_FISH)) {
+            uri = "@drawable/ic_meal_fish";
+        } else if (offer.getMeal().hasTag(Meal.TAG_COW)) {
+            uri = "@drawable/ic_meal_cow";
+        } else {
+            return null;
         }
         int imageResource = mContext.getResources().getIdentifier(uri, null, mContext.getPackageName());
         Drawable res = mContext.getResources().getDrawable(imageResource);

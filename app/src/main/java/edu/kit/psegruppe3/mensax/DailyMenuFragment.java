@@ -45,27 +45,24 @@ public class DailyMenuFragment extends Fragment implements LoaderManager.LoaderC
                              Bundle savedInstanceState) {
         View rootView =  inflater.inflate(R.layout.fragment_daily_menu, container, false);
 
-
-        // Get a reference to the ListView, and attach this adapter to it.
         mListView = (ExpandableListView) rootView.findViewById(R.id.offer_listview);
+
+        mListView.setOnChildClickListener(new ExpandableListView.OnChildClickListener() {
+            @Override
+            public boolean onChildClick(ExpandableListView parent, View v, int groupPosition, int childPosition, long id) {
+                //the method getChildId from the ExpandableListAdapter returns a primitive type long
+                long selectedMealId_long = parent.getExpandableListAdapter().getChildId(groupPosition, childPosition);
+                int selectedMealId = (int) selectedMealId_long;
+                //send the id of the meal clicked to the DetailActivity and start it.
+                Intent intent = new Intent(getActivity(), DetailActivity.class)
+                        .putExtra(DetailActivity.ARG_MEAL_ID, selectedMealId);
+                startActivity(intent);
+                return false;
+            }
+        });
 
         return rootView;
     }
-
-    private ExpandableListView.OnChildClickListener myChildItemClicked =  new ExpandableListView.OnChildClickListener() {
-        public boolean onChildClick(ExpandableListView parent, View v,
-                                    int groupPosition, int childPosition, long id) {
-            //the method getChildId from the ExpandableListAdapter returns a primitive type long
-            long selectedMealId_long = parent.getExpandableListAdapter().getChildId(groupPosition, childPosition);
-            int selectedMealId = (int) selectedMealId_long;
-            //send the id of the meal clicked to the DetailActivity and start it.
-            Intent intent = new Intent(getActivity(), DetailActivity.class)
-                    .putExtra(DetailActivity.ARG_MEAL_ID, selectedMealId);
-            startActivity(intent);
-            return false;
-        }
-    };
-
 
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
@@ -147,20 +144,9 @@ public class DailyMenuFragment extends Fragment implements LoaderManager.LoaderC
         final OfferListAdapter mainActivityFragmentAdapter = new OfferListAdapter(getActivity(), mDailyMenu);
 
         mListView.setAdapter(mainActivityFragmentAdapter);
-
-        mListView.setOnChildClickListener(myChildItemClicked);
-
-        mListView.setOnGroupExpandListener(new ExpandableListView.OnGroupExpandListener() {
-            @Override
-            public void onGroupExpand(int groupPosition) {
-                int groupCount = mainActivityFragmentAdapter.getGroupCount();
-                for (int i = 0; i < groupCount; i++) {
-                    if (i != groupPosition) {
-                        mListView.collapseGroup(i);
-                    }
-                }
-            }
-        });
+        for (int i = 0; i < mainActivityFragmentAdapter.getGroupCount(); i++) {
+            mListView.expandGroup(i);
+        }
     }
 
     private Line getLine(String line) {

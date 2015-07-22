@@ -26,7 +26,6 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 
 import edu.kit.psegruppe3.mensax.datamodels.Meal;
-import edu.kit.psegruppe3.mensax.datamodels.Offer;
 
 /**
  * Fragment of the activity DetailActivity that shows all info about a meal.
