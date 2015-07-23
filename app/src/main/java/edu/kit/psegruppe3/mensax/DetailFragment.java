@@ -1,5 +1,7 @@
 package edu.kit.psegruppe3.mensax;
 
+import android.accounts.Account;
+import android.accounts.AccountManager;
 import android.content.DialogInterface;
 import android.net.Uri;
 import android.os.AsyncTask;
@@ -13,6 +15,10 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.RatingBar;
 import android.widget.TextView;
+
+import com.google.android.gms.auth.GoogleAuthException;
+import com.google.android.gms.auth.GoogleAuthUtil;
+import com.google.android.gms.auth.UserRecoverableAuthException;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -38,6 +44,7 @@ public class DetailFragment extends Fragment {
     private TextView txtIngredients;
     private RatingBar globalRating;
     private RatingBar userRating;
+
 
 
     public DetailFragment() {
@@ -69,6 +76,9 @@ public class DetailFragment extends Fragment {
 
         FetchMealDataTask fetchMealDataTask = new FetchMealDataTask();
         fetchMealDataTask.execute(mealId);
+
+        GetTokenTask getTokenTask = new GetTokenTask();
+        getTokenTask.execute();
 
         Button btnGiveRating = (Button) rootView.findViewById(R.id.button_giveRating);
         btnGiveRating.setOnClickListener(new View.OnClickListener() {
@@ -120,6 +130,49 @@ public class DetailFragment extends Fragment {
         globalRating.setRating(meal.getGlobalRating());
 
         userRating.setRating(meal.getUserRating());
+    }
+
+    private class GetTokenTask extends AsyncTask<Void, Void, String> {
+
+        final String LOG_TAG = GetTokenTask.class.getSimpleName();
+
+        @Override
+        protected String doInBackground(Void... params) {
+            final String scope = "audience:server:client_id:785844054287-7hge652kf27md81acog9vg1u0nk9so83.apps.googleusercontent.com";
+            try {
+                String email = getGoogleEmailAdress();
+                return GoogleAuthUtil.getToken(getActivity(), email, scope);
+            } catch (IOException e) {
+                Log.d(LOG_TAG, "Error");
+            } catch (UserRecoverableAuthException e ) {
+                Log.d(LOG_TAG, "Error");
+            } catch (GoogleAuthException e ) {
+                Log.d(LOG_TAG, "Error");
+            }
+            return null;
+        }
+
+
+        @Override
+        protected void onPostExecute(String s) {
+            if (s == null) {
+                super.onPostExecute(s);
+                return;
+            }
+            Log.d(LOG_TAG, "Token: " + s);
+            super.onPostExecute(s);
+        }
+
+        private String getGoogleEmailAdress() {
+            AccountManager accountManager = AccountManager.get(getActivity());
+            Account[] accounts = accountManager.getAccountsByType("com.google");
+            Account account;
+            if (accounts.length > 0) {
+                return accounts[0].name;
+            } else {
+                return null;
+            }
+        }
     }
 
     private class FetchMealDataTask extends AsyncTask<Integer, Void, Meal> {

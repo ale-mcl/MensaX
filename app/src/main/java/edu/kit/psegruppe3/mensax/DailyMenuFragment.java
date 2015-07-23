@@ -14,7 +14,6 @@ import android.view.ViewGroup;
 import android.widget.ExpandableListView;
 
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.List;
 
 import edu.kit.psegruppe3.mensax.data.CanteenContract;
