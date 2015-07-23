@@ -116,6 +116,7 @@ public class DailyMenuFragment extends Fragment implements LoaderManager.LoaderC
             boolean tagCowAw = (data.getInt(columnTagCowAw) != 0);
             boolean tagVegan = (data.getInt(columnTagVegan) != 0);
             boolean tagVeg = (data.getInt(columnTagVeg) != 0);
+            double globalRating = data.getDouble(columnRating);
             String ingredients = data.getString(columnIngredients);
             String line = data.getString(columnLine);
             Meal meal = new Meal(mealName, mealId);
@@ -126,6 +127,7 @@ public class DailyMenuFragment extends Fragment implements LoaderManager.LoaderC
             meal.setTag(Meal.TAG_COW_AW, tagCowAw);
             meal.setTag(Meal.TAG_VEGAN, tagVegan);
             meal.setTag(Meal.TAG_VEG, tagVeg);
+            meal.setGlobalRating(globalRating);
             meal.setIngredients(ingredients);
             offerList.add(new Offer(meal, getLine(line), priceStudents, priceGuests, priceStaff, pricePupils));
         } while (data.moveToNext());

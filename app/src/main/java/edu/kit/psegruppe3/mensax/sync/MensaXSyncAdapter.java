@@ -127,10 +127,8 @@ public class MensaXSyncAdapter extends AbstractThreadedSyncAdapter {
         dayTime.setToNow();
 
         // we start at the day returned by local time. Otherwise this is a mess.
-        int julianStartDay = Time.getJulianDay(System.currentTimeMillis(), dayTime.gmtoff);
-        int numDays = (julianStartDay == Time.MONDAY) ? 4 : 6;
-        // now we work exclusively in UTC
-        dayTime = new Time();
+        Calendar calendar = Calendar.getInstance();
+        int numDays = (calendar.get(Calendar.DAY_OF_WEEK) == Calendar.MONDAY) ? 4 : 6;
 
         // These two need to be declared outside the try/catch
         // so that they can be closed in the finally block.
@@ -145,14 +143,21 @@ public class MensaXSyncAdapter extends AbstractThreadedSyncAdapter {
             final String MENU_BASE_URL =
                     "https://i43pc164.ipd.kit.edu/PSESoSe15Gruppe3/mensa/api/plan";
 
+            calendar.set(Calendar.HOUR_OF_DAY, 0);
+            calendar.set(Calendar.MINUTE, 0);
+            calendar.set(Calendar.SECOND, 0);
+            calendar.set(Calendar.MILLISECOND, 0);
+            long startDate = calendar.getTimeInMillis();
+            calendar.add(Calendar.DATE, numDays);
+            long endDate = calendar.getTimeInMillis();
+
             Uri builtUri = Uri.parse(MENU_BASE_URL).buildUpon()
-                    .appendPath(Long.toString(dayTime.setJulianDay(julianStartDay) / 1000))
-                    .appendPath(Long.toString(dayTime.setJulianDay(julianStartDay + numDays) / 1000))
+                    .appendPath(Long.toString(startDate / 1000))
+                    .appendPath(Long.toString(endDate / 1000))
                     .build();
 
             URL url = new URL(builtUri.toString());
 
-            // Create the request to OpenWeatherMap, and open the connection
             urlConnection = (HttpURLConnection) url.openConnection();
             urlConnection.setRequestMethod("GET");
             urlConnection.connect();
@@ -179,7 +184,7 @@ public class MensaXSyncAdapter extends AbstractThreadedSyncAdapter {
                 return;
             }
             menuJsonStr = buffer.toString();
-            getMenuDataFromJson(menuJsonStr, julianStartDay);
+            getMenuDataFromJson(menuJsonStr, endDate);
         } catch (IOException e) {
             Log.e(LOG_TAG, "Error ", e);
             // If the code didn't successfully get the menu data, there's no point in attempting
@@ -233,7 +238,6 @@ public class MensaXSyncAdapter extends AbstractThreadedSyncAdapter {
                 mealCursor.close();
             }
 
-            int inserted = 0;
             // add to database
             if ( cVVector.size() > 0 ) {
                 ContentValues[] cvArray = new ContentValues[cVVector.size()];
@@ -248,12 +252,13 @@ public class MensaXSyncAdapter extends AbstractThreadedSyncAdapter {
         }
     }
 
-    private void getMenuDataFromJson(String menuJsonStr, int julianStartDay) throws JSONException {
+    private void getMenuDataFromJson(String menuJsonStr, long endDate) throws JSONException {
 
         final String API_MEAL = "meal";
         final String API_MEAL_NAME = "name";
         final String API_DATA = "data";
         final String API_MEAL_RATINGS = "ratings";
+        final String API_GLOBAL_RATING = "average";
         final String API_MEAL_TAG = "tags";
         final String API_TAG_BIO = "bio";
         final String API_TAG_FISH = "fish";
@@ -285,6 +290,7 @@ public class MensaXSyncAdapter extends AbstractThreadedSyncAdapter {
                 String line;
                 long mealKey;
                 long date;
+                double globalRating;
                 int tagBio;
                 int tagFish;
                 int tagPork;
@@ -302,8 +308,11 @@ public class MensaXSyncAdapter extends AbstractThreadedSyncAdapter {
                 JSONObject data = meal.getJSONObject(API_DATA);
                 JSONObject prices = offer.getJSONObject(API_PRICES);
                 JSONObject tags = data.getJSONObject(API_MEAL_TAG);
+                JSONObject ratings = data.getJSONObject(API_MEAL_RATINGS);
 
                 mealName = meal.getString(API_MEAL_NAME);
+
+                globalRating = ratings.getDouble(API_GLOBAL_RATING);
 
                 tagBio = (tags.getBoolean(API_TAG_BIO)) ? TRUE : FALSE;
                 tagFish = (tags.getBoolean(API_TAG_FISH)) ? TRUE : FALSE;
@@ -344,7 +353,7 @@ public class MensaXSyncAdapter extends AbstractThreadedSyncAdapter {
                 offerValues.put(CanteenContract.OfferEntry.COLUMN_PRICE_GUESTS, priceGuests);
                 offerValues.put(CanteenContract.OfferEntry.COLUMN_PRICE_STAFF, priceStaff);
                 offerValues.put(CanteenContract.OfferEntry.COLUMN_PRICE_PUPILS, pricePupils);
-                offerValues.put(CanteenContract.OfferEntry.COLUMN_GLOBAL_RATING, 0);
+                offerValues.put(CanteenContract.OfferEntry.COLUMN_GLOBAL_RATING, globalRating);
                 offerValues.put(CanteenContract.OfferEntry.COLUMN_TAG_BIO, tagBio);
                 offerValues.put(CanteenContract.OfferEntry.COLUMN_TAG_FISH, tagFish);
                 offerValues.put(CanteenContract.OfferEntry.COLUMN_TAG_PORK, tagPork);
@@ -363,14 +372,13 @@ public class MensaXSyncAdapter extends AbstractThreadedSyncAdapter {
             if ( cVVector.size() > 0 ) {
                 ContentValues[] cvArray = new ContentValues[cVVector.size()];
                 cVVector.toArray(cvArray);
-                inserted =  getContext().getContentResolver().bulkInsert(CanteenContract.OfferEntry.CONTENT_URI, cvArray);
 
-                Time time = new Time();
-                time.setToNow();
-                // delete old data so we don't build up an endless history
+
                 deleted = getContext().getContentResolver().delete(CanteenContract.OfferEntry.CONTENT_URI,
                         CanteenContract.OfferEntry.COLUMN_DATE + " <= ?",
-                        new String[]{Long.toString(time.setJulianDay(julianStartDay - 1))});
+                        new String[]{Long.toString(endDate)});
+
+                inserted =  getContext().getContentResolver().bulkInsert(CanteenContract.OfferEntry.CONTENT_URI, cvArray);
             }
 
             Log.d(LOG_TAG, "Sync Complete. " + inserted + " Offers Inserted and " + deleted + "Offers deleted");

@@ -21,8 +21,8 @@ public class Meal {
     private boolean vegan;
     private boolean veg;
     private String ingredients;
-    private float globalRating;
-    private float userRating;
+    private double globalRating;
+    private double userRating;
     private Uri[] images;
 
     public Meal(String name, int mealId) {
@@ -56,11 +56,11 @@ public class Meal {
         return ingredients;
     }
 
-    public float getGlobalRating() {
+    public double getGlobalRating() {
         return globalRating;
     }
 
-    public float getUserRating() {
+    public double getUserRating() {
         return userRating;
     }
 
@@ -84,11 +84,11 @@ public class Meal {
         this.ingredients = ingredients;
     }
 
-    public void setGlobalRating(float globalRating) {
+    public void setGlobalRating(double globalRating) {
         this.globalRating = globalRating;
     }
 
-    public void setUserRating(float userRating) {
+    public void setUserRating(double userRating) {
         this.userRating = userRating;
     }
 

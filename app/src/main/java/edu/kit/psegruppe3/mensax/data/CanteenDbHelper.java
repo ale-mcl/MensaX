@@ -39,7 +39,7 @@ public class CanteenDbHelper extends SQLiteOpenHelper {
                 OfferEntry.COLUMN_PRICE_GUESTS + " INTEGER NOT NULL," +
                 OfferEntry.COLUMN_PRICE_STAFF + " INTEGER NOT NULL," +
                 OfferEntry.COLUMN_PRICE_PUPILS + " INTEGER NOT NULL," +
-                OfferEntry.COLUMN_GLOBAL_RATING + " INTEGER NOT NULL," +
+                OfferEntry.COLUMN_GLOBAL_RATING + " REAL NOT NULL," +
                 OfferEntry.COLUMN_TAG_BIO + " INTEGER NOT NULL," +
                 OfferEntry.COLUMN_TAG_FISH + " INTEGER NOT NULL," +
                 OfferEntry.COLUMN_TAG_PORK + " INTEGER NOT NULL," +

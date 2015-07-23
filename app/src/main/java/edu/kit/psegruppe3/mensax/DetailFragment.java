@@ -91,7 +91,9 @@ public class DetailFragment extends Fragment {
                 final RatingBar ratingBar = (RatingBar)dialogView.findViewById(R.id.dialog_ratingbar);
                 rankDialog.setPositiveButton(R.string.confirm, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
-                        meal.setUserRating(ratingBar.getRating());
+                        int newRating = (int) ratingBar.getRating();
+                        RateMealTask rateMealTask = new RateMealTask();
+                        rateMealTask.execute(meal.getMealId(), newRating);
                     }
                 });
                 rankDialog.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
@@ -125,9 +127,9 @@ public class DetailFragment extends Fragment {
 
         txtIngredients.setText("[" + meal.getIngredients() + "]");
 
-        globalRating.setRating(meal.getGlobalRating());
+        globalRating.setRating((float) meal.getGlobalRating());
 
-        userRating.setRating(meal.getUserRating());
+        userRating.setRating((float) meal.getUserRating());
     }
 
     private String getToken() {
@@ -169,50 +171,47 @@ public class DetailFragment extends Fragment {
                 return null;
             }
 
+            Meal newMeal = null;
             HttpURLConnection urlConnection = null;
+            OutputStreamWriter writer = null;
             BufferedReader reader = null;
 
-            // Will contain the raw JSON response as a string.
-            String mealDataJsonStr = null;
             try {
-                final String MEAL_DATA_BASE_URL =
-                        "https://i43pc164.ipd.kit.edu/PSESoSe15Gruppe3/mensa/api/meal";
+                URL url = new URL("https://i43pc164.ipd.kit.edu/PSESoSe15Gruppe3/mensa/api/meal/");
 
-                Uri builtUri = Uri.parse(MEAL_DATA_BASE_URL).buildUpon()
-                        .appendPath(Integer.toString(params[0]))
-                        .build();
-
-                URL url = new URL(builtUri.toString());
+                String token = getToken();
+                String output = getJsonString(params[0], token);
 
                 urlConnection = (HttpURLConnection) url.openConnection();
-                urlConnection.setRequestMethod("GET");
+                urlConnection.setDoOutput(true);
+                urlConnection.setDoInput(true);
+                urlConnection.setRequestProperty("Content-Type", "application/json; charset=UTF-8");
+                urlConnection.setRequestMethod("POST");
                 urlConnection.connect();
 
-                // Read the input stream into a String
-                InputStream inputStream = urlConnection.getInputStream();
-                StringBuffer buffer = new StringBuffer();
-                if (inputStream == null) {
-                    // Nothing to do.
-                    return null;
-                }
-                reader = new BufferedReader(new InputStreamReader(inputStream));
+                Log.d("doInBackground(Request)", output);
 
+                writer = new OutputStreamWriter(urlConnection.getOutputStream());
+                writer.write(output);
+                writer.flush();
+
+                InputStream input = urlConnection.getInputStream();
+                reader = new BufferedReader(new InputStreamReader(input));
+                StringBuffer result = new StringBuffer();
                 String line;
-                while ((line = reader.readLine()) != null) {
-                    // Since it's JSON, adding a newline isn't necessary (it won't affect parsing)
-                    // But it does make debugging a *lot* easier if you print out the completed
-                    // buffer for debugging.
-                    buffer.append(line + "\n");
-                }
 
-                if (buffer.length() == 0) {
-                    // Stream was empty.  No point in parsing.
-                    return null;
+                while ((line = reader.readLine()) != null) {
+                    result.append(line);
                 }
-                mealDataJsonStr = buffer.toString();
+                Log.d("doInBackground(Resp)", result.toString());
+
+                newMeal = getMealDataFromJson(result.toString());
             } catch (IOException e) {
                 Log.e(LOG_TAG, "Error ", e);
                 return null;
+            } catch (JSONException e) {
+                Log.e(LOG_TAG, e.getMessage(), e);
+                e.printStackTrace();
             } finally {
                 if (urlConnection != null) {
                     urlConnection.disconnect();
@@ -225,7 +224,7 @@ public class DetailFragment extends Fragment {
                     }
                 }
             }
-            return getMealDataFromJson(mealDataJsonStr);
+            return newMeal;
         }
 
         @Override
@@ -235,11 +234,14 @@ public class DetailFragment extends Fragment {
             super.onPostExecute(m);
         }
 
-        private Meal getMealDataFromJson(String jsonStr) {
+        private Meal getMealDataFromJson(String jsonStr) throws JSONException {
             final String API_MEAL_DATA = "data";
             final String API_MEAL_NAME = "name";
             final String API_MEAL_ID = "id";
             final String API_MEAL_TAG = "tags";
+            final String API_MEAL_RATINGS = "ratings";
+            final String API_GLOBAL_RATING = "average";
+            final String API_USER_RATING = "currentUserRating";
             final String API_TAG_BIO = "bio";
             final String API_TAG_FISH = "fish";
             final String API_TAG_PORK = "pork";
@@ -252,37 +254,55 @@ public class DetailFragment extends Fragment {
 
             Meal newMeal = null;
 
-            try {
-                JSONObject meal = new JSONObject(jsonStr);
-                JSONObject data = meal.getJSONObject(API_MEAL_DATA);
-                JSONObject tags = data.getJSONObject(API_MEAL_TAG);
-                JSONArray images = data.getJSONArray(API_MEAL_IMAGES);
 
-                String mealName = meal.getString(API_MEAL_NAME);
-                String ingredients = tags.getString(API_MEAL_INGREDIENTS);
-                int mealId = meal.getInt(API_MEAL_ID);
-                boolean tagBio = tags.getBoolean(API_TAG_BIO);
-                boolean tagFish = tags.getBoolean(API_TAG_FISH);
-                boolean tagPork = tags.getBoolean(API_TAG_PORK);
-                boolean tagCow = tags.getBoolean(API_TAG_COW);
-                boolean tagCowAw = tags.getBoolean(API_TAG_COW_AW);
-                boolean tagVegan = tags.getBoolean(API_TAG_VEGAN);
-                boolean tagVeg = tags.getBoolean(API_TAG_VEG);
+            JSONObject meal = new JSONObject(jsonStr);
+            JSONObject data = meal.getJSONObject(API_MEAL_DATA);
+            JSONObject tags = data.getJSONObject(API_MEAL_TAG);
+            JSONObject ratings = data.getJSONObject(API_MEAL_RATINGS);
+            JSONArray images = data.getJSONArray(API_MEAL_IMAGES);
 
-                newMeal = new Meal(mealName, mealId);
-                newMeal.setTag(Meal.TAG_BIO, tagBio);
-                newMeal.setTag(Meal.TAG_FISH, tagFish);
-                newMeal.setTag(Meal.TAG_PORK, tagPork);
-                newMeal.setTag(Meal.TAG_COW, tagCow);
-                newMeal.setTag(Meal.TAG_COW_AW, tagCowAw);
-                newMeal.setTag(Meal.TAG_VEGAN, tagVegan);
-                newMeal.setTag(Meal.TAG_VEG, tagVeg);
-                newMeal.setIngredients(ingredients);
-            } catch (JSONException e) {
-                Log.e(LOG_TAG, e.getMessage(), e);
-                e.printStackTrace();
+            String mealName = meal.getString(API_MEAL_NAME);
+            String ingredients = tags.getString(API_MEAL_INGREDIENTS);
+            int mealId = meal.getInt(API_MEAL_ID);
+            int userRating = 0;
+            if (!ratings.get(API_USER_RATING).equals(null)) {
+                userRating = ratings.getInt(API_USER_RATING);
             }
+            double globalRating = ratings.getDouble(API_GLOBAL_RATING);
+            boolean tagBio = tags.getBoolean(API_TAG_BIO);
+            boolean tagFish = tags.getBoolean(API_TAG_FISH);
+            boolean tagPork = tags.getBoolean(API_TAG_PORK);
+            boolean tagCow = tags.getBoolean(API_TAG_COW);
+            boolean tagCowAw = tags.getBoolean(API_TAG_COW_AW);
+            boolean tagVegan = tags.getBoolean(API_TAG_VEGAN);
+            boolean tagVeg = tags.getBoolean(API_TAG_VEG);
+
+            newMeal = new Meal(mealName, mealId);
+            newMeal.setTag(Meal.TAG_BIO, tagBio);
+            newMeal.setTag(Meal.TAG_FISH, tagFish);
+            newMeal.setTag(Meal.TAG_PORK, tagPork);
+            newMeal.setTag(Meal.TAG_COW, tagCow);
+            newMeal.setTag(Meal.TAG_COW_AW, tagCowAw);
+            newMeal.setTag(Meal.TAG_VEGAN, tagVegan);
+            newMeal.setTag(Meal.TAG_VEG, tagVeg);
+            newMeal.setGlobalRating(globalRating);
+            newMeal.setUserRating(userRating);
+            newMeal.setIngredients(ingredients);
+
             return newMeal;
+        }
+
+        private String getJsonString(int mealId, String userId) throws JSONException {
+            final String API_MEAL_ID = "mealid";
+            final String API_USER_ID = "token";
+            String ratingJsonStr = "";
+
+            JSONObject rating = new JSONObject();
+            rating.put(API_MEAL_ID, mealId);
+            rating.put(API_USER_ID, userId);
+            ratingJsonStr = rating.toString();
+
+            return ratingJsonStr;
         }
     }
 
@@ -324,7 +344,11 @@ public class DetailFragment extends Fragment {
                     result.append(line);
                 }
                 Log.d("doInBackground(Resp)", result.toString());
-                JSONObject response = new JSONObject(result.toString());
+                JSONObject newMeal = new JSONObject(result.toString());
+                JSONObject data = newMeal.getJSONObject("data");
+                JSONObject ratings = data.getJSONObject("ratings");
+                meal.setGlobalRating((int) (ratings.getDouble("average") * 100));
+                meal.setUserRating((ratings.getInt("currentUserRating") * 100));
             } catch (JSONException e){
                 Log.e(LOG_TAG, e.getMessage(), e);
                 e.printStackTrace();
@@ -353,10 +377,16 @@ public class DetailFragment extends Fragment {
             return null;
         }
 
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            updateScreen();
+            super.onPostExecute(aVoid);
+        }
+
         private String getJsonString(int mealid, int value, String userid) throws JSONException {
             final String API_MEAL_ID = "mealid";
             final String API_RATING_VALUE = "value";
-            final String API_USER_ID = "userid";
+            final String API_USER_ID = "token";
             String ratingJsonStr = "";
 
             JSONObject rating = new JSONObject();
@@ -438,7 +468,7 @@ public class DetailFragment extends Fragment {
         private String getJsonString(int fistMealId, int secondMealId, String userid) throws JSONException {
             final String API_FIRST_MEAL_ID = "mealid1";
             final String API_SECOND_MEAL_ID = "mealid2";
-            final String API_USER_ID = "userid";
+            final String API_USER_ID = "token";
             String ratingJsonStr = "";
 
             JSONObject rating = new JSONObject();

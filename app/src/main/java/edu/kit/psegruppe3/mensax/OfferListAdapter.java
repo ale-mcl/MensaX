@@ -9,6 +9,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseExpandableListAdapter;
 import android.widget.ImageView;
+import android.widget.RatingBar;
 import android.widget.TextView;
 
 import edu.kit.psegruppe3.mensax.datamodels.DailyMenu;
@@ -135,7 +136,8 @@ public class OfferListAdapter extends BaseExpandableListAdapter {
         TextView textViewPrice = (TextView) convertView.findViewById(R.id.list_item_offer_textview_price);
         textViewPrice.setText(real_price);
 
-
+        RatingBar globalRating = (RatingBar) convertView.findViewById(R.id.list_item_offer_ratingbar);
+        globalRating.setRating((float) offer.getMeal().getGlobalRating());
 
         return convertView;
     }
@@ -166,8 +168,7 @@ public class OfferListAdapter extends BaseExpandableListAdapter {
             return null;
         }
         int imageResource = mContext.getResources().getIdentifier(uri, null, mContext.getPackageName());
-        Drawable res = mContext.getResources().getDrawable(imageResource);
-        return res;
+        return mContext.getResources().getDrawable(imageResource);
     }
 
     private Line getLine(int position) {
