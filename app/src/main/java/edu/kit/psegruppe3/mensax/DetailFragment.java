@@ -28,8 +28,10 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.concurrent.TimeUnit;
 
 import edu.kit.psegruppe3.mensax.datamodels.Meal;
 
@@ -38,14 +40,13 @@ import edu.kit.psegruppe3.mensax.datamodels.Meal;
  */
 public class DetailFragment extends Fragment {
 
+    private final String LOG_TAG = DetailFragment.class.getSimpleName();
     private Meal meal;
 
     private TextView txtMealName;
     private TextView txtIngredients;
     private RatingBar globalRating;
     private RatingBar userRating;
-
-
 
     public DetailFragment() {
     }
@@ -76,9 +77,6 @@ public class DetailFragment extends Fragment {
 
         FetchMealDataTask fetchMealDataTask = new FetchMealDataTask();
         fetchMealDataTask.execute(mealId);
-
-        GetTokenTask getTokenTask = new GetTokenTask();
-        getTokenTask.execute();
 
         Button btnGiveRating = (Button) rootView.findViewById(R.id.button_giveRating);
         btnGiveRating.setOnClickListener(new View.OnClickListener() {
@@ -132,48 +130,34 @@ public class DetailFragment extends Fragment {
         userRating.setRating(meal.getUserRating());
     }
 
-    private class GetTokenTask extends AsyncTask<Void, Void, String> {
+    private String getToken() {
+        final String scope = "audience:server:client_id:785844054287-7hge652kf27md81acog9vg1u0nk9so83.apps.googleusercontent.com";
+        try {
+            String email = getGoogleEmailAdress();
+            String token = GoogleAuthUtil.getToken(getActivity(), email, scope);
+            Log.d(LOG_TAG, "Token: " + token);
+            return token;
+        } catch (IOException e) {
+            Log.d(LOG_TAG, "Error");
+        } catch (UserRecoverableAuthException e ) {
+            Log.d(LOG_TAG, "Error");
+        } catch (GoogleAuthException e ) {
+            Log.d(LOG_TAG, "Error");
+        }
+        return null;
+    }
 
-        final String LOG_TAG = GetTokenTask.class.getSimpleName();
-
-        @Override
-        protected String doInBackground(Void... params) {
-            final String scope = "audience:server:client_id:785844054287-7hge652kf27md81acog9vg1u0nk9so83.apps.googleusercontent.com";
-            try {
-                String email = getGoogleEmailAdress();
-                return GoogleAuthUtil.getToken(getActivity(), email, scope);
-            } catch (IOException e) {
-                Log.d(LOG_TAG, "Error");
-            } catch (UserRecoverableAuthException e ) {
-                Log.d(LOG_TAG, "Error");
-            } catch (GoogleAuthException e ) {
-                Log.d(LOG_TAG, "Error");
-            }
+    private String getGoogleEmailAdress() {
+        AccountManager accountManager = AccountManager.get(getActivity());
+        Account[] accounts = accountManager.getAccountsByType("com.google");
+        Account account;
+        if (accounts.length > 0) {
+            return accounts[0].name;
+        } else {
             return null;
         }
-
-
-        @Override
-        protected void onPostExecute(String s) {
-            if (s == null) {
-                super.onPostExecute(s);
-                return;
-            }
-            Log.d(LOG_TAG, "Token: " + s);
-            super.onPostExecute(s);
-        }
-
-        private String getGoogleEmailAdress() {
-            AccountManager accountManager = AccountManager.get(getActivity());
-            Account[] accounts = accountManager.getAccountsByType("com.google");
-            Account account;
-            if (accounts.length > 0) {
-                return accounts[0].name;
-            } else {
-                return null;
-            }
-        }
     }
+
 
     private class FetchMealDataTask extends AsyncTask<Integer, Void, Meal> {
 
@@ -228,8 +212,6 @@ public class DetailFragment extends Fragment {
                 mealDataJsonStr = buffer.toString();
             } catch (IOException e) {
                 Log.e(LOG_TAG, "Error ", e);
-                // If the code didn't successfully get the weather data, there's no point in attemping
-                // to parse it.
                 return null;
             } finally {
                 if (urlConnection != null) {
@@ -301,6 +283,171 @@ public class DetailFragment extends Fragment {
                 e.printStackTrace();
             }
             return newMeal;
+        }
+    }
+
+    // use like this: rateMealTask.execute(mealid, ratingvalue);
+    private class RateMealTask extends AsyncTask<Integer, Void, Void> {
+
+        @Override
+        protected Void doInBackground(Integer... params) {
+            if (params.length < 2) {
+                return null;
+            }
+            HttpURLConnection urlConnection = null;
+            BufferedReader reader = null;
+            OutputStreamWriter writer = null;
+            String token = getToken();
+
+            try {
+                String output = getJsonString(params[0], params[1], token);
+                URL url = new URL("https://i43pc164.ipd.kit.edu/PSESoSe15Gruppe3/mensa/api/rating");
+                urlConnection = (HttpURLConnection) url.openConnection();
+                urlConnection.setDoOutput(true);
+                urlConnection.setDoInput(true);
+                urlConnection.setRequestProperty("Content-Type", "application/json; charset=UTF-8");
+                urlConnection.setRequestMethod("POST");
+                urlConnection.connect();
+
+                Log.d("doInBackground(Request)", output);
+
+                writer = new OutputStreamWriter(urlConnection.getOutputStream());
+                writer.write(output);
+                writer.flush();
+
+                InputStream input = urlConnection.getInputStream();
+                reader = new BufferedReader(new InputStreamReader(input));
+                StringBuilder result = new StringBuilder();
+                String line;
+
+                while ((line = reader.readLine()) != null) {
+                    result.append(line);
+                }
+                Log.d("doInBackground(Resp)", result.toString());
+                JSONObject response = new JSONObject(result.toString());
+            } catch (JSONException e){
+                Log.e(LOG_TAG, e.getMessage(), e);
+                e.printStackTrace();
+            } catch (IOException e) {
+                Log.e(LOG_TAG, "Error ", e);
+                return null;
+            } finally {
+                if (urlConnection != null) {
+                    urlConnection.disconnect();
+                }
+                if (reader != null) {
+                    try {
+                        reader.close();
+                    } catch (final IOException e) {
+                        Log.e(LOG_TAG, "Error closing stream", e);
+                    }
+                }
+                if (writer != null) {
+                    try {
+                        writer.close();
+                    } catch (final IOException e) {
+                        Log.e(LOG_TAG, "Error closing stream", e);
+                    }
+                }
+            }
+            return null;
+        }
+
+        private String getJsonString(int mealid, int value, String userid) throws JSONException {
+            final String API_MEAL_ID = "mealid";
+            final String API_RATING_VALUE = "value";
+            final String API_USER_ID = "userid";
+            String ratingJsonStr = "";
+
+            JSONObject rating = new JSONObject();
+            rating.put(API_MEAL_ID, mealid);
+            rating.put(API_RATING_VALUE, value);
+            rating.put(API_USER_ID, userid);
+            ratingJsonStr = rating.toString();
+
+            return ratingJsonStr;
+        }
+    }
+
+    private class MergeMealTask extends AsyncTask<Integer, Void, Void> {
+
+        @Override
+        protected Void doInBackground(Integer... params) {
+            if (params.length < 2) {
+                return null;
+            }
+            HttpURLConnection urlConnection = null;
+            BufferedReader reader = null;
+            OutputStreamWriter writer = null;
+            String token = getToken();
+
+            try {
+                String output = getJsonString(params[0], params[1], token);
+                URL url = new URL("https://i43pc164.ipd.kit.edu/PSESoSe15Gruppe3/mensa/api/merge");
+                urlConnection = (HttpURLConnection) url.openConnection();
+                urlConnection.setDoOutput(true);
+                urlConnection.setDoInput(true);
+                urlConnection.setRequestProperty("Content-Type", "application/json; charset=UTF-8");
+                urlConnection.setRequestMethod("POST");
+                urlConnection.connect();
+
+                Log.d("doInBackground(Request)", output);
+
+                writer = new OutputStreamWriter(urlConnection.getOutputStream());
+                writer.write(output);
+                writer.flush();
+
+                InputStream input = urlConnection.getInputStream();
+                reader = new BufferedReader(new InputStreamReader(input));
+                StringBuilder result = new StringBuilder();
+                String line;
+
+                while ((line = reader.readLine()) != null) {
+                    result.append(line);
+                }
+                Log.d("doInBackground(Resp)", result.toString());
+                JSONObject response = new JSONObject(result.toString());
+            } catch (JSONException e){
+                Log.e(LOG_TAG, e.getMessage(), e);
+                e.printStackTrace();
+            } catch (IOException e) {
+                Log.e(LOG_TAG, "Error ", e);
+                return null;
+            } finally {
+                if (urlConnection != null) {
+                    urlConnection.disconnect();
+                }
+                if (reader != null) {
+                    try {
+                        reader.close();
+                    } catch (final IOException e) {
+                        Log.e(LOG_TAG, "Error closing stream", e);
+                    }
+                }
+                if (writer != null) {
+                    try {
+                        writer.close();
+                    } catch (final IOException e) {
+                        Log.e(LOG_TAG, "Error closing stream", e);
+                    }
+                }
+            }
+            return null;
+        }
+
+        private String getJsonString(int fistMealId, int secondMealId, String userid) throws JSONException {
+            final String API_FIRST_MEAL_ID = "mealid1";
+            final String API_SECOND_MEAL_ID = "mealid2";
+            final String API_USER_ID = "userid";
+            String ratingJsonStr = "";
+
+            JSONObject rating = new JSONObject();
+            rating.put(API_FIRST_MEAL_ID, fistMealId);
+            rating.put(API_SECOND_MEAL_ID, secondMealId);
+            rating.put(API_USER_ID, userid);
+            ratingJsonStr = rating.toString();
+
+            return ratingJsonStr;
         }
     }
 }
