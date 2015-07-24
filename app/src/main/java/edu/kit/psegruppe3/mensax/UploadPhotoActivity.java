@@ -35,26 +35,16 @@ import android.widget.VideoView;
 public class UploadPhotoActivity extends Activity {
     // LogCat tag
     private static final String TAG = DetailActivity.class.getSimpleName();
-    public static final String FILE_UPLOAD_URL = "http://192.168.2.101/AndroidFileUpload/fileUpload.php";
+    public static final String FILE_UPLOAD_URL = "https://i43pc164.ipd.kit.edu/PSESoSe15Gruppe3-Daten/photos/fileUpload.php";
 
 
-    private ProgressBar progressBar;
-    private String filePath = null;
-    private TextView txtPercentage;
-    private ImageView imgPreview;
-    private VideoView vidPreview;
-    private Button btnUpload;
     long totalSize = 0;
+    private String filePath = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_uploadphoto);
-        txtPercentage = (TextView) findViewById(R.id.txtPercentage);
-        btnUpload = (Button) findViewById(R.id.btnUpload);
-        progressBar = (ProgressBar) findViewById(R.id.progressBar);
-        imgPreview = (ImageView) findViewById(R.id.imgPreview);
-        vidPreview = (VideoView) findViewById(R.id.videoPreview);
 
         // Receiving the data from previous activity
         Intent i = getIntent();
@@ -62,54 +52,10 @@ public class UploadPhotoActivity extends Activity {
         // image path that is captured in previous activity
         filePath = i.getStringExtra("filePath");
 
-        // boolean flag to identify the media type, image or video
-        boolean isImage = i.getBooleanExtra("isImage", true);
-
-        if (filePath != null) {
-            // Displaying the image or video on the screen
-            previewMedia(isImage);
-        } else {
-            Toast.makeText(getApplicationContext(),
-                    "Sorry, file path is missing!", Toast.LENGTH_LONG).show();
-        }
-
-        btnUpload.setOnClickListener(new View.OnClickListener() {
-
-            @Override
-            public void onClick(View v) {
-                // uploading the file to server
-                new UploadFileToServer().execute();
-            }
-        });
+        new UploadFileToServer().execute();
 
     }
 
-    /**
-     * Displaying captured image/video on the screen
-     * */
-    private void previewMedia(boolean isImage) {
-        // Checking whether captured media is image or video
-        if (isImage) {
-            imgPreview.setVisibility(View.VISIBLE);
-            vidPreview.setVisibility(View.GONE);
-            // bimatp factory
-            BitmapFactory.Options options = new BitmapFactory.Options();
-
-            // down sizing image as it throws OutOfMemory Exception for larger
-            // images
-            options.inSampleSize = 8;
-
-            final Bitmap bitmap = BitmapFactory.decodeFile(filePath, options);
-
-            imgPreview.setImageBitmap(bitmap);
-        } else {
-            imgPreview.setVisibility(View.GONE);
-            vidPreview.setVisibility(View.VISIBLE);
-            vidPreview.setVideoPath(filePath);
-            // start playing
-            vidPreview.start();
-        }
-    }
 
     /**
      * Uploading the file to server
@@ -117,21 +63,7 @@ public class UploadPhotoActivity extends Activity {
     private class UploadFileToServer extends AsyncTask<Void, Integer, String> {
         @Override
         protected void onPreExecute() {
-            // setting progress bar to zero
-            progressBar.setProgress(0);
             super.onPreExecute();
-        }
-
-        @Override
-        protected void onProgressUpdate(Integer... progress) {
-            // Making progress bar visible
-            progressBar.setVisibility(View.VISIBLE);
-
-            // updating progress bar value
-            progressBar.setProgress(progress[0]);
-
-            // updating percentage value
-            txtPercentage.setText(String.valueOf(progress[0]) + "%");
         }
 
         @Override
@@ -195,7 +127,6 @@ public class UploadPhotoActivity extends Activity {
         @Override
         protected void onPostExecute(String result) {
             Log.e(TAG, "Response from server: " + result);
-
             // showing the server response in an alert dialog
             showAlert(result);
 

@@ -65,7 +65,6 @@ public class DetailActivity extends ActionBarActivity {
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-
         // save file url in bundle as it will be null on screen orientation changes
         outState.putParcelable("file_uri", fileUri);
     }
@@ -73,7 +72,6 @@ public class DetailActivity extends ActionBarActivity {
     @Override
     protected void onRestoreInstanceState(Bundle savedInstanceState) {
         super.onRestoreInstanceState(savedInstanceState);
-
         // get the file url
         fileUri = savedInstanceState.getParcelable("file_uri");
     }
