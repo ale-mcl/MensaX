@@ -1,11 +1,7 @@
 package edu.kit.psegruppe3.mensax;
 
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.Matrix;
 import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.v7.app.ActionBarActivity;
@@ -15,26 +11,20 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
-
-import org.apache.http.HttpResponse;
-import org.apache.http.client.ClientProtocolException;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.impl.client.DefaultHttpClient;
-
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Locale;
 
 
 public class DetailActivity extends ActionBarActivity {
 
-    static final int REQUEST_IMAGE_CAPTURE = 1;
+    static final int CAMERA_CAPTURE_IMAGE_REQUEST_CODE = 100;
+    public static final int MEDIA_TYPE_IMAGE = 1;
     static final String ARG_MEAL_ID = "mealId";
-    private static final String TAG = "upload";
+    private Uri fileUri;
+    private static final String TAG = DetailActivity.class.getSimpleName();
+    public static final String IMAGE_DIRECTORY_NAME = "MensaX Pictures";
 
 
     @Override
@@ -62,13 +52,37 @@ public class DetailActivity extends ActionBarActivity {
     }
 
     public void takePicture(View view) {
-        dispatchTakePictureIntent();
+        Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        fileUri = getOutputMediaFileUri(MEDIA_TYPE_IMAGE);
+        intent.putExtra(MediaStore.EXTRA_OUTPUT, fileUri);
+        // start the image capture Intent
+        startActivityForResult(intent, CAMERA_CAPTURE_IMAGE_REQUEST_CODE);
+    }
+
+    /**
+     * Here we store the file url as it will be null after returning from camera app
+     */
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+
+        // save file url in bundle as it will be null on screen orientation changes
+        outState.putParcelable("file_uri", fileUri);
+    }
+
+    @Override
+    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+
+        // get the file url
+        fileUri = savedInstanceState.getParcelable("file_uri");
     }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
-            setPic();
+        if (requestCode == CAMERA_CAPTURE_IMAGE_REQUEST_CODE && resultCode == RESULT_OK) {
+            launchUploadActivity(true);
+
         } else if (resultCode == RESULT_CANCELED) {
             Toast.makeText(getApplicationContext(),
                     "User cancelled image capture", Toast.LENGTH_SHORT)
@@ -80,162 +94,46 @@ public class DetailActivity extends ActionBarActivity {
         }
     }
 
-    private void sendPhoto(Bitmap bitmap) throws Exception {
-        new UploadTask().execute(bitmap);
+    private void launchUploadActivity(boolean isImage){
+        Intent i = new Intent(DetailActivity.this, UploadPhotoActivity.class);
+        i.putExtra("filePath", fileUri.getPath());
+        i.putExtra("isImage", isImage);
+        startActivity(i);
     }
 
-    private class UploadTask extends AsyncTask<Bitmap, Void, Void> {
+    public Uri getOutputMediaFileUri(int type) {
+        return Uri.fromFile(getOutputMediaFile(type));
+    }
 
-        protected Void doInBackground(Bitmap... bitmaps) {
-            if (bitmaps[0] == null)
+    private static File getOutputMediaFile(int type) {
+
+        // External sdcard location
+        File mediaStorageDir = new File(
+                Environment
+                        .getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES),
+                IMAGE_DIRECTORY_NAME);
+
+        // Create the storage directory if it does not exist
+        if (!mediaStorageDir.exists()) {
+            if (!mediaStorageDir.mkdirs()) {
+                Log.d(IMAGE_DIRECTORY_NAME, "Oops! Failed create "
+                        + IMAGE_DIRECTORY_NAME + " directory");
                 return null;
-            setProgress(0);
-
-            Bitmap bitmap = bitmaps[0];
-            ByteArrayOutputStream stream = new ByteArrayOutputStream();
-            bitmap.compress(Bitmap.CompressFormat.PNG, 100, stream); // convert Bitmap to ByteArrayOutputStream
-            InputStream in = new ByteArrayInputStream(stream.toByteArray()); // convert ByteArrayOutputStream to ByteArrayInputStream
-
-            DefaultHttpClient httpclient = new DefaultHttpClient();
-            try {
-                HttpPost httppost = new HttpPost(
-                        "https://i43pc164.ipd.kit.edu/PSESoSe15Gruppe3-Daten/photos"); // server
-
-                MultipartEntity reqEntity = new MultipartEntity();
-                reqEntity.addPart("myFile",
-                        System.currentTimeMillis() + ".jpg", in);
-                httppost.setEntity(reqEntity);
-
-                Log.i(TAG, "request " + httppost.getRequestLine());
-                HttpResponse response = null;
-                try {
-                    response = httpclient.execute(httppost);
-                } catch (ClientProtocolException e) {
-                    // TODO Auto-generated catch block
-                    e.printStackTrace();
-                } catch (IOException e) {
-                    // TODO Auto-generated catch block
-                    e.printStackTrace();
-                }
-                try {
-                    if (response != null)
-                        Log.i(TAG, "response " + response.getStatusLine().toString());
-                } finally {
-
-                }
-            } finally {
-
             }
+        }
 
-            if (in != null) {
-                try {
-                    in.close();
-                } catch (IOException e) {
-                    // TODO Auto-generated catch block
-                    e.printStackTrace();
-                }
-            }
-
-            if (stream != null) {
-                try {
-                    stream.close();
-                } catch (IOException e) {
-                    // TODO Auto-generated catch block
-                    e.printStackTrace();
-                }
-            }
-
+        // Create a media file name
+        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss",
+                Locale.getDefault()).format(new Date());
+        File mediaFile;
+        if (type == MEDIA_TYPE_IMAGE) {
+            mediaFile = new File(mediaStorageDir.getPath() + File.separator
+                    + "IMG_" + timeStamp + ".jpg");
+        } else {
             return null;
         }
 
-        @Override
-        protected void onProgressUpdate(Void... values) {
-            // TODO Auto-generated method stub
-            super.onProgressUpdate(values);
-        }
-
-        @Override
-        protected void onPostExecute(Void result) {
-            // TODO Auto-generated method stub
-            super.onPostExecute(result);
-            Toast.makeText(DetailActivity.this, R.string.uploaded, Toast.LENGTH_LONG).show();
-        }
-    }
-
-    String mCurrentPhotoPath;
-
-    static final int REQUEST_TAKE_PHOTO = 1;
-    File photoFile = null;
-
-
-    private void dispatchTakePictureIntent() {
-        Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        // Ensure that there's a camera activity to handle the intent
-        if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
-            // Create the File where the photo should go
-            File photoFile = null;
-            try {
-                photoFile = createImageFile();
-            } catch (IOException ex) {
-                // Error occurred while creating the File
-
-            }
-            // Continue only if the File was successfully created
-            if (photoFile != null) {
-                takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT,
-                        Uri.fromFile(photoFile));
-                startActivityForResult(takePictureIntent, REQUEST_TAKE_PHOTO);
-            }
-        }
-    }
-
-    private File createImageFile() throws IOException {
-        // Create an image file name
-        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
-        String imageFileName = "JPEG_" + timeStamp + "_";
-        String storageDir = Environment.getExternalStorageDirectory() + "/picupload";
-        File dir = new File(storageDir);
-        if (!dir.exists())
-            dir.mkdir();
-
-        File image = new File(storageDir + "/" + imageFileName + ".jpg");
-
-        // Save a file: path for use with ACTION_VIEW intents
-        mCurrentPhotoPath = image.getAbsolutePath();
-        Log.i(TAG, "photo path = " + mCurrentPhotoPath);
-        return image;
-    }
-
-
-    private void setPic() {
-        // Get the dimensions of the bitmap
-        BitmapFactory.Options bmOptions = new BitmapFactory.Options();
-        bmOptions.inJustDecodeBounds = true;
-        BitmapFactory.decodeFile(mCurrentPhotoPath, bmOptions);
-        int photoW = bmOptions.outWidth;
-        int photoH = bmOptions.outHeight;
-
-
-        // Decode the image file into a Bitmap sized to fill the View
-        bmOptions.inJustDecodeBounds = false;
-        bmOptions.inPurgeable = true;
-
-        Bitmap bitmap = BitmapFactory.decodeFile(mCurrentPhotoPath, bmOptions);
-
-        Matrix mtx = new Matrix();
-        mtx.postRotate(90);
-        // Rotating Bitmap
-        Bitmap rotatedBMP = Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), mtx, true);
-
-        if (rotatedBMP != bitmap)
-            bitmap.recycle();
-
-        try {
-            sendPhoto(rotatedBMP);
-        } catch (Exception e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
+        return mediaFile;
     }
 
 
