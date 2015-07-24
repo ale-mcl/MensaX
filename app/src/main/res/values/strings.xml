@@ -56,11 +56,13 @@
     <string name="global_rating">Average Rating:</string>
     <string name="user_rating">Your Rating:</string>
 
-    <!-- GiveRatingFragment strings -->
+    <!-- Give Rating in DetailFragment strings -->
     <string name="dialog_giveRating">Rate this meal</string>
     <string name="confirm">Confirm</string>
     <string name="cancel">Cancel</string>
 
+    <!-- Upload Picture in DetailActivity strings -->
+    <string name="uploaded">Successfully uploaded</string>
 
 
 </resources>
