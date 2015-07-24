@@ -7,11 +7,6 @@
 
     <uses-permission android:name="android.permission.GET_ACCOUNTS" />
 
-    <!-- This permission is necessary in order for MensaX to
-    provide an image saving path to the camera app -->
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
-
     <!-- Permissions required by the sync adapter -->
     <uses-permission
         android:name="android.permission.READ_SYNC_SETTINGS"/>

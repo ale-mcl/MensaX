@@ -3,11 +3,15 @@ package edu.kit.psegruppe3.mensax;
 import android.accounts.Account;
 import android.accounts.AccountManager;
 import android.content.DialogInterface;
+import android.content.Intent;
+import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
+import android.util.Base64;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -15,6 +19,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.RatingBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.android.gms.auth.GoogleAuthException;
 import com.google.android.gms.auth.GoogleAuthUtil;
@@ -25,6 +30,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.BufferedReader;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -42,6 +48,8 @@ public class DetailFragment extends Fragment {
 
     private final String LOG_TAG = DetailFragment.class.getSimpleName();
     private Meal meal;
+
+    static final int REQUEST_IMAGE_CAPTURE = 1;
 
     private TextView txtMealName;
     private TextView txtIngredients;
@@ -88,7 +96,7 @@ public class DetailFragment extends Fragment {
                 rankDialog.setView(dialogView);
                 rankDialog.setCancelable(true);
                 rankDialog.setTitle(R.string.dialog_giveRating);
-                final RatingBar ratingBar = (RatingBar)dialogView.findViewById(R.id.dialog_ratingbar);
+                final RatingBar ratingBar = (RatingBar) dialogView.findViewById(R.id.dialog_ratingbar);
                 rankDialog.setPositiveButton(R.string.confirm, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
                         int newRating = (int) ratingBar.getRating();
@@ -105,18 +113,116 @@ public class DetailFragment extends Fragment {
             }
         });
 
+        Button btnTakePicture = (Button) rootView.findViewById(R.id.button_takePicture);
+        btnGiveRating.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                takePicture(v);
+                }
+        });
+
+        Button btnMeargeMeal = (Button) rootView.findViewById(R.id.button_mergeMeal);
+        btnGiveRating.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+
+                //HERE: MeargeMealTask
+            }
+        });
+
         return rootView;
     }
 
-    private void uploadImage(Uri imageUri) {
+    public void takePicture(View view) {
+        Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        // start the image capture Intent
+        startActivityForResult(intent, REQUEST_IMAGE_CAPTURE);
     }
 
-    private Uri selectImageUri() {
-        return null;
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == getActivity().RESULT_OK) {
+            Bitmap photo = (Bitmap) data.getExtras().get("data");
+            String stringOfPhoto = BitMapToString(photo);
+            UploadPictureTask uploadPictureTask = new UploadPictureTask();
+            uploadPictureTask.execute(String.valueOf(meal.getMealId()), stringOfPhoto);
+
+        } else if (resultCode == getActivity().RESULT_CANCELED) {
+            Toast.makeText(getActivity().getApplicationContext(),
+                    "User cancelled image capture", Toast.LENGTH_SHORT)
+                    .show();
+        } else {
+            Toast.makeText(getActivity().getApplicationContext(),
+                    "Sorry! Failed to capture image", Toast.LENGTH_SHORT)
+                    .show();
+        }
     }
 
-    private Meal selectMeal() {
-        return null;
+    public String BitMapToString(Bitmap bitmap){
+        ByteArrayOutputStream baos=new ByteArrayOutputStream();
+        bitmap.compress(Bitmap.CompressFormat.PNG,100, baos);
+        byte [] b=baos.toByteArray();
+        String temp=Base64.encodeToString(b, Base64.DEFAULT);
+        return temp;
+    }
+
+    private class UploadPictureTask extends AsyncTask<String,Void, Void> {
+
+        private final String LOG_TAG = UploadPictureTask.class.getSimpleName();
+
+        @Override
+        protected Void doInBackground(String... params) {
+            if (params.length < 2) {
+                return null;
+            }
+
+            HttpURLConnection urlConnection = null;
+            OutputStreamWriter writer = null;
+
+            try {
+                URL url = new URL("https://i43pc164.ipd.kit.edu/PSESoSe15Gruppe3/mensa/api/image/post");
+
+                String token = getToken();
+                String output = getJsonString(params[0], token, params[1]);
+
+                urlConnection = (HttpURLConnection) url.openConnection();
+                urlConnection.setDoOutput(true);
+                urlConnection.setDoInput(true);
+                urlConnection.setRequestProperty("Content-Type", "application/json; charset=UTF-8");
+                urlConnection.setRequestMethod("POST");
+                urlConnection.connect();
+
+                Log.d("doInBackground(Request)", output);
+
+                writer = new OutputStreamWriter(urlConnection.getOutputStream());
+                writer.write(output);
+                writer.flush();
+
+            } catch (IOException e) {
+                Log.e(LOG_TAG, "Error ", e);
+                return null;
+            } catch (JSONException e) {
+                Log.e(LOG_TAG, e.getMessage(), e);
+                e.printStackTrace();
+            } finally {
+                if (urlConnection != null) {
+                    urlConnection.disconnect();
+                }
+            }
+            return null;
+        }
+        private String getJsonString(String mealId, String userId, String image) throws JSONException {
+            final String API_MEAL_ID = "mealid";
+            final String API_USER_ID = "token";
+            final String API_IMAGE =  "image";
+            String imageJsonStr = "";
+
+            JSONObject imageString = new JSONObject();
+            imageString.put(API_MEAL_ID, mealId);
+            imageString.put(API_USER_ID, userId);
+            imageString.put(API_IMAGE, image);
+            imageJsonStr = imageString.toString();
+
+            return imageJsonStr;
+        }
     }
 
     private void updateScreen() {

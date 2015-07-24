@@ -116,8 +116,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/button_takePicture"
-                android:drawableLeft="@drawable/ic_menu_camera"
-                android:onClick="takePicture"/>
+                android:drawableLeft="@drawable/ic_menu_camera" />
             <TextView
                 android:text=""
                 android:layout_weight=".25"
@@ -132,11 +131,10 @@
                 android:layout_width="0dip"
                 />
             <Button
-                android:id="@+id/button_mergeFood"
+                android:id="@+id/button_mergeMeal"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/button_foodMerge"
-                android:onClick="mergeFood"/>
+                android:text="@string/button_foodMerge" />
             <TextView
                 android:text=""
                 android:layout_weight=".25"
