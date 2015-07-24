@@ -1,29 +1,19 @@
 package edu.kit.psegruppe3.mensax;
 
-import android.app.Activity;
 import android.app.ListActivity;
 import android.app.SearchManager;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.widget.SearchView;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.CursorAdapter;
 import android.widget.ListView;
-import android.widget.TextView;
-
-import java.util.ArrayList;
-import java.util.List;
 
 import edu.kit.psegruppe3.mensax.data.CanteenContract;
-import edu.kit.psegruppe3.mensax.datamodels.Meal;
 
 /**
  * Activity that performs searches and present results.
@@ -83,9 +73,9 @@ public class SearchableActivity extends ListActivity {
 
 
     private Cursor query(String query) {
-        Cursor cursor = getContentResolver().query(CanteenContract.MealEntry.CONTENT_URI, new String[]{CanteenContract.MealEntry._ID},
-                CanteenContract.MealEntry.COLUMN_MEAL_NAME + " MATCH ?",
-                new String[]{query},
+        Cursor cursor = getContentResolver().query(CanteenContract.MealEntry.CONTENT_URI, null,
+                CanteenContract.MealEntry.COLUMN_MEAL_NAME + " LIKE ?",
+                new String[]{"%" + query + "%"},
                 null);
 
         if (cursor == null) {
