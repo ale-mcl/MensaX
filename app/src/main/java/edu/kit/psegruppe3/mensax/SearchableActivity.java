@@ -5,20 +5,52 @@ import android.app.ListActivity;
 import android.app.SearchManager;
 import android.content.Context;
 import android.content.Intent;
+import android.database.Cursor;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.widget.SearchView;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.CursorAdapter;
+import android.widget.ListView;
+import android.widget.TextView;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import edu.kit.psegruppe3.mensax.data.CanteenContract;
+import edu.kit.psegruppe3.mensax.datamodels.Meal;
 
 /**
  * Activity that performs searches and present results.
  */
 public class SearchableActivity extends ListActivity {
 
+    private SearchListAdapter mSearchListAdapter;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_searchable);
+        ListView listView = getListView();
+        mSearchListAdapter = new SearchListAdapter(this, null, 0);
+        setListAdapter(mSearchListAdapter);
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Cursor cursor = (Cursor) parent.getItemAtPosition(position);
+                if (cursor != null) {
+                    Intent intent = new Intent(SearchableActivity.this, DetailActivity.class)
+                            .putExtra(DetailActivity.ARG_MEAL_ID,
+                                    cursor.getInt(cursor.getColumnIndex(CanteenContract.MealEntry.COLUMN_MEAL_ID)));
+                    startActivity(intent);
+                }
+            }
+        });
 
         // Get the intent, verify the action and get the query
         Intent intent = getIntent();
@@ -45,12 +77,23 @@ public class SearchableActivity extends ListActivity {
     }
 
     public void doMySearch(String query) {
-        //method where to implement the search
-        // use full-text search FTS3 because we have a SQLite database!
-        //"If your data comes from a SQLite database query, you can apply your
-        // results to a ListView using a CursorAdapter."
+        Cursor cursor = query(query);
+        mSearchListAdapter.swapCursor(cursor);
     }
 
 
+    private Cursor query(String query) {
+        Cursor cursor = getContentResolver().query(CanteenContract.MealEntry.CONTENT_URI, new String[]{CanteenContract.MealEntry._ID},
+                CanteenContract.MealEntry.COLUMN_MEAL_NAME + " MATCH ?",
+                new String[]{query},
+                null);
 
+        if (cursor == null) {
+            return null;
+        } else if (!cursor.moveToFirst()) {
+            cursor.close();
+            return null;
+        }
+        return cursor;
+    }
 }
