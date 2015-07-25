@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    android:id="@+id/legendelayout"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="?android:windowBackground"
+    android:clickable="true">
+
+    <TextView
+        android:id="@+id/txtLegende"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:fontFamily="sans-serif-condensed"
+        android:inputType="textMultiLine" />
+
+    <TextView
+        android:id="@+id/txt1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:drawableLeft="@drawable/ic_meal_cow"
+        android:paddingTop="10pt"
+        android:drawablePadding="5dp"
+        android:singleLine="true"
+        android:text="@string/legende_cow"/>
+
+
+    <TextView
+        android:id="@+id/txt2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:drawableLeft="@drawable/ic_meal_cow_aw"
+        android:drawablePadding="5dp"
+        android:singleLine="true"
+        android:text="@string/legende_cow_aw"/>
+
+    <TextView
+        android:id="@+id/txt3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:drawableLeft="@drawable/ic_meal_pork"
+        android:drawablePadding="5dp"
+        android:singleLine="true"
+        android:text="@string/legende_pork"/>
+
+    <TextView
+        android:id="@+id/txt4"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:drawableLeft="@drawable/ic_meal_veg"
+        android:drawablePadding="5dp"
+        android:singleLine="true"
+        android:text="@string/legende_veg"/>
+
+    <TextView
+        android:id="@+id/txt5"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:drawableLeft="@drawable/ic_meal_vegan"
+        android:drawablePadding="5dp"
+        android:singleLine="true"
+        android:text="@string/legende_vegan"/>
+
+    <TextView
+        android:id="@+id/txt6"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:drawableLeft="@drawable/ic_meal_fish"
+        android:drawablePadding="5dp"
+        android:singleLine="true"
+        android:text="@string/legende_fish"/>
+
+    <TextView
+        android:id="@+id/txt7"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:drawableLeft="@drawable/ic_meal_bio"
+        android:drawablePadding="5dp"
+        android:singleLine="true"
+        android:text="@string/legende_bio"/>
+
+    <TextView
+        android:id="@+id/txtAddress"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingTop="10pt"
+        android:fontFamily="sans-serif-condensed"
+        android:inputType="textMultiLine" />
+
+
+
+</LinearLayout>

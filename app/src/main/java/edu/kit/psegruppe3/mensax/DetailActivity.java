@@ -1,10 +1,14 @@
 package edu.kit.psegruppe3.mensax;
 
+import android.app.FragmentTransaction;
+import android.content.Context;
 import android.content.Intent;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.ViewGroup;
+
 
 public class DetailActivity extends ActionBarActivity {
 
@@ -34,7 +38,7 @@ public class DetailActivity extends ActionBarActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.options_menu, menu);
+        getMenuInflater().inflate(R.menu.detailactivity_menu, menu);
         return true;
     }
 
@@ -45,13 +49,22 @@ public class DetailActivity extends ActionBarActivity {
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
-        //noinspection SimplifiableIfStatement
+
         if (id == R.id.action_settings) {
             startActivity(new Intent(this, SettingsActivity.class));
             return true;
         } else if (id == R.id.action_search) {
             onSearchRequested();
             return true;
+        } else if (id == R.id.action_legende) {
+
+            InfosFragment infosFragment = new InfosFragment();
+            FragmentTransaction transaction = getFragmentManager().beginTransaction();
+
+            transaction.replace(R.id.container, infosFragment);
+            transaction.addToBackStack(null);
+
+            transaction.commit();
         }
 
         return super.onOptionsItemSelected(item);
