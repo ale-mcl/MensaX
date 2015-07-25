@@ -3,12 +3,11 @@ package edu.kit.psegruppe3.mensax;
 import android.accounts.Account;
 import android.accounts.AccountManager;
 import android.app.SearchManager;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.res.TypedArray;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.provider.MediaStore;
@@ -20,12 +19,9 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Gallery;
-import android.widget.ImageView;
 import android.widget.RatingBar;
 import android.widget.TextView;
 
@@ -53,17 +49,17 @@ import edu.kit.psegruppe3.mensax.datamodels.Meal;
  */
 public class DetailFragment extends Fragment {
 
-    private final String LOG_TAG = DetailFragment.class.getSimpleName();
-    private Meal meal;
-
     static final int REQUEST_IMAGE_CAPTURE = 1;
 
+    private final String LOG_TAG = DetailFragment.class.getSimpleName();
+
+    private Meal meal;
     private TextView txtMealName;
     private TextView txtIngredients;
     private RatingBar globalRating;
     private RatingBar userRating;
-
-    private String[] picturesURLs;
+    private GalleryAdapter galleryAdapter;
+    private Gallery gallery;
 
     public DetailFragment() {
     }
@@ -75,31 +71,22 @@ public class DetailFragment extends Fragment {
 
         Integer[] mealId = {getArguments().getInt(DetailActivity.ARG_MEAL_ID)};
 
-        Gallery gallery = (Gallery) rootView.findViewById(R.id.gallery1);
-        gallery.setAdapter(new ImageAdapter(getActivity()));
-        gallery.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        gallery = (Gallery) rootView.findViewById(R.id.gallery1);
+        /*gallery.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             public void onItemClick(AdapterView<?> parent, View v, int position,long id)
             {
                 // display the images selected
                // ImageView imageView = (ImageView) getActivity().findViewById(R.id.image1);
                // imageView.setImageResource(imageIDs[position]);
             }
-        });
+        });*/
+
 
         txtMealName = (TextView) rootView.findViewById(R.id.mealName);
 
-        TextView txtMealIngredients = (TextView) rootView.findViewById(R.id.mealIngredients);
-        txtMealIngredients.setText(R.string.ingredients);
-
         txtIngredients = (TextView) rootView.findViewById(R.id.showIngredients);
 
-        TextView txtMealGlobalRating = (TextView) rootView.findViewById(R.id.mealGlobalRating);
-        txtMealGlobalRating.setText(R.string.global_rating);
-
         globalRating = (RatingBar) rootView.findViewById(R.id.showGlobalRating);
-
-        TextView txtMealUserRating = (TextView) rootView.findViewById(R.id.mealUserRating);
-        txtMealUserRating.setText(R.string.user_rating);
 
         userRating = (RatingBar) rootView.findViewById(R.id.showUserRating);
 
@@ -136,7 +123,8 @@ public class DetailFragment extends Fragment {
         Button btnTakePicture = (Button) rootView.findViewById(R.id.button_takePicture);
         btnTakePicture.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                takePicture(v);
+                Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                startActivityForResult(intent, REQUEST_IMAGE_CAPTURE);
             }
         });
 
@@ -148,12 +136,6 @@ public class DetailFragment extends Fragment {
         });
 
         return rootView;
-    }
-
-    public void takePicture(View view) {
-        Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        // start the image capture Intent
-        startActivityForResult(intent, REQUEST_IMAGE_CAPTURE);
     }
 
     @Override
@@ -173,12 +155,91 @@ public class DetailFragment extends Fragment {
         }
     }
 
-    public String BitMapToString(Bitmap bitmap){
+    private String BitMapToString(Bitmap bitmap){
         ByteArrayOutputStream baos=new ByteArrayOutputStream();
-        bitmap.compress(Bitmap.CompressFormat.PNG,100, baos);
+        bitmap.compress(Bitmap.CompressFormat.PNG, 100, baos);
         byte [] b=baos.toByteArray();
         String temp=Base64.encodeToString(b, Base64.DEFAULT);
         return temp;
+    }
+
+    private void updateScreen(boolean downloadImages) {
+        if (meal == null) {
+            return;
+        }
+        if (downloadImages) {
+            for (int i = 0; i < meal.getImageCount(); i++) {
+                boolean isLastPicture = (i == meal.getImageCount());
+                DownloadPictureTask downloadPictureTask = new DownloadPictureTask(isLastPicture);
+                downloadPictureTask.execute(meal.getImage(i).toString());
+            }
+        }
+
+        txtMealName.setText(meal.getName());
+
+        txtIngredients.setText("[" + meal.getIngredients() + "]");
+
+        globalRating.setRating((float) meal.getGlobalRating());
+
+        userRating.setRating((float) meal.getUserRating());
+    }
+
+    private String getToken() {
+        final String scope = "audience:server:client_id:785844054287-7hge652kf27md81acog9vg1u0nk9so83.apps.googleusercontent.com";
+        try {
+            String email = getGoogleEmailAdress();
+            String token = GoogleAuthUtil.getToken(getActivity(), email, scope);
+            Log.d(LOG_TAG, "Token: " + token);
+            return token;
+        } catch (IOException e) {
+            Log.d(LOG_TAG, "Error");
+        } catch (UserRecoverableAuthException e ) {
+            Log.d(LOG_TAG, "Error");
+        } catch (GoogleAuthException e ) {
+            Log.d(LOG_TAG, "Error");
+        }
+        return null;
+    }
+
+    private void sendSearchRequest(String query) {
+        Intent mIntent = new Intent(getActivity(), SearchableActivity.class);
+        mIntent.setAction(Intent.ACTION_SEARCH);
+        mIntent.putExtra(SearchableActivity.ARG_SELECT_MEAL, true);
+        mIntent.putExtra(SearchManager.QUERY, query);
+        startActivityForResult(mIntent, SearchableActivity.REQUEST_CODE);
+    }
+
+    private void askSearchQuery() {
+        final EditText input = new EditText(getActivity());
+        AlertDialog.Builder adb = new AlertDialog.Builder(getActivity());
+        adb.setTitle("Search Items");
+        adb.setMessage("Please input the name of the item you are looking for.");
+        adb.setView(input);
+        adb.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int whichButton) {
+
+                Editable upc = input.getText();
+                sendSearchRequest(upc.toString());
+
+                dialog.cancel();
+            }
+        });
+        adb.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int whichButton) {
+                dialog.cancel();
+            }
+        });
+        adb.create().show();
+    }
+
+    private String getGoogleEmailAdress() {
+        AccountManager accountManager = AccountManager.get(getActivity());
+        Account[] accounts = accountManager.getAccountsByType("com.google");
+        if (accounts.length > 0) {
+            return accounts[0].name;
+        } else {
+            return null;
+        }
     }
 
     private class UploadPictureTask extends AsyncTask<String,Void, Void> {
@@ -238,47 +299,6 @@ public class DetailFragment extends Fragment {
             return imageJsonStr;
         }
     }
-
-    private void updateScreen() {
-        if (meal == null) {
-            return;
-        }
-        txtMealName.setText(meal.getName());
-
-        txtIngredients.setText("[" + meal.getIngredients() + "]");
-
-        globalRating.setRating((float) meal.getGlobalRating());
-
-        userRating.setRating((float) meal.getUserRating());
-    }
-
-    private String getToken() {
-        final String scope = "audience:server:client_id:785844054287-7hge652kf27md81acog9vg1u0nk9so83.apps.googleusercontent.com";
-        try {
-            String email = getGoogleEmailAdress();
-            String token = GoogleAuthUtil.getToken(getActivity(), email, scope);
-            Log.d(LOG_TAG, "Token: " + token);
-            return token;
-        } catch (IOException e) {
-            Log.d(LOG_TAG, "Error");
-        } catch (UserRecoverableAuthException e ) {
-            Log.d(LOG_TAG, "Error");
-        } catch (GoogleAuthException e ) {
-            Log.d(LOG_TAG, "Error");
-        }
-        return null;
-    }
-
-    private String getGoogleEmailAdress() {
-        AccountManager accountManager = AccountManager.get(getActivity());
-        Account[] accounts = accountManager.getAccountsByType("com.google");
-        if (accounts.length > 0) {
-            return accounts[0].name;
-        } else {
-            return null;
-        }
-    }
-
 
     private class FetchMealDataTask extends AsyncTask<Integer, Void, Meal> {
 
@@ -350,7 +370,7 @@ public class DetailFragment extends Fragment {
         protected void onPostExecute(Meal m) {
             if (meal != null) {
                 meal = m;
-                updateScreen();
+                updateScreen(true);
             }
             super.onPostExecute(m);
         }
@@ -364,6 +384,10 @@ public class DetailFragment extends Fragment {
             JSONObject ratings = data.getJSONObject(ServerApiContract.API_MEAL_RATINGS);
             JSONArray images = data.getJSONArray(ServerApiContract.API_MEAL_IMAGES);
 
+            Uri[] imageUris = new Uri[images.length()];
+            for (int i = 0; i < images.length(); i++) {
+                imageUris[i] = Uri.parse(images.getString(i));
+            }
             String mealName = meal.getString(ServerApiContract.API_MEAL_NAME);
             String ingredients = tags.getString(ServerApiContract.API_MEAL_INGREDIENTS);
             int mealId = meal.getInt(ServerApiContract.API_MEAL_ID);
@@ -396,18 +420,24 @@ public class DetailFragment extends Fragment {
         }
 
         private String getJsonString(int mealId, String userId) throws JSONException {
-            String ratingJsonStr = "";
+            String requestJsonStr = "";
 
-            JSONObject rating = new JSONObject();
-            rating.put(ServerApiContract.API_MEAL_ID, mealId);
-            rating.put(ServerApiContract.API_USER_ID, userId);
-            ratingJsonStr = rating.toString();
+            JSONObject request = new JSONObject();
+            request.put(ServerApiContract.API_MEAL_ID, mealId);
+            request.put(ServerApiContract.API_USER_ID, userId);
+            requestJsonStr = request.toString();
 
-            return ratingJsonStr;
+            return requestJsonStr;
         }
     }
 
     private class DownloadPictureTask extends AsyncTask<String, Void, Bitmap> {
+
+        private boolean isLastPicture;
+
+        public DownloadPictureTask(boolean isLastPicture) {
+           this.isLastPicture = isLastPicture;
+        }
 
         @Override
         protected Bitmap doInBackground(String... params) {
@@ -446,7 +476,10 @@ public class DetailFragment extends Fragment {
 
         @Override
         protected void onPostExecute(Bitmap bitmap) {
-            //TODO: Add bitmap to UI here
+            galleryAdapter.addBitmap(bitmap);
+            if (isLastPicture) {
+                gallery.setAdapter(galleryAdapter);
+            }
             super.onPostExecute(bitmap);
         }
     }
@@ -490,10 +523,10 @@ public class DetailFragment extends Fragment {
                 }
                 //Log.d("doInBackground(Resp)", result.toString());
                 JSONObject newMeal = new JSONObject(result.toString());
-                JSONObject data = newMeal.getJSONObject("data");
-                JSONObject ratings = data.getJSONObject("ratings");
-                meal.setGlobalRating((int) (ratings.getDouble("average") * 100));
-                meal.setUserRating((ratings.getInt("currentUserRating") * 100));
+                JSONObject data = newMeal.getJSONObject(ServerApiContract.API_MEAL_DATA);
+                JSONObject ratings = data.getJSONObject(ServerApiContract.API_MEAL_RATINGS);
+                meal.setGlobalRating((int) (ratings.getDouble(ServerApiContract.API_GLOBAL_RATING)));
+                meal.setUserRating(ratings.getInt(ServerApiContract.API_USER_RATING));
             } catch (JSONException e){
                 Log.e(LOG_TAG, e.getMessage(), e);
                 e.printStackTrace();
@@ -524,7 +557,7 @@ public class DetailFragment extends Fragment {
 
         @Override
         protected void onPostExecute(Void aVoid) {
-            updateScreen();
+            updateScreen(false);
             super.onPostExecute(aVoid);
         }
 
@@ -621,82 +654,4 @@ public class DetailFragment extends Fragment {
             return ratingJsonStr;
         }
     }
-
-    public void sendSearchRequest(String query) {
-        Intent mIntent = new Intent(getActivity(), SearchableActivity.class);
-        mIntent.setAction(Intent.ACTION_SEARCH);
-        mIntent.putExtra(SearchableActivity.ARG_SELECT_MEAL, true);
-        mIntent.putExtra(SearchManager.QUERY, query);
-        startActivityForResult(mIntent, SearchableActivity.REQUEST_CODE);
-    }
-
-    public void askSearchQuery() {
-        final EditText input = new EditText(getActivity());
-        AlertDialog.Builder adb = new AlertDialog.Builder(getActivity());
-        adb.setTitle("Search Items");
-        adb.setMessage("Please input the name of the item you are looking for.");
-        adb.setView(input);
-        adb.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int whichButton) {
-
-                Editable upc = input.getText();
-                sendSearchRequest(upc.toString());
-
-                dialog.cancel();
-            }
-        });
-        adb.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int whichButton) {
-                dialog.cancel();
-            }
-        });
-        adb.create().show();
-    }
-
-
-    public class ImageAdapter extends BaseAdapter {
-        private Context context;
-        private int itemBackground;
-        public ImageAdapter(Context c)
-        {
-            context = c;
-            // sets a grey background; wraps around the images
-            TypedArray a = context.obtainStyledAttributes(R.styleable.MyGallery);
-            itemBackground = a.getResourceId(R.styleable.MyGallery_android_galleryItemBackground, 0);
-            a.recycle();
-        }
-        // returns the number of images
-        public int getCount() {
-            return picturesURLs.length;
-        }
-        // returns the ID of an item
-        public Object getItem(int position) {
-            return position;
-        }
-        // returns the ID of an item
-        public long getItemId(int position) {
-            return position;
-        }
-        // returns an ImageView view
-        public View getView(int position, View convertView, ViewGroup parent) {
-            ImageView imageView = new ImageView(context);
-
-            imageView.setImageBitmap(getBitmapFromUrl(picturesURLs[position]));
-            imageView.setLayoutParams(new Gallery.LayoutParams(600, 600));
-            imageView.setBackgroundResource(itemBackground);
-            return imageView;
-        }
-
-        private Bitmap getBitmapFromUrl (String url){
-            Bitmap bitmap = null;
-            /*
-            TO-DO HERE:
-            write method  that gets a string of an url and returns a bitmap.
-            */
-            return bitmap;
-        }
-    }
-
-
-
 }

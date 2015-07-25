@@ -39,6 +39,10 @@ public class Meal {
         return mealId;
     }
 
+    public void setImages(Uri[] imageUris) {
+        images = imageUris;
+    }
+
     public boolean hasTag(int index){
         switch (index) {
             case TAG_BIO: return bio;
@@ -64,8 +68,16 @@ public class Meal {
         return userRating;
     }
 
-    public Uri[] getImages() {
-        return images;
+    public int getImageCount() {
+        return images.length;
+    }
+
+    public Uri getImage(int position) {
+        if (position < getImageCount()) {
+            return images[position];
+        } else {
+            throw new ArrayIndexOutOfBoundsException();
+        }
     }
 
     public void setTag(int index, boolean value){
