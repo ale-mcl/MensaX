@@ -6,6 +6,7 @@ import android.app.SearchManager;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.provider.MediaStore;
@@ -175,7 +176,7 @@ public class DetailFragment extends Fragment {
             OutputStreamWriter writer = null;
 
             try {
-                URL url = new URL("https://i43pc164.ipd.kit.edu/PSESoSe15Gruppe3/mensa/api/image/post");
+                URL url = ServerApiContract.getURL(ServerApiContract.PATH_IMAGE);
 
                 String token = getToken();
                 String output = getJsonString(params[0], token, params[1]);
@@ -207,15 +208,12 @@ public class DetailFragment extends Fragment {
             return null;
         }
         private String getJsonString(String mealId, String userId, String image) throws JSONException {
-            final String API_MEAL_ID = "mealid";
-            final String API_USER_ID = "token";
-            final String API_IMAGE =  "image";
             String imageJsonStr = "";
 
             JSONObject imageString = new JSONObject();
-            imageString.put(API_MEAL_ID, mealId);
-            imageString.put(API_USER_ID, userId);
-            imageString.put(API_IMAGE, image);
+            imageString.put(ServerApiContract.API_MEAL_ID, mealId);
+            imageString.put(ServerApiContract.API_USER_ID, userId);
+            imageString.put(ServerApiContract.API_IMAGE, image);
             imageJsonStr = imageString.toString();
 
             return imageJsonStr;
@@ -279,7 +277,7 @@ public class DetailFragment extends Fragment {
             BufferedReader reader = null;
 
             try {
-                URL url = new URL("https://i43pc164.ipd.kit.edu/PSESoSe15Gruppe3/mensa/api/meal/");
+                URL url = ServerApiContract.getURL(ServerApiContract.PATH_MEAL);
 
                 String token = getToken();
                 String output = getJsonString(params[0], token);
@@ -291,7 +289,7 @@ public class DetailFragment extends Fragment {
                 urlConnection.setRequestMethod("POST");
                 urlConnection.connect();
 
-                Log.d("doInBackground(Request)", output);
+                //Log.d("doInBackground(Request)", output);
 
                 writer = new OutputStreamWriter(urlConnection.getOutputStream());
                 writer.write(output);
@@ -305,7 +303,7 @@ public class DetailFragment extends Fragment {
                 while ((line = reader.readLine()) != null) {
                     result.append(line);
                 }
-                Log.d("doInBackground(Resp)", result.toString());
+                //Log.d("doInBackground(Resp)", result.toString());
 
                 newMeal = getMealDataFromJson(result.toString());
             } catch (IOException e) {
@@ -331,53 +329,37 @@ public class DetailFragment extends Fragment {
 
         @Override
         protected void onPostExecute(Meal m) {
-            meal = m;
-            updateScreen();
+            if (meal != null) {
+                meal = m;
+                updateScreen();
+            }
             super.onPostExecute(m);
         }
 
         private Meal getMealDataFromJson(String jsonStr) throws JSONException {
-            final String API_MEAL_DATA = "data";
-            final String API_MEAL_NAME = "name";
-            final String API_MEAL_ID = "id";
-            final String API_MEAL_TAG = "tags";
-            final String API_MEAL_RATINGS = "ratings";
-            final String API_GLOBAL_RATING = "average";
-            final String API_USER_RATING = "currentUserRating";
-            final String API_TAG_BIO = "bio";
-            final String API_TAG_FISH = "fish";
-            final String API_TAG_PORK = "pork";
-            final String API_TAG_COW = "cow";
-            final String API_TAG_COW_AW = "cow_aw";
-            final String API_TAG_VEGAN = "vegan";
-            final String API_TAG_VEG = "veg";
-            final String API_MEAL_INGREDIENTS = "add";
-            final String API_MEAL_IMAGES = "images";
-
             Meal newMeal = null;
 
-
             JSONObject meal = new JSONObject(jsonStr);
-            JSONObject data = meal.getJSONObject(API_MEAL_DATA);
-            JSONObject tags = data.getJSONObject(API_MEAL_TAG);
-            JSONObject ratings = data.getJSONObject(API_MEAL_RATINGS);
-            JSONArray images = data.getJSONArray(API_MEAL_IMAGES);
+            JSONObject data = meal.getJSONObject(ServerApiContract.API_MEAL_DATA);
+            JSONObject tags = data.getJSONObject(ServerApiContract.API_MEAL_TAG);
+            JSONObject ratings = data.getJSONObject(ServerApiContract.API_MEAL_RATINGS);
+            JSONArray images = data.getJSONArray(ServerApiContract.API_MEAL_IMAGES);
 
-            String mealName = meal.getString(API_MEAL_NAME);
-            String ingredients = tags.getString(API_MEAL_INGREDIENTS);
-            int mealId = meal.getInt(API_MEAL_ID);
+            String mealName = meal.getString(ServerApiContract.API_MEAL_NAME);
+            String ingredients = tags.getString(ServerApiContract.API_MEAL_INGREDIENTS);
+            int mealId = meal.getInt(ServerApiContract.API_MEAL_ID);
             int userRating = 0;
-            if (!ratings.get(API_USER_RATING).equals(null)) {
-                userRating = ratings.getInt(API_USER_RATING);
+            if (!ratings.get(ServerApiContract.API_USER_RATING).equals(null)) {
+                userRating = ratings.getInt(ServerApiContract.API_USER_RATING);
             }
-            double globalRating = ratings.getDouble(API_GLOBAL_RATING);
-            boolean tagBio = tags.getBoolean(API_TAG_BIO);
-            boolean tagFish = tags.getBoolean(API_TAG_FISH);
-            boolean tagPork = tags.getBoolean(API_TAG_PORK);
-            boolean tagCow = tags.getBoolean(API_TAG_COW);
-            boolean tagCowAw = tags.getBoolean(API_TAG_COW_AW);
-            boolean tagVegan = tags.getBoolean(API_TAG_VEGAN);
-            boolean tagVeg = tags.getBoolean(API_TAG_VEG);
+            double globalRating = ratings.getDouble(ServerApiContract.API_GLOBAL_RATING);
+            boolean tagBio = tags.getBoolean(ServerApiContract.API_TAG_BIO);
+            boolean tagFish = tags.getBoolean(ServerApiContract.API_TAG_FISH);
+            boolean tagPork = tags.getBoolean(ServerApiContract.API_TAG_PORK);
+            boolean tagCow = tags.getBoolean(ServerApiContract.API_TAG_COW);
+            boolean tagCowAw = tags.getBoolean(ServerApiContract.API_TAG_COW_AW);
+            boolean tagVegan = tags.getBoolean(ServerApiContract.API_TAG_VEGAN);
+            boolean tagVeg = tags.getBoolean(ServerApiContract.API_TAG_VEG);
 
             newMeal = new Meal(mealName, mealId);
             newMeal.setTag(Meal.TAG_BIO, tagBio);
@@ -395,16 +377,58 @@ public class DetailFragment extends Fragment {
         }
 
         private String getJsonString(int mealId, String userId) throws JSONException {
-            final String API_MEAL_ID = "mealid";
-            final String API_USER_ID = "token";
             String ratingJsonStr = "";
 
             JSONObject rating = new JSONObject();
-            rating.put(API_MEAL_ID, mealId);
-            rating.put(API_USER_ID, userId);
+            rating.put(ServerApiContract.API_MEAL_ID, mealId);
+            rating.put(ServerApiContract.API_USER_ID, userId);
             ratingJsonStr = rating.toString();
 
             return ratingJsonStr;
+        }
+    }
+
+    private class DownloadPictureTask extends AsyncTask<String, Void, Bitmap> {
+
+        @Override
+        protected Bitmap doInBackground(String... params) {
+            if (params.length == 0) {
+                return null;
+            }
+
+            HttpURLConnection urlConnection = null;
+            BufferedReader reader = null;
+            OutputStreamWriter writer = null;
+            int responseCode = -1;
+            Bitmap result = null;
+
+            try {
+                URL url = new URL(params[0]);
+                urlConnection = (HttpURLConnection) url.openConnection();
+                urlConnection.setDoInput(true);
+                urlConnection.connect();
+                responseCode = urlConnection.getResponseCode();
+                if(responseCode == HttpURLConnection.HTTP_OK) {
+                    InputStream input = urlConnection.getInputStream();
+                    result = BitmapFactory.decodeStream(input);
+                    input.close();
+                }
+
+            } catch (IOException e) {
+                Log.e(LOG_TAG, "Error ", e);
+                return null;
+            } finally {
+                if (urlConnection != null) {
+                    urlConnection.disconnect();
+                }
+            }
+            return result;
+        }
+
+        @Override
+        protected void onPostExecute(Bitmap bitmap) {
+            //TODO: Add bitmap to UI here
+            super.onPostExecute(bitmap);
         }
     }
 
@@ -423,7 +447,7 @@ public class DetailFragment extends Fragment {
 
             try {
                 String output = getJsonString(params[0], params[1], token);
-                URL url = new URL("https://i43pc164.ipd.kit.edu/PSESoSe15Gruppe3/mensa/api/rating");
+                URL url = ServerApiContract.getURL(ServerApiContract.PATH_RATING);
                 urlConnection = (HttpURLConnection) url.openConnection();
                 urlConnection.setDoOutput(true);
                 urlConnection.setDoInput(true);
@@ -431,7 +455,7 @@ public class DetailFragment extends Fragment {
                 urlConnection.setRequestMethod("POST");
                 urlConnection.connect();
 
-                Log.d("doInBackground(Request)", output);
+                //Log.d("doInBackground(Request)", output);
 
                 writer = new OutputStreamWriter(urlConnection.getOutputStream());
                 writer.write(output);
@@ -445,7 +469,7 @@ public class DetailFragment extends Fragment {
                 while ((line = reader.readLine()) != null) {
                     result.append(line);
                 }
-                Log.d("doInBackground(Resp)", result.toString());
+                //Log.d("doInBackground(Resp)", result.toString());
                 JSONObject newMeal = new JSONObject(result.toString());
                 JSONObject data = newMeal.getJSONObject("data");
                 JSONObject ratings = data.getJSONObject("ratings");
@@ -486,15 +510,12 @@ public class DetailFragment extends Fragment {
         }
 
         private String getJsonString(int mealid, int value, String userid) throws JSONException {
-            final String API_MEAL_ID = "mealid";
-            final String API_RATING_VALUE = "value";
-            final String API_USER_ID = "token";
             String ratingJsonStr = "";
 
             JSONObject rating = new JSONObject();
-            rating.put(API_MEAL_ID, mealid);
-            rating.put(API_RATING_VALUE, value);
-            rating.put(API_USER_ID, userid);
+            rating.put(ServerApiContract.API_MEAL_ID, mealid);
+            rating.put(ServerApiContract.API_RATING_VALUE, value);
+            rating.put(ServerApiContract.API_USER_ID, userid);
             ratingJsonStr = rating.toString();
 
             return ratingJsonStr;
@@ -515,7 +536,8 @@ public class DetailFragment extends Fragment {
 
             try {
                 String output = getJsonString(params[0], params[1], token);
-                URL url = new URL("https://i43pc164.ipd.kit.edu/PSESoSe15Gruppe3/mensa/api/merge");
+
+                URL url = ServerApiContract.getURL(ServerApiContract.PATH_MERGE);
                 urlConnection = (HttpURLConnection) url.openConnection();
                 urlConnection.setDoOutput(true);
                 urlConnection.setDoInput(true);
@@ -523,7 +545,7 @@ public class DetailFragment extends Fragment {
                 urlConnection.setRequestMethod("POST");
                 urlConnection.connect();
 
-                Log.d("doInBackground(Request)", output);
+                //Log.d("doInBackground(Request)", output);
 
                 writer = new OutputStreamWriter(urlConnection.getOutputStream());
                 writer.write(output);
@@ -568,15 +590,12 @@ public class DetailFragment extends Fragment {
         }
 
         private String getJsonString(int fistMealId, int secondMealId, String userid) throws JSONException {
-            final String API_FIRST_MEAL_ID = "mealid1";
-            final String API_SECOND_MEAL_ID = "mealid2";
-            final String API_USER_ID = "token";
             String ratingJsonStr = "";
 
             JSONObject rating = new JSONObject();
-            rating.put(API_USER_ID, userid);
-            rating.put(API_FIRST_MEAL_ID, fistMealId);
-            rating.put(API_SECOND_MEAL_ID, secondMealId);
+            rating.put(ServerApiContract.API_USER_ID, userid);
+            rating.put(ServerApiContract.API_FIRST_MEAL_ID, fistMealId);
+            rating.put(ServerApiContract.API_SECOND_MEAL_ID, secondMealId);
 
             ratingJsonStr = rating.toString();
 

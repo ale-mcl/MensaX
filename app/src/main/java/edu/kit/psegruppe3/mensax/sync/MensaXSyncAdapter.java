@@ -34,6 +34,7 @@ import java.util.GregorianCalendar;
 import java.util.Vector;
 
 import edu.kit.psegruppe3.mensax.R;
+import edu.kit.psegruppe3.mensax.ServerApiContract;
 import edu.kit.psegruppe3.mensax.data.CanteenContract;
 
 /**
@@ -67,11 +68,7 @@ public class MensaXSyncAdapter extends AbstractThreadedSyncAdapter {
         String mealNamesJsonStr = null;
 
         try {
-            // Construct the URL for the MenuGetterApi query
-            final String MEAL_NAMES_URL =
-                    "https://i43pc164.ipd.kit.edu/PSESoSe15Gruppe3/mensa/api/names";
-
-            URL url = new URL(MEAL_NAMES_URL);
+            URL url = ServerApiContract.getURL(ServerApiContract.PATH_NAMES);
 
             // Create the request to OpenWeatherMap, and open the connection
             urlConnection = (HttpURLConnection) url.openConnection();
@@ -139,10 +136,6 @@ public class MensaXSyncAdapter extends AbstractThreadedSyncAdapter {
         String menuJsonStr = null;
 
         try {
-            // Construct the URL for the MenuGetterApi query
-            final String MENU_BASE_URL =
-                    "https://i43pc164.ipd.kit.edu/PSESoSe15Gruppe3/mensa/api/plan";
-
             calendar.set(Calendar.HOUR_OF_DAY, 0);
             calendar.set(Calendar.MINUTE, 0);
             calendar.set(Calendar.SECOND, 0);
@@ -151,13 +144,7 @@ public class MensaXSyncAdapter extends AbstractThreadedSyncAdapter {
             calendar.add(Calendar.DATE, numDays);
             long endDate = calendar.getTimeInMillis();
 
-            Uri builtUri = Uri.parse(MENU_BASE_URL).buildUpon()
-                    .appendPath(Long.toString(startDate / 1000))
-                    .appendPath(Long.toString(endDate / 1000))
-                    .build();
-
-            URL url = new URL(builtUri.toString());
-
+            URL url = ServerApiContract.getURL(ServerApiContract.PATH_PLAN, startDate / 1000, endDate / 1000);
             urlConnection = (HttpURLConnection) url.openConnection();
             urlConnection.setRequestMethod("GET");
             urlConnection.connect();
@@ -223,15 +210,10 @@ public class MensaXSyncAdapter extends AbstractThreadedSyncAdapter {
                         CanteenContract.MealEntry.COLUMN_MEAL_NAME + " = ?",
                         new String[]{name},
                         null);
-
                 if (!mealCursor.moveToFirst()) {
                     ContentValues mealValues = new ContentValues();
-
-                    // Then add the data, along with the corresponding name of the data type,
-                    // so the content provider knows what kind of value is being inserted.
                     mealValues.put(CanteenContract.MealEntry.COLUMN_MEAL_NAME, name);
                     mealValues.put(CanteenContract.MealEntry.COLUMN_MEAL_ID, id);
-
                     cVVector.add(mealValues);
                 }
 
@@ -253,31 +235,6 @@ public class MensaXSyncAdapter extends AbstractThreadedSyncAdapter {
     }
 
     private void getMenuDataFromJson(String menuJsonStr, long endDate) throws JSONException {
-
-        final String API_MEAL = "meal";
-        final String API_MEAL_NAME = "name";
-        final String API_DATA = "data";
-        final String API_MEAL_RATINGS = "ratings";
-        final String API_GLOBAL_RATING = "average";
-        final String API_MEAL_TAG = "tags";
-        final String API_TAG_BIO = "bio";
-        final String API_TAG_FISH = "fish";
-        final String API_TAG_PORK = "pork";
-        final String API_TAG_COW = "cow";
-        final String API_TAG_COW_AW = "cow_aw";
-        final String API_TAG_VEGAN = "vegan";
-        final String API_TAG_VEG = "veg";
-        final String API_MEAL_INGREDIENTS = "add";
-        final String API_MEAL_IMAGES = "images";
-        final String API_ACTIVE = "active";
-        final String API_LINE = "line";
-        final String API_PRICES = "price";
-        final String API_PRICE_STUDENTS = "studentPrice";
-        final String API_PRICE_GUESTS = "visitorPrice";
-        final String API_PRICE_STAFF = "workerPrice";
-        final String API_PRICE_PUPILS = "childPrice";
-        final String API_DATE = "timestamp";
-
         final int TRUE = 1;
         final int FALSE = 0;
 
@@ -304,25 +261,22 @@ public class MensaXSyncAdapter extends AbstractThreadedSyncAdapter {
                 int pricePupils;
 
                 JSONObject offer = menuJson.getJSONObject(i);
-                JSONObject meal = offer.getJSONObject(API_MEAL);
-                JSONObject data = meal.getJSONObject(API_DATA);
-                JSONObject prices = offer.getJSONObject(API_PRICES);
-                JSONObject tags = data.getJSONObject(API_MEAL_TAG);
-                JSONObject ratings = data.getJSONObject(API_MEAL_RATINGS);
+                JSONObject meal = offer.getJSONObject(ServerApiContract.API_MEAL);
+                JSONObject data = meal.getJSONObject(ServerApiContract.API_MEAL_DATA);
+                JSONObject prices = offer.getJSONObject(ServerApiContract.API_PRICES);
+                JSONObject tags = data.getJSONObject(ServerApiContract.API_MEAL_TAG);
+                JSONObject ratings = data.getJSONObject(ServerApiContract.API_MEAL_RATINGS);
 
-                mealName = meal.getString(API_MEAL_NAME);
-
-                globalRating = ratings.getDouble(API_GLOBAL_RATING);
-
-                tagBio = (tags.getBoolean(API_TAG_BIO)) ? TRUE : FALSE;
-                tagFish = (tags.getBoolean(API_TAG_FISH)) ? TRUE : FALSE;
-                tagPork = (tags.getBoolean(API_TAG_PORK)) ? TRUE : FALSE;
-                tagCow = (tags.getBoolean(API_TAG_COW)) ? TRUE : FALSE;
-                tagCowAw = (tags.getBoolean(API_TAG_COW_AW)) ? TRUE : FALSE;
-                tagVegan = (tags.getBoolean(API_TAG_VEGAN)) ? TRUE : FALSE;
-                tagVeg = (tags.getBoolean(API_TAG_VEG)) ? TRUE : FALSE;
-
-                ingredients = tags.getString(API_MEAL_INGREDIENTS);
+                mealName = meal.getString(ServerApiContract.API_MEAL_NAME);
+                globalRating = ratings.getDouble(ServerApiContract.API_GLOBAL_RATING);
+                tagBio = (tags.getBoolean(ServerApiContract.API_TAG_BIO)) ? TRUE : FALSE;
+                tagFish = (tags.getBoolean(ServerApiContract.API_TAG_FISH)) ? TRUE : FALSE;
+                tagPork = (tags.getBoolean(ServerApiContract.API_TAG_PORK)) ? TRUE : FALSE;
+                tagCow = (tags.getBoolean(ServerApiContract.API_TAG_COW)) ? TRUE : FALSE;
+                tagCowAw = (tags.getBoolean(ServerApiContract.API_TAG_COW_AW)) ? TRUE : FALSE;
+                tagVegan = (tags.getBoolean(ServerApiContract.API_TAG_VEGAN)) ? TRUE : FALSE;
+                tagVeg = (tags.getBoolean(ServerApiContract.API_TAG_VEG)) ? TRUE : FALSE;
+                ingredients = tags.getString(ServerApiContract.API_MEAL_INGREDIENTS);
 
                 Cursor mealCursor = getContext().getContentResolver().query(
                         CanteenContract.MealEntry.CONTENT_URI,
@@ -337,13 +291,13 @@ public class MensaXSyncAdapter extends AbstractThreadedSyncAdapter {
                 int mealKeyIndex = mealCursor.getColumnIndex(CanteenContract.MealEntry._ID);
                 mealKey = mealCursor.getLong(mealKeyIndex);
                 mealCursor.close();
-                line = offer.getString(API_LINE);
-                date = offer.getLong(API_DATE) * 1000;
 
-                priceStudents = (int) (prices.getDouble(API_PRICE_STUDENTS) * 100);
-                priceGuests = (int) (prices.getDouble(API_PRICE_GUESTS) * 100);
-                priceStaff = (int) (prices.getDouble(API_PRICE_STAFF) * 100);
-                pricePupils = (int) (prices.getDouble(API_PRICE_PUPILS) * 100);
+                line = offer.getString(ServerApiContract.API_LINE);
+                date = offer.getLong(ServerApiContract.API_DATE) * 1000;
+                priceStudents = (int) (prices.getDouble(ServerApiContract.API_PRICE_STUDENTS) * 100);
+                priceGuests = (int) (prices.getDouble(ServerApiContract.API_PRICE_GUESTS) * 100);
+                priceStaff = (int) (prices.getDouble(ServerApiContract.API_PRICE_STAFF) * 100);
+                pricePupils = (int) (prices.getDouble(ServerApiContract.API_PRICE_PUPILS) * 100);
 
                 ContentValues offerValues = new ContentValues();
                 offerValues.put(CanteenContract.OfferEntry.COLUMN_DATE, date);
@@ -362,7 +316,6 @@ public class MensaXSyncAdapter extends AbstractThreadedSyncAdapter {
                 offerValues.put(CanteenContract.OfferEntry.COLUMN_TAG_VEGAN, tagVegan);
                 offerValues.put(CanteenContract.OfferEntry.COLUMN_TAG_VEG, tagVeg);
                 offerValues.put(CanteenContract.OfferEntry.COLUMN_INGREDIENTS, ingredients);
-
                 cVVector.add(offerValues);
             }
 
