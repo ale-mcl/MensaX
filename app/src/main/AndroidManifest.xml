@@ -39,6 +39,8 @@
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="edu.kit.psegruppe3.mensax.MainActivity" />
+            <meta-data android:name="android.app.default_searchable"
+                android:value=".SearchableActivity" />
         </activity>
         <activity
             android:name=".SettingsActivity"
@@ -49,7 +51,8 @@
                 android:value="edu.kit.psegruppe3.mensax.MainActivity" />
         </activity>
 
-        <activity android:name=".SearchableActivity" >
+        <activity android:name=".SearchableActivity"
+            android:label="@string/title_activity_searchable" >
             <intent-filter>
                 <action android:name="android.intent.action.SEARCH" />
             </intent-filter>

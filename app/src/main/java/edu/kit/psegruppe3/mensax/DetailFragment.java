@@ -2,24 +2,25 @@ package edu.kit.psegruppe3.mensax;
 
 import android.accounts.Account;
 import android.accounts.AccountManager;
+import android.app.SearchManager;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
+import android.text.Editable;
 import android.util.Base64;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.RatingBar;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.google.android.gms.auth.GoogleAuthException;
 import com.google.android.gms.auth.GoogleAuthUtil;
@@ -37,7 +38,6 @@ import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.util.concurrent.TimeUnit;
 
 import edu.kit.psegruppe3.mensax.datamodels.Meal;
 
@@ -114,17 +114,16 @@ public class DetailFragment extends Fragment {
         });
 
         Button btnTakePicture = (Button) rootView.findViewById(R.id.button_takePicture);
-        btnGiveRating.setOnClickListener(new View.OnClickListener() {
+        btnTakePicture.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 takePicture(v);
-                }
+            }
         });
 
-        Button btnMeargeMeal = (Button) rootView.findViewById(R.id.button_mergeMeal);
-        btnGiveRating.setOnClickListener(new View.OnClickListener() {
+        Button btnMergeMeal = (Button) rootView.findViewById(R.id.button_mergeMeal);
+        btnMergeMeal.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-
-                //HERE: MeargeMealTask
+                askSearchQuery();
             }
         });
 
@@ -142,17 +141,15 @@ public class DetailFragment extends Fragment {
         if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == getActivity().RESULT_OK) {
             Bitmap photo = (Bitmap) data.getExtras().get("data");
             String stringOfPhoto = BitMapToString(photo);
-            UploadPictureTask uploadPictureTask = new UploadPictureTask();
-            uploadPictureTask.execute(String.valueOf(meal.getMealId()), stringOfPhoto);
+            //UploadPictureTask uploadPictureTask = new UploadPictureTask();
+            //uploadPictureTask.execute(String.valueOf(meal.getMealId()), stringOfPhoto);
 
-        } else if (resultCode == getActivity().RESULT_CANCELED) {
-            Toast.makeText(getActivity().getApplicationContext(),
-                    "User cancelled image capture", Toast.LENGTH_SHORT)
-                    .show();
-        } else {
-            Toast.makeText(getActivity().getApplicationContext(),
-                    "Sorry! Failed to capture image", Toast.LENGTH_SHORT)
-                    .show();
+        } else if (requestCode == SearchableActivity.REQUEST_CODE && resultCode == getActivity().RESULT_OK) {
+            if (data.hasExtra(DetailActivity.ARG_MEAL_ID)) {
+                int mealId = data.getIntExtra(DetailActivity.ARG_MEAL_ID, 0);
+                MergeMealTask mergeMealTask = new MergeMealTask();
+                mergeMealTask.execute(meal.getMealId(), mealId);
+            }
         }
     }
 
@@ -258,7 +255,6 @@ public class DetailFragment extends Fragment {
     private String getGoogleEmailAdress() {
         AccountManager accountManager = AccountManager.get(getActivity());
         Account[] accounts = accountManager.getAccountsByType("com.google");
-        Account account;
         if (accounts.length > 0) {
             return accounts[0].name;
         } else {
@@ -513,8 +509,8 @@ public class DetailFragment extends Fragment {
                 return null;
             }
             HttpURLConnection urlConnection = null;
-            BufferedReader reader = null;
             OutputStreamWriter writer = null;
+            BufferedReader reader = null;
             String token = getToken();
 
             try {
@@ -541,8 +537,8 @@ public class DetailFragment extends Fragment {
                 while ((line = reader.readLine()) != null) {
                     result.append(line);
                 }
-                Log.d("doInBackground(Resp)", result.toString());
-                JSONObject response = new JSONObject(result.toString());
+
+
             } catch (JSONException e){
                 Log.e(LOG_TAG, e.getMessage(), e);
                 e.printStackTrace();
@@ -553,16 +549,16 @@ public class DetailFragment extends Fragment {
                 if (urlConnection != null) {
                     urlConnection.disconnect();
                 }
-                if (reader != null) {
+                if (writer != null) {
                     try {
-                        reader.close();
+                        writer.close();
                     } catch (final IOException e) {
                         Log.e(LOG_TAG, "Error closing stream", e);
                     }
                 }
-                if (writer != null) {
+                if (reader != null) {
                     try {
-                        writer.close();
+                        reader.close();
                     } catch (final IOException e) {
                         Log.e(LOG_TAG, "Error closing stream", e);
                     }
@@ -578,12 +574,44 @@ public class DetailFragment extends Fragment {
             String ratingJsonStr = "";
 
             JSONObject rating = new JSONObject();
+            rating.put(API_USER_ID, userid);
             rating.put(API_FIRST_MEAL_ID, fistMealId);
             rating.put(API_SECOND_MEAL_ID, secondMealId);
-            rating.put(API_USER_ID, userid);
+
             ratingJsonStr = rating.toString();
 
             return ratingJsonStr;
         }
+    }
+
+    public void sendSearchRequest(String query) {
+        Intent mIntent = new Intent(getActivity(), SearchableActivity.class);
+        mIntent.setAction(Intent.ACTION_SEARCH);
+        mIntent.putExtra(SearchableActivity.ARG_SELECT_MEAL, true);
+        mIntent.putExtra(SearchManager.QUERY, query);
+        startActivityForResult(mIntent, SearchableActivity.REQUEST_CODE);
+    }
+
+    public void askSearchQuery() {
+        final EditText input = new EditText(getActivity());
+        AlertDialog.Builder adb = new AlertDialog.Builder(getActivity());
+        adb.setTitle("Search Items");
+        adb.setMessage("Please input the name of the item you are looking for.");
+        adb.setView(input);
+        adb.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int whichButton) {
+
+                Editable upc = input.getText();
+                sendSearchRequest(upc.toString());
+
+                dialog.cancel();
+            }
+        });
+        adb.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int whichButton) {
+                dialog.cancel();
+            }
+        });
+        adb.create().show();
     }
 }

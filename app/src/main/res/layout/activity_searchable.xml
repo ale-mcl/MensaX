@@ -3,19 +3,21 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="@color/LightGrey">
 
-    <ListView android:id="@android:id/list"
+    <ListView android:id="@+id/search_listview"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="#00FF00"
-        android:layout_weight="1"
-        android:drawSelectorOnTop="false"/>
+        android:layout_height="wrap_content"
+        android:drawSelectorOnTop="false"
+        android:background="@color/White"/>
 
-    <TextView android:id="@android:id/empty"
+    <TextView android:id="@+id/search_empty_textview"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="#FF0000"
-        android:text="No data"/>
+        android:layout_height="wrap_content"
+        android:textSize="20sp"
+        android:text="@string/no_results"
+        android:gravity="center"
+        android:visibility="gone"/>
 
 </LinearLayout>
