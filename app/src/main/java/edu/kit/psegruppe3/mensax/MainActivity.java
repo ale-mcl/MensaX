@@ -42,7 +42,6 @@ public class MainActivity extends ActionBarActivity {
         tabLayout.setupWithViewPager(mPager);
 
         MensaXSyncAdapter.initializeSyncAdapter(this);
-        MensaXSyncAdapter.syncImmediately(this);
     }
 
 

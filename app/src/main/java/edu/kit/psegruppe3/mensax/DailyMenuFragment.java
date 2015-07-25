@@ -1,6 +1,7 @@
 package edu.kit.psegruppe3.mensax;
 
 import android.content.Intent;
+import android.content.SyncAdapterType;
 import android.database.Cursor;
 import android.net.Uri;
 import android.support.v4.app.Fragment;
@@ -8,6 +9,7 @@ import android.os.Bundle;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,6 +20,7 @@ import java.util.List;
 
 import edu.kit.psegruppe3.mensax.data.CanteenContract;
 import edu.kit.psegruppe3.mensax.datamodels.*;
+import edu.kit.psegruppe3.mensax.sync.MensaXSyncAdapter;
 
 /**
  * The fragment of the MainActivity. It shows the daily menu.
@@ -43,6 +46,16 @@ public class DailyMenuFragment extends Fragment implements LoaderManager.LoaderC
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View rootView =  inflater.inflate(R.layout.fragment_daily_menu, container, false);
+
+        final SwipeRefreshLayout swipeRefreshLayout = (SwipeRefreshLayout) rootView;
+
+        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                MensaXSyncAdapter.syncImmediately(getActivity());
+                swipeRefreshLayout.setRefreshing(false);
+            }
+        });
 
         mListView = (ExpandableListView) rootView.findViewById(R.id.offer_listview);
 
