@@ -681,16 +681,19 @@ public class DetailFragment extends Fragment {
         public View getView(int position, View convertView, ViewGroup parent) {
             ImageView imageView = new ImageView(context);
 
-            /*
-            TO-DO HERE:
-            write method methodXXX that gets an url (from array "picturesURLs") and returns a bitmap
-            once u have the bitmap uncomment next line.
-            */
-
-            //imageView.setImageBitmap(methodXXX(picturesURLs[position]));
+            imageView.setImageBitmap(getBitmapFromUrl(picturesURLs[position]));
             imageView.setLayoutParams(new Gallery.LayoutParams(600, 600));
             imageView.setBackgroundResource(itemBackground);
             return imageView;
+        }
+
+        private Bitmap getBitmapFromUrl (String url){
+            Bitmap bitmap = null;
+            /*
+            TO-DO HERE:
+            write method  that gets a string of an url and returns a bitmap.
+            */
+            return bitmap;
         }
     }
 
