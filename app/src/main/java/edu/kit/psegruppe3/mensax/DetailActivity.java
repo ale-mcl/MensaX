@@ -10,7 +10,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.ViewGroup;
 
-
+@SuppressWarnings("deprecation")
 public class DetailActivity extends ActionBarActivity {
 
     static final String ARG_MEAL_ID = "mealId";

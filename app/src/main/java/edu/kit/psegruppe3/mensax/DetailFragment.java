@@ -3,8 +3,10 @@ package edu.kit.psegruppe3.mensax;
 import android.accounts.Account;
 import android.accounts.AccountManager;
 import android.app.SearchManager;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.res.TypedArray;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
@@ -18,8 +20,12 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Gallery;
+import android.widget.ImageView;
 import android.widget.RatingBar;
 import android.widget.TextView;
 
@@ -57,6 +63,17 @@ public class DetailFragment extends Fragment {
     private RatingBar globalRating;
     private RatingBar userRating;
 
+    //dummy data
+    Integer[] imageIDs = {
+            R.drawable.ic_meal_bio,
+            R.drawable.ic_meal_cow,
+            R.drawable.ic_meal_pork,
+            R.drawable.ic_meal_vegan,
+            R.drawable.ic_meal_bio,
+            R.drawable.ic_meal_veg,
+    };
+    private String[] picturesURLs;
+
     public DetailFragment() {
     }
 
@@ -66,6 +83,17 @@ public class DetailFragment extends Fragment {
         final View rootView =  inflater.inflate(R.layout.fragment_detail, container, false);
 
         Integer[] mealId = {getArguments().getInt(DetailActivity.ARG_MEAL_ID)};
+
+        Gallery gallery = (Gallery) rootView.findViewById(R.id.gallery1);
+        gallery.setAdapter(new ImageAdapter(getActivity()));
+        gallery.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            public void onItemClick(AdapterView<?> parent, View v, int position,long id)
+            {
+                // display the images selected
+               // ImageView imageView = (ImageView) getActivity().findViewById(R.id.image1);
+               // imageView.setImageResource(imageIDs[position]);
+            }
+        });
 
         txtMealName = (TextView) rootView.findViewById(R.id.mealName);
 
@@ -633,4 +661,48 @@ public class DetailFragment extends Fragment {
         });
         adb.create().show();
     }
+
+
+    public class ImageAdapter extends BaseAdapter {
+        private Context context;
+        private int itemBackground;
+        public ImageAdapter(Context c)
+        {
+            context = c;
+            // sets a grey background; wraps around the images
+            TypedArray a = context.obtainStyledAttributes(R.styleable.MyGallery);
+            itemBackground = a.getResourceId(R.styleable.MyGallery_android_galleryItemBackground, 0);
+            a.recycle();
+        }
+        // returns the number of images
+        public int getCount() {
+            return imageIDs.length;
+        }
+        // returns the ID of an item
+        public Object getItem(int position) {
+            return position;
+        }
+        // returns the ID of an item
+        public long getItemId(int position) {
+            return position;
+        }
+        // returns an ImageView view
+        public View getView(int position, View convertView, ViewGroup parent) {
+            ImageView imageView = new ImageView(context);
+/*
+            DownloadPictureTask downloadPictureTask = new DownloadPictureTask();
+            downloadPictureTask.execute(meal.getMealId(), mealId);
+
+            Bitmap myBitmap = BitmapFactory.decodeStream(picturesURLs[position]);
+            imageView.setImageBitmap(bitmap); */
+
+            imageView.setImageResource(imageIDs[position]);
+            imageView.setLayoutParams(new Gallery.LayoutParams(600, 600));
+            imageView.setBackgroundResource(itemBackground);
+            return imageView;
+        }
+    }
+
+
+
 }
