@@ -63,15 +63,6 @@ public class DetailFragment extends Fragment {
     private RatingBar globalRating;
     private RatingBar userRating;
 
-    //dummy data
-    Integer[] imageIDs = {
-            R.drawable.ic_meal_bio,
-            R.drawable.ic_meal_cow,
-            R.drawable.ic_meal_pork,
-            R.drawable.ic_meal_vegan,
-            R.drawable.ic_meal_bio,
-            R.drawable.ic_meal_veg,
-    };
     private String[] picturesURLs;
 
     public DetailFragment() {
@@ -676,7 +667,7 @@ public class DetailFragment extends Fragment {
         }
         // returns the number of images
         public int getCount() {
-            return imageIDs.length;
+            return picturesURLs.length;
         }
         // returns the ID of an item
         public Object getItem(int position) {
@@ -689,14 +680,14 @@ public class DetailFragment extends Fragment {
         // returns an ImageView view
         public View getView(int position, View convertView, ViewGroup parent) {
             ImageView imageView = new ImageView(context);
-/*
-            DownloadPictureTask downloadPictureTask = new DownloadPictureTask();
-            downloadPictureTask.execute(meal.getMealId(), mealId);
 
-            Bitmap myBitmap = BitmapFactory.decodeStream(picturesURLs[position]);
-            imageView.setImageBitmap(bitmap); */
+            /*
+            TO-DO HERE:
+            write method methodXXX that gets an url (from array "picturesURLs") and returns a bitmap
+            once u have the bitmap uncomment next line.
+            */
 
-            imageView.setImageResource(imageIDs[position]);
+            //imageView.setImageBitmap(methodXXX(picturesURLs[position]));
             imageView.setLayoutParams(new Gallery.LayoutParams(600, 600));
             imageView.setBackgroundResource(itemBackground);
             return imageView;
