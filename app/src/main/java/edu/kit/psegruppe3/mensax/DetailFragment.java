@@ -73,16 +73,6 @@ public class DetailFragment extends Fragment {
         Integer[] mealId = {getArguments().getInt(DetailActivity.ARG_MEAL_ID)};
 
         gallery = (Gallery) rootView.findViewById(R.id.gallery1);
-        /*gallery.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            public void onItemClick(AdapterView<?> parent, View v, int position,long id)
-            {
-                // display the images selected
-               // ImageView imageView = (ImageView) getActivity().findViewById(R.id.image1);
-               // imageView.setImageResource(imageIDs[position]);
-            }
-        });*/
-
-
         txtMealName = (TextView) rootView.findViewById(R.id.mealName);
         txtIngredients = (TextView) rootView.findViewById(R.id.showIngredients);
         globalRating = (RatingBar) rootView.findViewById(R.id.showGlobalRating);
@@ -134,7 +124,6 @@ public class DetailFragment extends Fragment {
                 askSearchQuery();
             }
         });
-
         return rootView;
     }
 
@@ -168,10 +157,8 @@ public class DetailFragment extends Fragment {
             return;
         }
         if (downloadImages) {
-            String[] urls = {"http://img2.wikia.nocookie.net/__cb20110725041802/logopedia/images/8/89/Logo_rolling_stones.png",
-                "http://i.stack.imgur.com/ILTQq.png", "http://img15.deviantart.net/2d65/i/2012/340/8/7/png_rabbit_by_moonglowlilly-d5n7yiz.png"};
             DownloadPictureTask downloadPictureTask = new DownloadPictureTask();
-            downloadPictureTask.execute(urls);
+            downloadPictureTask.execute(meal.getImages());
         }
 
         int i = Meal.TAG_BIO;
