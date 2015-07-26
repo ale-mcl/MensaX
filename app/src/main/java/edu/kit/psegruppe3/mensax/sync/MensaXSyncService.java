@@ -6,7 +6,11 @@ import android.os.IBinder;
 import android.util.Log;
 
 /**
- * Created by ekremsenturk on 19.06.15.
+ * The MensaSyncService class provides a service to run the syncadapter tasks
+ * in the background.
+ *
+ * @author MensaX-group
+ * @version 1.0
  */
 public class MensaXSyncService extends Service {
     private static final Object sSyncAdapterLock = new Object();

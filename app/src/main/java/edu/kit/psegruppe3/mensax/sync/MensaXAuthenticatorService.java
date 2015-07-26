@@ -5,10 +5,16 @@ import android.content.Intent;
 import android.os.IBinder;
 
 /**
- * Created by ekremsenturk on 19.06.15.
+ * The service which allows the sync adapter framework to access the authenticator.
+ *
+ * @author MensaX-group
+ * @version 1.0
  */
 public class MensaXAuthenticatorService extends Service {
-    // Instance field that stores the authenticator object
+
+    /**
+     * Instance field that stores the authenticator object
+     */
     private MensaXAuthenticator mAuthenticator;
 
     @Override
@@ -17,10 +23,6 @@ public class MensaXAuthenticatorService extends Service {
         mAuthenticator = new MensaXAuthenticator(this);
     }
 
-    /*
-     * When the system binds to this Service to make the RPC call
-     * return the authenticator's IBinder.
-     */
     @Override
     public IBinder onBind(Intent intent) {
         return mAuthenticator.getIBinder();

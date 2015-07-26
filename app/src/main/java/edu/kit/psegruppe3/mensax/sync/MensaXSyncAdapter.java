@@ -32,13 +32,24 @@ import edu.kit.psegruppe3.mensax.ServerApiContract;
 import edu.kit.psegruppe3.mensax.data.CanteenContract;
 
 /**
- * Created by ekremsenturk on 19.06.15.
+ * The MensaSyncAdapter class loads data from the server periodically in the background and
+ * stores it using the content provider. It loads the current menu of the canteen and a list
+ * of meal names to enable the search function.
+ *
+ * @author MensaX-group
+ * @version 1.0
  */
 public class MensaXSyncAdapter extends AbstractThreadedSyncAdapter {
     public final String LOG_TAG = MensaXSyncAdapter.class.getSimpleName();
-    // Interval at which to sync with the canteen data, in seconds.
-    // 60 seconds (1 minute) * 180 = 3 hours
-    public static final int SYNC_INTERVAL = 60 * 180;
+
+    /**
+     * Interval at which to sync with the canteen data for older devices, in seconds.
+     */
+    public static final int SYNC_INTERVAL = 60 * 180; //60 seconds (1 minute) * 180 = 3 hours
+
+    /**
+     * Interval at which to sync with the canteen data for newer devices, in seconds.
+     */
     public static final int SYNC_FLEXTIME = SYNC_INTERVAL/3;
 
     public MensaXSyncAdapter(Context context, boolean autoInitialize) {
@@ -52,6 +63,9 @@ public class MensaXSyncAdapter extends AbstractThreadedSyncAdapter {
         getMenu();
     }
 
+    /**
+     * Loads a meal names list with mealids from the server and stores it with the content provider.
+     */
     private void getMealNames() {
         // These two need to be declared outside the try/catch
         // so that they can be closed in the finally block.
@@ -63,8 +77,7 @@ public class MensaXSyncAdapter extends AbstractThreadedSyncAdapter {
 
         try {
             URL url = ServerApiContract.getURL(ServerApiContract.PATH_NAMES);
-
-            // Create the request to OpenWeatherMap, and open the connection
+            // Create the request to the Server, and open the connection
             urlConnection = (HttpURLConnection) url.openConnection();
             urlConnection.setRequestMethod("GET");
             urlConnection.connect();
@@ -73,16 +86,12 @@ public class MensaXSyncAdapter extends AbstractThreadedSyncAdapter {
             InputStream inputStream = urlConnection.getInputStream();
             StringBuffer buffer = new StringBuffer();
             if (inputStream == null) {
-                // Nothing to do.
                 return;
             }
             reader = new BufferedReader(new InputStreamReader(inputStream));
 
             String line;
             while ((line = reader.readLine()) != null) {
-                // Since it's JSON, adding a newline isn't necessary (it won't affect parsing)
-                // But it does make debugging a *lot* easier if you print out the completed
-                // buffer for debugging.
                 buffer.append(line + "\n");
             }
 
@@ -113,6 +122,10 @@ public class MensaXSyncAdapter extends AbstractThreadedSyncAdapter {
         }
     }
 
+    /**
+     * Loads a the menu for the next five day from the server and stores it with the content provider
+     * and deletes the old menu data.
+     */
     private void getMenu() {
         Calendar calendar = Calendar.getInstance();
         int numDays = (calendar.get(Calendar.DAY_OF_WEEK) == Calendar.MONDAY) ? 4 : 6;
@@ -360,8 +373,7 @@ public class MensaXSyncAdapter extends AbstractThreadedSyncAdapter {
 
     /**
      * Helper method to get the fake account to be used with SyncAdapter, or make a new one
-     * if the fake account doesn't exist yet.  If we make a new account, we call the
-     * onAccountCreated method so we can initialize things.
+     * if the fake account doesn't exist yet.
      *
      * @param context The context used to access the account service
      * @return a fake account.
@@ -392,22 +404,17 @@ public class MensaXSyncAdapter extends AbstractThreadedSyncAdapter {
     }
 
     private static void onAccountCreated(Account newAccount, Context context) {
-        /*
-         * Since we've created an account
-         */
         MensaXSyncAdapter.configurePeriodicSync(context, SYNC_INTERVAL, SYNC_FLEXTIME);
 
-        /*
-         * Without calling setSyncAutomatically, our periodic sync will not be enabled.
-         */
         ContentResolver.setSyncAutomatically(newAccount, context.getString(R.string.content_authority), true);
 
-        /*
-         * Finally, let's do a sync to get things started
-         */
         syncImmediately(context);
     }
 
+    /**
+     * Initializes the syncadapter.
+     * @param context The context used to initialize the sync adapter
+     */
     public static void initializeSyncAdapter(Context context) {
         getSyncAccount(context);
     }

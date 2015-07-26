@@ -8,10 +8,19 @@ import android.content.Context;
 import android.os.Bundle;
 
 /**
- * Created by ekremsenturk on 19.06.15.
+ * Manages "Authentication" to MensaX's backend service.  The SyncAdapter framework
+ * requires an authenticator object, so syncing to a service that doesn't need authentication
+ * typically means creating a stub authenticator like this one.
+ *
+ * @author MensaX-group
+ * @version 1.0
  */
 public class MensaXAuthenticator extends AbstractAccountAuthenticator {
 
+    /**
+     * Constructor for the stub authenticator
+     * @param context context of the authenticator
+     */
     public MensaXAuthenticator(Context context) {
         super(context);
     }
@@ -23,7 +32,7 @@ public class MensaXAuthenticator extends AbstractAccountAuthenticator {
         throw new UnsupportedOperationException();
     }
 
-    // Because we're not actually adding an account to the device, just return null.
+
     @Override
     public Bundle addAccount(
             AccountAuthenticatorResponse r,
@@ -34,7 +43,7 @@ public class MensaXAuthenticator extends AbstractAccountAuthenticator {
         return null;
     }
 
-    // Ignore attempts to confirm credentials
+
     @Override
     public Bundle confirmCredentials(
             AccountAuthenticatorResponse r,
@@ -43,7 +52,7 @@ public class MensaXAuthenticator extends AbstractAccountAuthenticator {
         return null;
     }
 
-    // Getting an authentication token is not supported
+
     @Override
     public Bundle getAuthToken(
             AccountAuthenticatorResponse r,
@@ -53,13 +62,13 @@ public class MensaXAuthenticator extends AbstractAccountAuthenticator {
         throw new UnsupportedOperationException();
     }
 
-    // Getting a label for the auth token is not supported
+
     @Override
     public String getAuthTokenLabel(String s) {
         throw new UnsupportedOperationException();
     }
 
-    // Updating user credentials is not supported
+
     @Override
     public Bundle updateCredentials(
             AccountAuthenticatorResponse r,
@@ -68,7 +77,7 @@ public class MensaXAuthenticator extends AbstractAccountAuthenticator {
         throw new UnsupportedOperationException();
     }
 
-    // Checking features for the account is not supported
+
     @Override
     public Bundle hasFeatures(
             AccountAuthenticatorResponse r,

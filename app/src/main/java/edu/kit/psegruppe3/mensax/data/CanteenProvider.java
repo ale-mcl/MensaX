@@ -10,13 +10,22 @@ import android.database.sqlite.SQLiteQueryBuilder;
 import android.net.Uri;
 
 /**
- * Created by ekremsenturk on 16.06.15.
+ * This class is the actual content provider. It manages acces to a structured set
+ * of data and provides insert, query, delete and update functions.
+ *
+ * @author MensaX-group
+ * @version 1.0
  */
 public class CanteenProvider extends ContentProvider {
 
-    // The URI Matcher used by this content provider.
+    /**
+     * The URI Matcher used by this content provider to determine the kind of request of
+     * an URI.
+     */
     private static final UriMatcher sUriMatcher = buildUriMatcher();
+
     private CanteenDbHelper mOpenHelper;
+
 
     static final int OFFER = 100;
     static final int OFFER_WITH_DATE = 101;
@@ -40,8 +49,6 @@ public class CanteenProvider extends ContentProvider {
                         "." + CanteenContract.MealEntry._ID);
         sMealByNameQueryBuilder = new SQLiteQueryBuilder();
 
-        //This is an inner join which looks like
-        //offer INNER JOIN meal ON offer.meal_key = meal._id
         sMealByNameQueryBuilder.setTables(
                 CanteenContract.MealEntry.TABLE_NAME);
     }
@@ -51,7 +58,7 @@ public class CanteenProvider extends ContentProvider {
             CanteenContract.MealEntry.TABLE_NAME +
                     "." + CanteenContract.MealEntry.COLUMN_MEAL_NAME + " = ? ";
 
-    //offer.line = ?
+    //offer.date = ?
     private static final String sDateSelection =
             CanteenContract.OfferEntry.TABLE_NAME +
                     "." + CanteenContract.OfferEntry.COLUMN_DATE + " = ? ";
@@ -90,26 +97,20 @@ public class CanteenProvider extends ContentProvider {
         );
     }
 
-    /*
-        Students: Here is where you need to create the UriMatcher. This UriMatcher will
-        match each URI to the WEATHER, WEATHER_WITH_LOCATION, WEATHER_WITH_LOCATION_AND_DATE,
-        and LOCATION integer constants defined above.  You can test this by uncommenting the
-        testUriMatcher test within TestUriMatcher.
+
+    /**
+     * Builds the URI Matcher for the content provider.
+     *
+     * @return the URI Matcher
      */
     static UriMatcher buildUriMatcher() {
-        // 1) The code passed into the constructor represents the code to return for the root
-        // URI.  It's common to use NO_MATCH as the code for this case. Add the constructor below.
         UriMatcher uriMatcher = new UriMatcher(UriMatcher.NO_MATCH);
 
-        // 2) Use the addURI function to match each of the types.  Use the constants from
-        // WeatherContract to help define the types to the UriMatcher.
         uriMatcher.addURI(CanteenContract.CONTENT_AUTHORITY, CanteenContract.PATH_OFFER, OFFER);
         uriMatcher.addURI(CanteenContract.CONTENT_AUTHORITY, CanteenContract.PATH_OFFER + "/#", OFFER_WITH_DATE);
         uriMatcher.addURI(CanteenContract.CONTENT_AUTHORITY, CanteenContract.PATH_MEAL, MEAL);
         uriMatcher.addURI(CanteenContract.CONTENT_AUTHORITY, CanteenContract.PATH_MEAL + "/*", MEAL_WITH_NAME);
 
-
-        // 3) Return the new matcher!
         return uriMatcher;
     }
 
@@ -312,9 +313,7 @@ public class CanteenProvider extends ContentProvider {
         }
     }
 
-    // You do not need to call this method. This is a method specifically to assist the testing
-    // framework in running smoothly. You can read more at:
-    // http://developer.android.com/reference/android/content/ContentProvider.html#shutdown()
+
     @Override
     @TargetApi(11)
     public void shutdown() {
