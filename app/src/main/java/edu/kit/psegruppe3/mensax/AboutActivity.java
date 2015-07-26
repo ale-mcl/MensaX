@@ -14,7 +14,7 @@ public class AboutActivity extends ActionBarActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.fragment_about);
+        setContentView(R.layout.activity_about);
 
         String mensaTimes =
                 "Mittagessen:\n" +

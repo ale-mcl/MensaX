@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources
+    xmlns:xliff="http://schemas.android.com/apk/res-auto">
+    <string name="abend"></string>
+    <string name="action_legende">Legenda</string>
+    <string name="additives">(1) - con Coloranti\n(2) - con Conservanti\n(3) - con Antiossidanti\n(4) - con Esaltatori di sapiditá\n(5) - con Fosfati\n(6) - cresciuti in Superficie\n(7) - solfati\n(8) - annerito con olive\n(9) - con Zuccheri\n(10) - in caso di consumo elevato puó essere lassativo\n(11) - contiene Phenylalanina\n(12) - puó contenere resti di Alcohol\n(14) - composto da Carne\n(15) - con grasso di cacaro\n(27) - composto da pesci\n\nGl - Frumenti con glutei\nNu - Noccioline / noci\nUova - Uova\nEr - Noci\nSo - Soja\nSn - Senape\nKr - Crostacei\nFi - Pesce\nML - Latte / Lattosio\nSe - Sedano\nSf - Diossido di zolfo / Sulfati\nSa - Sesamo\nLu - Lupini\nWe - Molluschi</string>
+    <string name="button_foodMerge">Unire</string>
+    <string name="button_giveRating">Valutare</string>
+    <string name="button_takePicture">Carica Foto</string>
+    <string name="cancel">Annullare</string>
+    <string name="confirm">OK</string>
+    <string name="dialog_giveRating">Valuta piatto</string>
+    <string name="friday">Venerdí</string>
+    <string name="global_rating">Valutazione media:</string>
+    <string name="ingredients">Additivi: <xliff:g id="add">%1$s</xliff:g></string>
+    <string name="merge_dialog_message">Scrivi il nome del secondo piatto</string>
+    <string name="merge_dialog_title">Unire portate</string>
+    <string name="monday">Lunedí</string>
+    <string name="no_ingredients">Additivi: nessuno</string>
+    <string name="no_results">Nessun risultato trovato</string>
+    <string name="ok">OK</string>
+    <string name="pref_priceGroup_label">Gruppo di prezzo</string>
+    <string name="pref_priceGroup_label_guest">Ospiti</string>
+    <string name="pref_priceGroup_label_pupil">Scolari</string>
+    <string name="pref_priceGroup_label_staff">Inservienti</string>
+    <string name="pref_priceGroup_label_students">Studenti</string>
+    <string name="search_hint">Cerca piatto</string>
+    <string name="tag_bio">produzione biologica controllata con certificato EU</string>
+    <string name="tag_cow">contiene carne di Manzo</string>
+    <string name="tag_cow_aw">contiene carne di Manzo da adeguato allevamento </string>
+    <string name="tag_fish">Pesce certificato-MSC</string>
+    <string name="tag_veg">piatto vegetariano (senza aggiunta di carne)</string>
+    <string name="tag_vegan">piatto vegano</string>
+    <string name="tag_pork">contiene carne di maiale </string>
+    <string name="thursday">Giovedí</string>
+    <string name="title_activity_detail">Dettagli piatto</string>
+    <string name="title_activity_searchable">Risultati ricerca</string>
+    <string name="title_activity_settings">Impostazioni</string>
+    <string name="today">Oggi</string>
+    <string name="tomorrow">Domani</string>
+    <string name="tuesday">Martedí</string>
+    <string name="update"></string>
+    <string name="uploaded">Caricata con successo</string>
+    <string name="user_rating">La tua valutazione:</string>
+    <string name="wednesday">Mercoledí</string>
+    <string name="action_search">Ricerca</string>
+    <string name="action_settings">Impostazioni</string>
+</resources>

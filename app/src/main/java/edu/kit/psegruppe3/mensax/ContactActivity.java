@@ -13,7 +13,7 @@ public class ContactActivity extends ActionBarActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.fragment_contact);
+        setContentView(R.layout.activity_contact);
     }
 
 
@@ -22,7 +22,10 @@ public class ContactActivity extends ActionBarActivity {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.options_menu, menu);
 
-        String contactUs = "Specific comments and general or private inquires can be send to:\n"+
+        String contactUs = "This app has been developed by " +
+                "The MensaX students Group at KIT.\n" +
+                "All rights reserved.\n" +
+                "Specific comments and general or private inquires can be send to:\n"+
                 "mensaxapp@web.de";
 
         TextView txtContact = (TextView) findViewById(R.id.txtContact);
