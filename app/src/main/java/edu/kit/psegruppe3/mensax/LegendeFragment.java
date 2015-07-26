@@ -7,9 +7,9 @@ import android.view.View;
 import android.view.ViewGroup;
 
 
-public class InfosFragment extends Fragment {
+public class LegendeFragment extends Fragment {
 
-    public InfosFragment() {
+    public LegendeFragment() {
         // Required empty public constructor
     }
 
@@ -22,7 +22,7 @@ public class InfosFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
-        return inflater.inflate(R.layout.fragment_infos, container, false);
+        return inflater.inflate(R.layout.fragment_legende, container, false);
     }
 
 
