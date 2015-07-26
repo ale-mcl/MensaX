@@ -30,7 +30,6 @@ public class MainActivity extends ActionBarActivity {
 
     private TabAdapter mAdapter;
     private ViewPager mPager;
-    private TabLayout tabLayout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,7 +42,7 @@ public class MainActivity extends ActionBarActivity {
         mPager = (ViewPager) findViewById(R.id.pager);
         mPager.setAdapter(mAdapter);
 
-        tabLayout = (TabLayout) findViewById(R.id.tab_layout);
+        TabLayout tabLayout = (TabLayout) findViewById(R.id.tab_layout);
         tabLayout.setupWithViewPager(mPager);
 
         MensaXSyncAdapter.initializeSyncAdapter(this);

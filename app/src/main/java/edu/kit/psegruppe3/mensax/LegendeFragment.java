@@ -25,6 +25,4 @@ public class LegendeFragment extends Fragment {
         return inflater.inflate(R.layout.fragment_legende, container, false);
     }
 
-
-
 }

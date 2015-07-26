@@ -7,6 +7,7 @@ import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 
 @SuppressWarnings("deprecation")
 public class DetailActivity extends ActionBarActivity {
@@ -59,7 +60,7 @@ public class DetailActivity extends ActionBarActivity {
 
             FragmentTransaction transaction = getFragmentManager().beginTransaction();
             transaction.replace(R.id.detailContainer, legendeFragment);
-            transaction.addToBackStack(null);
+            //transaction.addToBackStack(null);
             transaction.commit();
 
         } else if (id == R.id.action_about) {
@@ -82,6 +83,10 @@ public class DetailActivity extends ActionBarActivity {
     public void onBackPressed(){
         FragmentManager fm = getFragmentManager();
         if (fm.getBackStackEntryCount() > 0) {
+            if(findViewById(R.id.legendeContainer).getVisibility() == View.VISIBLE) {
+                recreate();
+                return;
+            }
             fm.popBackStack();
         } else {
             super.onBackPressed();

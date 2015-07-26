@@ -49,4 +49,6 @@
     <string name="title_activity_contact">Kontaktiere uns</string>
     <string name="action_about">Über die Mensa</string>
     <string name="action_contact">Kontaktiere uns</string>
+    <string name="action_liveCam">Live Cams</string>
+    <string name="title_activity_live_cams">Live Cams</string>
 </resources>
