@@ -60,7 +60,7 @@ public class DetailActivity extends ActionBarActivity {
 
             FragmentTransaction transaction = getFragmentManager().beginTransaction();
             transaction.replace(R.id.detailContainer, legendeFragment);
-            //transaction.addToBackStack(null);
+            transaction.addToBackStack(null);
             transaction.commit();
 
         } else if (id == R.id.action_about) {
@@ -82,12 +82,10 @@ public class DetailActivity extends ActionBarActivity {
     @Override
     public void onBackPressed(){
         FragmentManager fm = getFragmentManager();
-        if (fm.getBackStackEntryCount() > 0) {
-            if(findViewById(R.id.legendeContainer).getVisibility() == View.VISIBLE) {
-                recreate();
-                return;
-            }
-            fm.popBackStack();
+        if(fm.getBackStackEntryCount() > 0 && findViewById(R.id.legendeContainer).getVisibility() == View.VISIBLE) {
+            findViewById(R.id.legendeContainer).setVisibility(View.GONE);
+            //recreate();
+            //fm.popBackStack();
         } else {
             super.onBackPressed();
         }
