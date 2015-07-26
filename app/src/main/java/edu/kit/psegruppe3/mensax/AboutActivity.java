@@ -1,41 +1,31 @@
 package edu.kit.psegruppe3.mensax;
 
-import android.app.Fragment;
+import android.content.Intent;
+import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-public class AboutFragment extends Fragment {
 
-    public AboutFragment() {
-        // Required empty public constructor
-    }
+public class AboutActivity extends ActionBarActivity {
 
     @Override
-    public void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-    }
-
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-
-        final View rootView = inflater.inflate(R.layout.fragment_about, container, false);
+        setContentView(R.layout.fragment_about);
 
         String mensaTimes =
                 "Mittagessen:\n" +
-                "Mo. - Fr. 11:00 - 14:00 Uhr\n" +
-                "Curry Queen:\n" +
-                "Mo. - Do. 11:00 - 14:30 Uhr\n" +
-                "Fr. 11:00 - 14:00 Uhr\n" +
-                "Abendessen in der Cafeteria:\n" +
-                "Mo - Do 16:00 - 19:30 Uhr\n" +
-                "\nKontakt: Adenauerring 7, 76131 Karlsruhe\n" +
-                "Telefon: 0721 6909230\n";
+                        "Mo. - Fr. 11:00 - 14:00 Uhr\n" +
+                        "Curry Queen:\n" +
+                        "Mo. - Do. 11:00 - 14:30 Uhr\n" +
+                        "Fr. 11:00 - 14:00 Uhr\n" +
+                        "Abendessen in der Cafeteria:\n" +
+                        "Mo - Do 16:00 - 19:30 Uhr\n" +
+                        "\nKontakt: Adenauerring 7, 76131 Karlsruhe\n" +
+                        "Telefon: 0721 6909230\n";
 
         String aboutMensa = "Mensa Am Adenauerring:\n" +
                 "In der Mensa Am Adenauerring werden in der Vorlesungszeit täglich um die 9.000 Essen frisch zubereitet und an acht verschiedenen Linien ausgegeben. Unsere Mitarbeiterinnen und Mitarbeiter kümmern sich in zwei Großküchen um ein schmackhaftes und abwechslungsreiches Essen sowie einen reibungslosen Ablauf mit höchsten hygienischen Standards.\n" +
@@ -57,15 +47,55 @@ public class AboutFragment extends Fragment {
                 "Last but not least bieten wir Ihnen von Montag bis Donnerstag die Möglichkeit, zwischen 16.00 – 19.30 Uhr, in unserer Cafeteria Am Adenauerring den Tag im Studentenhaus mit einem Abendessen ausklingen zu lassen. Hierfür schlagen wir Ihnen warme Gerichte mit verschiedenen Beilagen, Salate und Desserts vor.";
 
 
-        ImageView imgMensa = (ImageView) rootView.findViewById(R.id.imageView1);
+        ImageView imgMensa = (ImageView) findViewById(R.id.imageView1);
 
-        TextView txtTimes = (TextView) rootView.findViewById(R.id.txtTimes);
+        TextView txtTimes = (TextView) findViewById(R.id.txtTimes);
         txtTimes.setText(mensaTimes);
 
-        TextView txtAbout = (TextView) rootView.findViewById(R.id.txtAbout);
+        TextView txtAbout = (TextView) findViewById(R.id.txtAbout);
         txtAbout.setText(aboutMensa);
 
-        return rootView;
+
+
+
+    }
+
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.options_menu, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle action bar item clicks here. The action bar will
+        // automatically handle clicks on the Home/Up button, so long
+        // as you specify a parent activity in AndroidManifest.xml.
+        int id = item.getItemId();
+
+        if (id == R.id.action_settings) {
+            startActivity(new Intent(this, SettingsActivity.class));
+            return true;
+
+        } else if (id == R.id.action_search) {
+            onSearchRequested();
+            return true;
+
+        } else if (id == R.id.action_about) {
+            return true;
+
+        } else if (id == R.id.action_contact) {
+            Intent intent = new Intent(this, ContactActivity.class);
+            startActivity(intent);
+
+        }else if (id == R.id.action_liveCam) {
+            Intent intent = new Intent(this, LiveCamsActivity.class);
+            startActivity(intent);
+        }
+
+        return super.onOptionsItemSelected(item);
     }
 
 }

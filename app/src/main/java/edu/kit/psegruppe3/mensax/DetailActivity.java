@@ -63,29 +63,16 @@ public class DetailActivity extends ActionBarActivity {
             transaction.commit();
 
         } else if (id == R.id.action_about) {
-            AboutFragment aboutFragment = new AboutFragment();
-
-            FragmentTransaction transaction = getFragmentManager().beginTransaction();
-            transaction.replace(R.id.detailContainer, aboutFragment);
-            transaction.addToBackStack(null);
-            transaction.commit();
+            Intent intent = new Intent(this, AboutActivity.class);
+            startActivity(intent);
 
         } else if (id == R.id.action_contact) {
-            ContactFragment contactFragment = new ContactFragment();
-
-            FragmentTransaction transaction = getFragmentManager().beginTransaction();
-            transaction.replace(R.id.detailContainer, contactFragment);
-            transaction.addToBackStack(null);
-            transaction.commit();
+            Intent intent = new Intent(this, ContactActivity.class);
+            startActivity(intent);
 
         }else if (id == R.id.action_liveCam) {
-            LiveCamFragment liveCamFragment = new LiveCamFragment();
-
-            FragmentTransaction transaction = getFragmentManager().beginTransaction();
-            transaction.replace(R.id.detailContainer, liveCamFragment);
-            transaction.addToBackStack(null);
-            transaction.commit();
-
+            Intent intent = new Intent(this, LiveCamsActivity.class);
+            startActivity(intent);
         }
 
         return super.onOptionsItemSelected(item);

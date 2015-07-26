@@ -4,16 +4,16 @@
 
     <!-- This permission is necessary in order for MensaX to perform network access. -->
     <uses-permission android:name="android.permission.INTERNET" />
-
     <uses-permission android:name="android.permission.GET_ACCOUNTS" />
 
     <!-- Permissions required by the sync adapter -->
-    <uses-permission
-        android:name="android.permission.READ_SYNC_SETTINGS"/>
-    <uses-permission
-        android:name="android.permission.WRITE_SYNC_SETTINGS"/>
-    <uses-permission
-        android:name="android.permission.AUTHENTICATE_ACCOUNTS"/>
+    <uses-permission android:name="android.permission.READ_SYNC_SETTINGS" />
+    <uses-permission android:name="android.permission.WRITE_SYNC_SETTINGS" />
+    <uses-permission android:name="android.permission.AUTHENTICATE_ACCOUNTS" />
+
+    <uses-feature
+        android:name="android.hardware.camera"
+        android:required="false" />
 
     <application
         android:allowBackup="true"
@@ -29,7 +29,8 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
             <!-- enable the search dialog to send searches to SearchableActivity -->
-            <meta-data android:name="android.app.default_searchable"
+            <meta-data
+                android:name="android.app.default_searchable"
                 android:value=".SearchableActivity" />
         </activity>
         <activity
@@ -39,7 +40,8 @@
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="edu.kit.psegruppe3.mensax.MainActivity" />
-            <meta-data android:name="android.app.default_searchable"
+            <meta-data
+                android:name="android.app.default_searchable"
                 android:value=".SearchableActivity" />
         </activity>
         <activity
@@ -50,27 +52,30 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="edu.kit.psegruppe3.mensax.MainActivity" />
         </activity>
-
-        <activity android:name=".SearchableActivity"
+        <activity
+            android:name=".SearchableActivity"
             android:label="@string/title_activity_searchable" >
             <intent-filter>
                 <action android:name="android.intent.action.SEARCH" />
             </intent-filter>
-            <meta-data android:name="android.app.searchable"
-                android:resource="@xml/searchable"/>
+
+            <meta-data
+                android:name="android.app.searchable"
+                android:resource="@xml/searchable" />
         </activity>
 
         <provider
-            android:authorities="@string/content_authority"
             android:name=".data.CanteenProvider"
+            android:authorities="@string/content_authority"
             android:exported="false"
             android:syncable="true" />
 
         <!-- SyncAdapter's dummy authentication service -->
-        <service android:name=".sync.MensaXAuthenticatorService">
+        <service android:name=".sync.MensaXAuthenticatorService" >
             <intent-filter>
                 <action android:name="android.accounts.AccountAuthenticator" />
             </intent-filter>
+
             <meta-data
                 android:name="android.accounts.AccountAuthenticator"
                 android:resource="@xml/authenticator" />
@@ -79,18 +84,40 @@
         <!-- The SyncAdapter service -->
         <service
             android:name=".sync.MensaXSyncService"
-            android:exported="true"
-            >
+            android:exported="true" >
             <intent-filter>
                 <action android:name="android.content.SyncAdapter" />
             </intent-filter>
+
             <meta-data
                 android:name="android.content.SyncAdapter"
                 android:resource="@xml/syncadapter" />
         </service>
-    </application>
 
-    <uses-feature android:name="android.hardware.camera"
-        android:required="false" />
+        <activity
+            android:name=".AboutActivity"
+            android:label="@string/title_activity_about"
+            android:parentActivityName=".MainActivity" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="edu.kit.psegruppe3.mensax.MainActivity" />
+        </activity>
+        <activity
+            android:name=".ContactActivity"
+            android:label="@string/title_activity_contact"
+            android:parentActivityName=".MainActivity" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="MainActivity" />
+        </activity>
+        <activity
+            android:name=".LiveCamsActivity"
+            android:label="@string/title_activity_live_cams"
+            android:parentActivityName=".MainActivity" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="MainActivity" />
+        </activity>
+    </application>
 
 </manifest>

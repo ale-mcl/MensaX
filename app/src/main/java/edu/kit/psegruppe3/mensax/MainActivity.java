@@ -30,6 +30,7 @@ public class MainActivity extends ActionBarActivity {
 
     private TabAdapter mAdapter;
     private ViewPager mPager;
+    private TabLayout tabLayout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,24 +43,11 @@ public class MainActivity extends ActionBarActivity {
         mPager = (ViewPager) findViewById(R.id.pager);
         mPager.setAdapter(mAdapter);
 
-        TabLayout tabLayout = (TabLayout) findViewById(R.id.tab_layout);
+        tabLayout = (TabLayout) findViewById(R.id.tab_layout);
         tabLayout.setupWithViewPager(mPager);
 
         MensaXSyncAdapter.initializeSyncAdapter(this);
 
-    }
-
-    @Override
-    public void onBackPressed() {
-        if (findViewById(R.id.tab_layout).isShown() == false) {
-            //recreate();
-            Intent intent = getIntent();
-            finish();
-            startActivity(intent);
-
-        } else {
-            finish();
-        }
     }
 
     @Override
@@ -83,34 +71,16 @@ public class MainActivity extends ActionBarActivity {
             return true;
 
         } else if (id == R.id.action_about) {
-            AboutFragment aboutFragment = new AboutFragment();
-
-            findViewById(R.id.tab_layout).setVisibility(View.GONE);
-
-            FragmentTransaction transaction = getFragmentManager().beginTransaction();
-            transaction.replace(R.id.mainContainer, aboutFragment);
-            transaction.addToBackStack(null);
-            transaction.commit();
+            Intent intent = new Intent(this, AboutActivity.class);
+            startActivity(intent);
 
         } else if (id == R.id.action_contact) {
-            ContactFragment contactFragment = new ContactFragment();
-
-            findViewById(R.id.tab_layout).setVisibility(View.GONE);
-
-            FragmentTransaction transaction = getFragmentManager().beginTransaction();
-            transaction.replace(R.id.mainContainer, contactFragment);
-            transaction.addToBackStack(null);
-            transaction.commit();
+            Intent intent = new Intent(this, ContactActivity.class);
+            startActivity(intent);
 
         }else if (id == R.id.action_liveCam) {
-            LiveCamFragment liveCamFragment = new LiveCamFragment();
-
-            findViewById(R.id.tab_layout).setVisibility(View.GONE);
-
-            FragmentTransaction transaction = getFragmentManager().beginTransaction();
-            transaction.replace(R.id.mainContainer, liveCamFragment);
-            transaction.addToBackStack(null);
-            transaction.commit();
+            Intent intent = new Intent(this, LiveCamsActivity.class);
+            startActivity(intent);
         }
 
         return super.onOptionsItemSelected(item);
