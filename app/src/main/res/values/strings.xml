@@ -26,16 +26,16 @@
     <string name="no_results">No results found</string>
 
     <!-- OfferListAdapter strings -->
-    <string name="l1">Linie 1</string>
-    <string name="l2">Linie 2</string>
-    <string name="l3">Linie 3</string>
-    <string name="l45">Linie 4/5</string>
-    <string name="schnitzelbar">Schnitzelbar</string>
-    <string name="update">L6 Update</string>
-    <string name="abend">Abend</string>
-    <string name="aktion">Curry Queen</string>
-    <string name="heisstheke">Cafeteria Heiße Theke</string>
-    <string name="nmtisch">Cafeteria ab 14:30</string>
+    <string name="l1" translatable="false">Linie 1</string>
+    <string name="l2" translatable="false">Linie 2</string>
+    <string name="l3" translatable="false">Linie 3</string>
+    <string name="l45" translatable="false">Linie 4/5</string>
+    <string name="schnitzelbar" translatable="false">Schnitzelbar</string>
+    <string name="update" translatable="false">L6 Update</string>
+    <string name="abend" translatable="false">Abend</string>
+    <string name="aktion" translatable="false">Curry Queen</string>
+    <string name="heisstheke" translatable="false">Cafeteria Heiße Theke</string>
+    <string name="nmtisch" translatable="false">Cafeteria ab 14:30</string>
 
     <!-- Settings strings -->
     <string name="pref_priceGroup_label">Price Group</string>
@@ -72,7 +72,7 @@
     <string name="cancel">Cancel</string>
 
     <string name="ok">OK</string>
-    <string name="merge_dialog_title">Search meal</string>
+    <string name="merge_dialog_title">Merge meals</string>
     <string name="merge_dialog_message">Please input the name of the second meal</string>
 
     <!-- Upload Picture in DetailActivity strings -->
@@ -84,9 +84,5 @@
     <string name="action_legende">Infos</string>
 
 
-    <string name="additives">(1) - with colorant\n(2) - with preserving agents\n(3) - with antioxidant agent\n(4) - with flavor enhancer\n(5) - with phosphate\n(6) - surface waxed\n(7) - with sulphur\n(8) - blackened olives\n(9) - with sweetener\n(10) - can be laxative if overused\n(11) - contains phenylalanine\n(12) - can contain alcohol\n(14) - pressed meat\n(15) - with chocolate glaze\n(27) pressed fish\n\nGl - gluten\nNu - nuts\nEi - eggs\nEr - peanuts\nSo - soya\nSn - mustard\nKr - crustaceans\nFi - fish\nML - milk / lactose\nSe - celery\nSf - sulphite\n Sa - sesame\nLu - lupin\nWe - molluscs</string>
-
-
-
-
+    <string name="additives">(1) - with colorant\n(2) - with preserving agents\n(3) - with antioxidant agent\n(4) - with flavor enhancer\n(5) - with phosphate\n(6) - surface waxed\n(7) - with sulphur\n(8) - blackened olives\n(9) - with sweetener\n(10) - can be laxative if overused\n(11) - contains phenylalanine\n(12) - can contain alcohol\n(14) - pressed meat\n(15) - with chocolate glaze\n(27) - pressed fish\n\nGl - gluten\nNu - nuts\nEi - eggs\nEr - peanuts\nSo - soya\nSn - mustard\nKr - crustaceans\nFi - fish\nML - milk / lactose\nSe - celery\nSf - sulphite\nSa - sesame\nLu - lupin\nWe - molluscs</string>
 </resources>
