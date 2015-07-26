@@ -17,4 +17,20 @@
         android:icon="@drawable/ic_info_outline_white_24dp"
         app:showAsAction="ifRoom" />
 
+    <item android:id="@+id/action_about"
+        android:title="@string/action_about"
+        android:orderInCategory="100"
+        app:showAsAction="never" />
+
+    <item android:id="@+id/action_contact"
+        android:title="@string/action_contact"
+        android:orderInCategory="100"
+        app:showAsAction="never" />
+
+    <item android:id="@+id/action_liveCam"
+        android:title="@string/action_liveCam"
+        android:orderInCategory="100"
+        app:showAsAction="never" />
+
+
 </menu>

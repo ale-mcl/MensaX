@@ -2,13 +2,11 @@ package edu.kit.psegruppe3.mensax;
 
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
-import android.content.Context;
 import android.content.Intent;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.ViewGroup;
 
 @SuppressWarnings("deprecation")
 public class DetailActivity extends ActionBarActivity {
@@ -31,7 +29,7 @@ public class DetailActivity extends ActionBarActivity {
 
         if (savedInstanceState == null) {
             getSupportFragmentManager().beginTransaction()
-                    .add(R.id.container, detailData)
+                    .add(R.id.detailContainer, detailData)
                     .commit();
             }
     }
@@ -45,31 +43,54 @@ public class DetailActivity extends ActionBarActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
+        // Handle action bar item clicks here.
         int id = item.getItemId();
-
 
         if (id == R.id.action_settings) {
             startActivity(new Intent(this, SettingsActivity.class));
             return true;
+
         } else if (id == R.id.action_search) {
             onSearchRequested();
             return true;
+
         } else if (id == R.id.action_legende) {
+            LegendeFragment legendeFragment = new LegendeFragment();
 
-            InfosFragment infosFragment = new InfosFragment();
             FragmentTransaction transaction = getFragmentManager().beginTransaction();
-
-            transaction.replace(R.id.container, infosFragment);
+            transaction.replace(R.id.detailContainer, legendeFragment);
             transaction.addToBackStack(null);
-
             transaction.commit();
+
+        } else if (id == R.id.action_about) {
+            AboutFragment aboutFragment = new AboutFragment();
+
+            FragmentTransaction transaction = getFragmentManager().beginTransaction();
+            transaction.replace(R.id.detailContainer, aboutFragment);
+            transaction.addToBackStack(null);
+            transaction.commit();
+
+        } else if (id == R.id.action_contact) {
+            ContactFragment contactFragment = new ContactFragment();
+
+            FragmentTransaction transaction = getFragmentManager().beginTransaction();
+            transaction.replace(R.id.detailContainer, contactFragment);
+            transaction.addToBackStack(null);
+            transaction.commit();
+
+        }else if (id == R.id.action_liveCam) {
+            LiveCamFragment liveCamFragment = new LiveCamFragment();
+
+            FragmentTransaction transaction = getFragmentManager().beginTransaction();
+            transaction.replace(R.id.detailContainer, liveCamFragment);
+            transaction.addToBackStack(null);
+            transaction.commit();
+
         }
 
         return super.onOptionsItemSelected(item);
     }
+
     @Override
     public void onBackPressed(){
         FragmentManager fm = getFragmentManager();

@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    android:id="@+id/contactlayout"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="?android:windowBackground"
+    android:clickable="true">
+
+    <TextView
+        android:id="@+id/txtContact"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:fontFamily="sans-serif-condensed"
+        android:inputType="textMultiLine"
+        android:layout_marginLeft="4dp"
+        android:layout_marginTop="10dp"
+        android:textColor="@color/Black"
+        android:textSize="20sp"
+        android:scrollbars = "vertical"/>
+
+
+</LinearLayout>

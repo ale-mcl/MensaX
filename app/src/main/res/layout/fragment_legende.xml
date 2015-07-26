@@ -9,6 +9,17 @@
     android:clickable="true">
 
     <TextView
+        android:id="@+id/txtTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/legende_title"
+        android:fontFamily="sans-serif-condensed"
+        android:textColor="@color/Black"
+        android:textSize="25sp"
+        android:layout_marginBottom="13dp"/>
+
+
+    <TextView
         android:id="@+id/txtLegende"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -79,15 +90,5 @@
         android:drawablePadding="5dp"
         android:singleLine="true"
         android:text="@string/legende_bio"/>
-
-    <TextView
-        android:id="@+id/txtAddress"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:paddingTop="10pt"
-        android:fontFamily="sans-serif-condensed"
-        android:inputType="textMultiLine" />
-
-
 
 </LinearLayout>
