@@ -183,16 +183,13 @@ public class MensaXSyncAdapter extends AbstractThreadedSyncAdapter {
     }
 
     private void getMealNamesFromJson(String mealNamesJsonStr) throws JSONException {
-        final String API_MEAL_NAME = "name";
-        final String API_MEAL_ID = "id";
-
         try {
             JSONArray list = new JSONArray(mealNamesJsonStr);
             Vector<ContentValues> cVVector = new Vector<ContentValues>(list.length());
             for (int i = 0; i < list.length(); i++) {
                 JSONObject item = list.getJSONObject(i);
-                String name = item.getString(API_MEAL_NAME);
-                int id = item.getInt(API_MEAL_ID);
+                String name = item.getString(ServerApiContract.API_MEAL_NAME);
+                int id = item.getInt(ServerApiContract.API_MEAL_ID);
                 Cursor mealCursor = getContext().getContentResolver().query(
                         CanteenContract.MealEntry.CONTENT_URI,
                         new String[]{CanteenContract.MealEntry._ID},
