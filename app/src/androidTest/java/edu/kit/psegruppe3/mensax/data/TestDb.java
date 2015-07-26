@@ -7,30 +7,43 @@ import android.test.AndroidTestCase;
 
 import java.util.HashSet;
 
+/**
+ * TestDb class.
+ * @author MensaX-group
+ * @version 1.0
+ *
+ * The Database is going to be tested.
+ */
 public class TestDb extends AndroidTestCase {
 
     public static final String LOG_TAG = TestDb.class.getSimpleName();
 
-    // Since we want each test to start with a clean slate
+    /**
+     * We want each test to start with a clean slate
+     */
     void deleteTheDatabase() {
+
         mContext.deleteDatabase(CanteenDbHelper.DATABASE_NAME);
     }
 
-    /*
-        This function gets called before each test is executed to delete the database.  This makes
-        sure that we always have a clean test.
-    */
+    /**
+     * This function gets called before each test is executed to delete the database.  This makes
+     * sure that we always have a clean test.
+     */
     public void setUp() {
+
         deleteTheDatabase();
     }
 
-    /*
-        Note that this only tests that the Meal table has the correct columns.
+    /**
+     * This only tests that the Meal table has the correct columns.
+     * @throws Throwable if something wrong happens
      */
     public void testCreateDb() throws Throwable {
-        // build a HashSet of all of the table names we wish to look for
-        // Note that there will be another table in the DB that stores the
-        // Android metadata (db version information)
+
+         // Build a HashSet of all of the table names we want to look for
+         // There will be another table in the DB that stores the
+         // Android metadata (db version information)
         final HashSet<String> tableNameHashSet = new HashSet<String>();
         tableNameHashSet.add(CanteenContract.MealEntry.TABLE_NAME);
         tableNameHashSet.add(CanteenContract.OfferEntry.TABLE_NAME);
@@ -40,7 +53,7 @@ public class TestDb extends AndroidTestCase {
                 this.mContext).getWritableDatabase();
         assertEquals(true, db.isOpen());
 
-        // have we created the tables we want?
+        // check if the tables we want have been created
         Cursor c = db.rawQuery("SELECT name FROM sqlite_master WHERE type='table'", null);
 
         assertTrue("Error: This means that the database has not been created correctly",
@@ -56,7 +69,7 @@ public class TestDb extends AndroidTestCase {
         assertTrue("Error: Database created without both the meal entry and offer entry tables",
                 tableNameHashSet.isEmpty());
 
-        // now, do our tables contain the correct columns?
+        // do the tables contain the correct columns?
         c = db.rawQuery("PRAGMA table_info(" + CanteenContract.MealEntry.TABLE_NAME + ")",
                 null);
 
@@ -75,35 +88,37 @@ public class TestDb extends AndroidTestCase {
             mealColumnHashSet.remove(columnName);
         } while(c.moveToNext());
 
-        // if this fails, it means that your database doesn't contain all of the required meal
+        // if this fails, it means that the database doesn't contain all of the required meal
         // entry columns
         assertTrue("Error: The database doesn't contain all of the required meal entry columns",
                 mealColumnHashSet.isEmpty());
         db.close();
     }
 
-    /*
-        Code to test that we can insert and query the meal database.
-        Want to look in TestUtilities "createmealCarbonara" function.  Can
-        also make use of the ValidateCurrentRecord function from within TestUtilities.
-        */
+    /**
+     * Code to test that we can insert and query the meal database.
+     * Look in TestUtilities under "createMealCarbonara" function.
+     * Can also make use of the ValidateCurrentRecord function from within TestUtilities.
+     */
     public void testMealTable() {
+
         insertMeal();
     }
 
-    /*
-        Code to test that we can insert and query the database.
-        You'll want to look in TestUtilities where we can use the "createOfferValues" function.
-        You can also make use of the validateCurrentRecord function from within TestUtilities.
+    /**
+     * Code to test that we can insert and query the offer database.
+     * Look in TestUtilities  "createOfferValues" function.
+     * Can also make use of the ValidateCurrentRecord function from within TestUtilities.
      */
     public void testOfferTable() {
-        // First insert the meal, and then use the mealRowId to insert
-        // the offer. Make sure to cover as many failure cases as you can.
-
-        // Instead of rewriting all of the code we've already written in testMealTable
-        // we can move this code to insertMeal and then call insertMeal from both
-        // tests. Why move it? We need the code to return the ID of the inserted meal
-        // and the testMealTable can only return void because it's a test.
+        /** First insert the meal, and then use the mealRowId to insert
+         * the offer. Make sure to cover as many failure cases as you can.
+         *
+         * Instead of rewriting all of the code we've already written in testMealTable
+         * we move this code to insertMeal and then call insertMeal from both tests,
+         * because we need the code to return the ID of the inserted meal
+         * and the testMealTable can only return void because it's a test.
+         */
 
         long mealRowId = insertMeal();
 
@@ -111,7 +126,7 @@ public class TestDb extends AndroidTestCase {
         assertFalse("Error: Meal Not Inserted Correctly", mealRowId == -1L);
 
         // First step: Get reference to writable database
-        // If there's an error in those massive SQL table creation Strings,
+        // If there's an error in the SQL table creation Strings,
         // errors will be thrown here when we try to get a writable database.
         CanteenDbHelper dbHelper = new CanteenDbHelper(mContext);
         SQLiteDatabase db = dbHelper.getWritableDatabase();
@@ -124,7 +139,7 @@ public class TestDb extends AndroidTestCase {
         assertTrue(offerRowId != -1);
 
         // Fourth Step: Query the database and receive a Cursor back
-        // A cursor is your primary interface to the query results.
+        // A cursor is our primary interface to the query results.
         Cursor offerCursor = db.query(
                 CanteenContract.OfferEntry.TABLE_NAME,  // Table to Query
                 null, // leaving "columns" null just returns all the columns.
@@ -151,19 +166,21 @@ public class TestDb extends AndroidTestCase {
         dbHelper.close();
     }
 
-    /*
-        You can move your code from testMealTable to here so that you
-        can call this code from both testOfferTable and testMealTable.
+    /**
+     * This is a helper method.
+     * Moved the code from testMealTable here so that we can call
+     * this code from both testOfferTable and testMealTable
+     * @return mealRowId
      */
     public long insertMeal() {
         // First step: Get reference to writable database
-        // If there's an error in those massive SQL table creation Strings,
+        // If there's an error in the SQL table creation Strings,
         // errors will be thrown here when you try to get a writable database.
         CanteenDbHelper dbHelper = new CanteenDbHelper(mContext);
         SQLiteDatabase db = dbHelper.getWritableDatabase();
 
-        // Second Step: Create ContentValues of what you want to insert
-        // (use the createMealCarbonara)
+        // Second Step: Create ContentValues of what we want to insert
+        // (used the createMealCarbonara)
         ContentValues testValues = TestUtilities.createMealCarbonara();
 
         // Third Step: Insert ContentValues into database and get a row ID back
@@ -173,11 +190,10 @@ public class TestDb extends AndroidTestCase {
         // Verify we got a row back.
         assertTrue(mealRowId != -1);
 
-        // Data's inserted.  IN THEORY.  Now pull some out to stare at it and verify it made
-        // the round trip.
+        // Data's inserted.
 
         // Fourth Step: Query the database and receive a Cursor back
-        // A cursor is your primary interface to the query results.
+        // A cursor is our primary interface to the query results.
         Cursor cursor = db.query(
                 CanteenContract.MealEntry.TABLE_NAME,  // Table to Query
                 null, // all columns
@@ -193,8 +209,7 @@ public class TestDb extends AndroidTestCase {
         assertTrue("Error: No Records returned from meal query", cursor.moveToFirst());
 
         // Fifth Step: Validate data in resulting Cursor with the original ContentValues
-        // (you can use the validateCurrentRecord function in TestUtilities to validate the
-        // query if you like)
+        // (used the validateCurrentRecord function in TestUtilities to validate the query)
         TestUtilities.validateCurrentRecord("Error: Meal Query Validation Failed",
                 cursor, testValues);
 

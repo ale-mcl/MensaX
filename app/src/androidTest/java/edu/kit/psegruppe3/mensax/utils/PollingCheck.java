@@ -4,6 +4,11 @@ import junit.framework.Assert;
 
 import java.util.concurrent.Callable;
 
+/**
+ * PollingCheck class.
+ *
+ * Taken from Android CTS (Compatibility Test Suite) tests.
+ */
 public abstract class PollingCheck {
     private static final long TIME_SLICE = 50;
     private long mTimeout = 3000;

@@ -15,20 +15,37 @@ import edu.kit.psegruppe3.mensax.utils.PollingCheck;
 import java.util.Map;
 import java.util.Set;
 
-/*
-    These are functions and some test data to make it easier to test the database and
-    Content Provider.
+/**
+ * TestUtilities class.
+ * @author MensaX-group
+ * @version 1.0
+ *
+ * These are functions and some test data to make it easier to test the database and
+ * Content Provider.
  */
 public class TestUtilities extends AndroidTestCase {
+
     static final String TEST_MEAL = "Carbonara";
     static final long TEST_DATE = 1419033600L;  // December 20th, 2014
 
+    /**
+     * Validate Cursor method
+     * @param error showed
+     * @param valueCursor to check
+     * @param expectedValues the one it should be
+     */
     static void validateCursor(String error, Cursor valueCursor, ContentValues expectedValues) {
         assertTrue("Empty cursor returned. " + error, valueCursor.moveToFirst());
         validateCurrentRecord(error, valueCursor, expectedValues);
         valueCursor.close();
     }
 
+    /**
+     * Validate current record method
+     * @param error showed
+     * @param valueCursor to check
+     * @param expectedValues the one it sohuld be
+     */
     static void validateCurrentRecord(String error, Cursor valueCursor, ContentValues expectedValues) {
         Set<Map.Entry<String, Object>> valueSet = expectedValues.valueSet();
         for (Map.Entry<String, Object> entry : valueSet) {
@@ -42,8 +59,10 @@ public class TestUtilities extends AndroidTestCase {
         }
     }
 
-    /*
-        Use this to create some default weather values for the database tests.
+    /**
+     * Creates some default offer values for the database tests.
+     * @param mealRowId key of the foreign column
+     * @return offerValues
      */
     static ContentValues createOfferValues(long mealRowId) {
         ContentValues offerValues = new ContentValues();
@@ -67,11 +86,13 @@ public class TestUtilities extends AndroidTestCase {
         return offerValues;
     }
 
-    /*
-        MealEntry part of the CanteenContract.
-    */
+    /**
+     * Helper function.
+     * MealEntry part of the CanteenContract.
+     * @return testValues
+     */
     static ContentValues createMealCarbonara() {
-        // Create a new map of values, where column names are the keys //ID??
+        // Create a new map of values
         ContentValues testValues = new ContentValues();
         testValues.put(CanteenContract.MealEntry.COLUMN_MEAL_NAME, TEST_MEAL);
         testValues.put(CanteenContract.MealEntry.COLUMN_MEAL_ID, 1);
@@ -79,8 +100,10 @@ public class TestUtilities extends AndroidTestCase {
         return testValues;
     }
 
-    /*
-        Creates the MealEntry part of the CanteenContract as well as the CanteenDbHelper.
+    /**
+     * Creates the MealEntry part of the CanteenContract as well as the CanteenDbHelper.
+     * @param context test records
+     * @return mealRowId
      */
     static long insertMealCarbonara(Context context) {
         // insert our test records into the database
@@ -97,13 +120,13 @@ public class TestUtilities extends AndroidTestCase {
         return mealRowId;
     }
 
-    /*
-        The functions provided inside of TestProvider use this utility class to test
-        the ContentObserver callbacks using the PollingCheck class grabbed from the Android
-        CTS tests.
-
-        Note that this only tests that the onChange function is called; it does not test that the
-        correct Uri is returned.
+    /**
+     * The functions provided inside of TestProvider use this utility class to test
+     * the ContentObserver callbacks using the PollingCheck class grabbed from the Android
+     * CTS (Compatibility Test Suite) tests.
+     *
+     * Note: This only tests that the onChange function is called.
+     * It doesn't test that the correct Uri is returned.
      */
     static class TestContentObserver extends ContentObserver {
         final HandlerThread mHT;
@@ -132,7 +155,7 @@ public class TestUtilities extends AndroidTestCase {
         }
 
         public void waitForNotificationOrFail() {
-            // Note: The PollingCheck class is taken from the Android CTS (Compatibility Test Suite).
+            // Note: The PollingCheck class is taken from the Android CTS.
             // The reason that PollingCheck works is that, by default, the JUnit
             // testing framework is not running on the main Android application thread.
             new PollingCheck(5000) {

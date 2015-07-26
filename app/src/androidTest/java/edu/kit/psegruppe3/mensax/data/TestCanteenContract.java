@@ -3,17 +3,20 @@ package edu.kit.psegruppe3.mensax.data;
 import android.net.Uri;
 import android.test.AndroidTestCase;
 
-/*
-    This is NOT a complete test for the CanteenContract.
+/**
+ * TestCanteenContract class.
+ * @author MensaX-group
+ * @version 1.0
+ *
+ * Note: this is NOT a complete test for the CanteenContract.
  */
 public class TestCanteenContract extends AndroidTestCase {
 
     // intentionally includes a slash to make sure Uri is getting quoted correctly
-    private static final String TEST_MEAL = "Sahnefruchtjoghurt";
-    private static final long TEST_WEATHER_DATE = 1419033600L;  // December 20th, 2014
+    private static final String TEST_MEAL = "/Sahnefruchtjoghurt";
 
-    /*
-        Uncomment this out to test mensa offer function.
+    /**
+     * Test mensa offer function.
      */
     public void testBuildMealWithName() {
         Uri mealUri = CanteenContract.MealEntry.buildMealWithMealNameUri(TEST_MEAL);
@@ -24,7 +27,7 @@ public class TestCanteenContract extends AndroidTestCase {
                 TEST_MEAL, mealUri.getLastPathSegment());
         assertEquals("Error: Mensa meal Uri doesn't match our expected result",
                 mealUri.toString(),
-                "content://edu.kit.psegruppe3.mensax/meal/Sahnefruchtjoghurt"); //TO CHECK!!
+                "content://edu.kit.psegruppe3.mensax/meal/Sahnefruchtjoghurt");
     }
 }
 
