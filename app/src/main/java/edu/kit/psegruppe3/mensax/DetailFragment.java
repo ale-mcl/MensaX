@@ -7,7 +7,6 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.provider.MediaStore;
@@ -60,6 +59,8 @@ public class DetailFragment extends Fragment {
     private RatingBar userRating;
     private GalleryAdapter galleryAdapter;
     private Gallery gallery;
+    private TextView firstTagTextView;
+    private TextView secondTagTextView;
 
     public DetailFragment() {
     }
@@ -72,23 +73,12 @@ public class DetailFragment extends Fragment {
         Integer[] mealId = {getArguments().getInt(DetailActivity.ARG_MEAL_ID)};
 
         gallery = (Gallery) rootView.findViewById(R.id.gallery1);
-        /*gallery.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            public void onItemClick(AdapterView<?> parent, View v, int position,long id)
-            {
-                // display the images selected
-               // ImageView imageView = (ImageView) getActivity().findViewById(R.id.image1);
-               // imageView.setImageResource(imageIDs[position]);
-            }
-        });*/
-
-
         txtMealName = (TextView) rootView.findViewById(R.id.mealName);
-
         txtIngredients = (TextView) rootView.findViewById(R.id.showIngredients);
-
         globalRating = (RatingBar) rootView.findViewById(R.id.showGlobalRating);
-
         userRating = (RatingBar) rootView.findViewById(R.id.showUserRating);
+        firstTagTextView = (TextView) rootView.findViewById(R.id.first_tag_textview);
+        secondTagTextView = (TextView) rootView.findViewById(R.id.second_tag_textview);
 
         FetchMealDataTask fetchMealDataTask = new FetchMealDataTask();
         fetchMealDataTask.execute(mealId);
@@ -134,7 +124,6 @@ public class DetailFragment extends Fragment {
                 askSearchQuery();
             }
         });
-
         return rootView;
     }
 
@@ -168,19 +157,38 @@ public class DetailFragment extends Fragment {
             return;
         }
         if (downloadImages) {
-            for (int i = 0; i < meal.getImageCount(); i++) {
-                boolean isLastPicture = (i == meal.getImageCount());
-                DownloadPictureTask downloadPictureTask = new DownloadPictureTask(isLastPicture);
-                downloadPictureTask.execute(meal.getImage(i).toString());
+            DownloadPictureTask downloadPictureTask = new DownloadPictureTask();
+            downloadPictureTask.execute(meal.getImages());
+        }
+
+        int i = Meal.TAG_BIO;
+        while (i <= Meal.TAG_VEG) {
+            if (meal.hasTag(i)) {
+                firstTagTextView.setText(Utility.getTagString(getActivity(), i));
+                firstTagTextView.setCompoundDrawablesWithIntrinsicBounds(Utility.getTagDrawable(getActivity(), i), null, null, null);
+                i++;
+                break;
             }
+            i++;
+        }
+        while (i <= Meal.TAG_VEG) {
+            if (meal.hasTag(i)) {
+                secondTagTextView.setText(Utility.getTagString(getActivity(), i));
+                secondTagTextView.setCompoundDrawablesWithIntrinsicBounds(Utility.getTagDrawable(getActivity(), i), null, null, null);
+                break;
+            }
+            i++;
         }
 
         txtMealName.setText(meal.getName());
 
-        txtIngredients.setText("[" + meal.getIngredients() + "]");
+        if (!meal.getIngredients().equals("[]")) {
+            txtIngredients.setText(getString(R.string.ingredients, meal.getIngredients()));
+        } else {
+            txtIngredients.setText(getString(R.string.no_ingredients));
+        }
 
         globalRating.setRating((float) meal.getGlobalRating());
-
         userRating.setRating((float) meal.getUserRating());
     }
 
@@ -212,10 +220,10 @@ public class DetailFragment extends Fragment {
     private void askSearchQuery() {
         final EditText input = new EditText(getActivity());
         AlertDialog.Builder adb = new AlertDialog.Builder(getActivity());
-        adb.setTitle("Search Items");
-        adb.setMessage("Please input the name of the item you are looking for.");
+        adb.setTitle(R.string.merge_dialog_title);
+        adb.setMessage(R.string.merge_dialog_message);
         adb.setView(input);
-        adb.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+        adb.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int whichButton) {
 
                 Editable upc = input.getText();
@@ -224,7 +232,7 @@ public class DetailFragment extends Fragment {
                 dialog.cancel();
             }
         });
-        adb.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+        adb.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int whichButton) {
                 dialog.cancel();
             }
@@ -242,19 +250,19 @@ public class DetailFragment extends Fragment {
         }
     }
 
-    private class UploadPictureTask extends AsyncTask<String,Void, Void> {
+    private class UploadPictureTask extends AsyncTask<String, Void, Integer> {
 
         private final String LOG_TAG = UploadPictureTask.class.getSimpleName();
 
         @Override
-        protected Void doInBackground(String... params) {
+        protected Integer doInBackground(String... params) {
             if (params.length < 2) {
                 return null;
             }
 
             HttpURLConnection urlConnection = null;
             OutputStreamWriter writer = null;
-
+            int response = -1;
             try {
                 URL url = ServerApiContract.getURL(ServerApiContract.PATH_IMAGE);
 
@@ -273,7 +281,7 @@ public class DetailFragment extends Fragment {
                 writer = new OutputStreamWriter(urlConnection.getOutputStream());
                 writer.write(output);
                 writer.flush();
-
+                response = urlConnection.getResponseCode();
             } catch (IOException e) {
                 Log.e(LOG_TAG, "Error ", e);
                 return null;
@@ -284,8 +292,15 @@ public class DetailFragment extends Fragment {
                 if (urlConnection != null) {
                     urlConnection.disconnect();
                 }
+                if (writer != null) {
+                    try {
+                        writer.close();
+                    } catch (final IOException e) {
+                        Log.e(LOG_TAG, "Error closing stream", e);
+                    }
+                }
             }
-            return null;
+            return response;
         }
         private String getJsonString(String mealId, String userId, String image) throws JSONException {
             String imageJsonStr = "";
@@ -328,7 +343,7 @@ public class DetailFragment extends Fragment {
                 urlConnection.setRequestMethod("POST");
                 urlConnection.connect();
 
-                //Log.d("doInBackground(Request)", output);
+                Log.d("doInBackground(Request)", output);
 
                 writer = new OutputStreamWriter(urlConnection.getOutputStream());
                 writer.write(output);
@@ -342,7 +357,7 @@ public class DetailFragment extends Fragment {
                 while ((line = reader.readLine()) != null) {
                     result.append(line);
                 }
-                //Log.d("doInBackground(Resp)", result.toString());
+                Log.d("doInBackground(Resp)", result.toString());
 
                 newMeal = getMealDataFromJson(result.toString());
             } catch (IOException e) {
@@ -368,7 +383,7 @@ public class DetailFragment extends Fragment {
 
         @Override
         protected void onPostExecute(Meal m) {
-            if (meal != null) {
+            if (m != null) {
                 meal = m;
                 updateScreen(true);
             }
@@ -384,9 +399,9 @@ public class DetailFragment extends Fragment {
             JSONObject ratings = data.getJSONObject(ServerApiContract.API_MEAL_RATINGS);
             JSONArray images = data.getJSONArray(ServerApiContract.API_MEAL_IMAGES);
 
-            Uri[] imageUris = new Uri[images.length()];
+            String[] imageUris = new String[images.length()];
             for (int i = 0; i < images.length(); i++) {
-                imageUris[i] = Uri.parse(images.getString(i));
+                imageUris[i] = images.getString(i);
             }
             String mealName = meal.getString(ServerApiContract.API_MEAL_NAME);
             String ingredients = tags.getString(ServerApiContract.API_MEAL_INGREDIENTS);
@@ -415,6 +430,7 @@ public class DetailFragment extends Fragment {
             newMeal.setGlobalRating(globalRating);
             newMeal.setUserRating(userRating);
             newMeal.setIngredients(ingredients);
+            newMeal.setImages(imageUris);
 
             return newMeal;
         }
@@ -431,60 +447,60 @@ public class DetailFragment extends Fragment {
         }
     }
 
-    private class DownloadPictureTask extends AsyncTask<String, Void, Bitmap> {
-
-        private boolean isLastPicture;
-
-        public DownloadPictureTask(boolean isLastPicture) {
-           this.isLastPicture = isLastPicture;
-        }
-
+    private class DownloadPictureTask extends AsyncTask<String, Void, Bitmap[]> {
         @Override
-        protected Bitmap doInBackground(String... params) {
+        protected Bitmap[] doInBackground(String... params) {
             if (params.length == 0) {
                 return null;
             }
+            Bitmap[] bmps = new Bitmap[params.length];
 
-            HttpURLConnection urlConnection = null;
-            BufferedReader reader = null;
-            OutputStreamWriter writer = null;
-            int responseCode = -1;
-            Bitmap result = null;
+            for (int i = 0; i < params.length; i++) {
+                HttpURLConnection urlConnection = null;
+                int responseCode = -1;
+                Bitmap result = null;
 
-            try {
-                URL url = new URL(params[0]);
-                urlConnection = (HttpURLConnection) url.openConnection();
-                urlConnection.setDoInput(true);
-                urlConnection.connect();
-                responseCode = urlConnection.getResponseCode();
-                if(responseCode == HttpURLConnection.HTTP_OK) {
-                    InputStream input = urlConnection.getInputStream();
-                    result = BitmapFactory.decodeStream(input);
-                    input.close();
+                try {
+                    URL url = new URL(params[i]);
+                    urlConnection = (HttpURLConnection) url.openConnection();
+                    urlConnection.setDoInput(true);
+                    urlConnection.connect();
+                    responseCode = urlConnection.getResponseCode();
+                    if(responseCode == HttpURLConnection.HTTP_OK) {
+                        InputStream input = urlConnection.getInputStream();
+                        result = BitmapFactory.decodeStream(input);
+                        input.close();
+                    }
+
+                } catch (IOException e) {
+                    Log.e(LOG_TAG, "Error ", e);
+                    return null;
+                } finally {
+                    if (urlConnection != null) {
+                        urlConnection.disconnect();
+                    }
                 }
-
-            } catch (IOException e) {
-                Log.e(LOG_TAG, "Error ", e);
-                return null;
-            } finally {
-                if (urlConnection != null) {
-                    urlConnection.disconnect();
-                }
+                bmps[i] = result;
             }
-            return result;
+
+
+
+            return bmps;
         }
 
         @Override
-        protected void onPostExecute(Bitmap bitmap) {
-            galleryAdapter.addBitmap(bitmap);
-            if (isLastPicture) {
-                gallery.setAdapter(galleryAdapter);
+        protected void onPostExecute(Bitmap[] bmps) {
+            GalleryAdapter galleryAdapter = new GalleryAdapter(getActivity());
+            if (bmps != null) {
+                for (int i = 0; i < bmps.length; i++) {
+                    galleryAdapter.addBitmap(bmps[i]);
+                }
             }
-            super.onPostExecute(bitmap);
+            gallery.setAdapter(galleryAdapter);
+            super.onPostExecute(bmps);
         }
     }
 
-    // use like this: rateMealTask.execute(mealid, ratingvalue);
     private class RateMealTask extends AsyncTask<Integer, Void, Void> {
 
         @Override
@@ -574,16 +590,16 @@ public class DetailFragment extends Fragment {
         }
     }
 
-    private class MergeMealTask extends AsyncTask<Integer, Void, Void> {
+    private class MergeMealTask extends AsyncTask<Integer, Void, Integer> {
 
         @Override
-        protected Void doInBackground(Integer... params) {
+        protected Integer doInBackground(Integer... params) {
             if (params.length < 2) {
                 return null;
             }
             HttpURLConnection urlConnection = null;
             OutputStreamWriter writer = null;
-            BufferedReader reader = null;
+            Integer response = -1;
             String token = getToken();
 
             try {
@@ -597,22 +613,11 @@ public class DetailFragment extends Fragment {
                 urlConnection.setRequestMethod("POST");
                 urlConnection.connect();
 
-                //Log.d("doInBackground(Request)", output);
-
                 writer = new OutputStreamWriter(urlConnection.getOutputStream());
                 writer.write(output);
                 writer.flush();
 
-                InputStream input = urlConnection.getInputStream();
-                reader = new BufferedReader(new InputStreamReader(input));
-                StringBuilder result = new StringBuilder();
-                String line;
-
-                while ((line = reader.readLine()) != null) {
-                    result.append(line);
-                }
-
-
+                response = urlConnection.getResponseCode();
             } catch (JSONException e){
                 Log.e(LOG_TAG, e.getMessage(), e);
                 e.printStackTrace();
@@ -630,15 +635,8 @@ public class DetailFragment extends Fragment {
                         Log.e(LOG_TAG, "Error closing stream", e);
                     }
                 }
-                if (reader != null) {
-                    try {
-                        reader.close();
-                    } catch (final IOException e) {
-                        Log.e(LOG_TAG, "Error closing stream", e);
-                    }
-                }
             }
-            return null;
+            return response;
         }
 
         private String getJsonString(int fistMealId, int secondMealId, String userid) throws JSONException {

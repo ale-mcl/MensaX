@@ -1,4 +1,5 @@
-<resources>
+<resources
+    xmlns:xliff="http://schemas.android.com/apk/res-auto">
     <string name="app_name" translatable="false">MensaX</string>
 
     <!-- TabListener strings -->
@@ -21,19 +22,20 @@
 
     <!-- SearchableActivity strings -->
     <string name="search_hint">Search for meals</string>
+
     <string name="no_results">No results found</string>
 
     <!-- OfferListAdapter strings -->
-    <string name="l1">Linie 1</string>
-    <string name="l2">Linie 2</string>
-    <string name="l3">Linie 3</string>
-    <string name="l45">Linie 4/5</string>
-    <string name="schnitzelbar">Schnitzelbar</string>
-    <string name="update">L6 Update</string>
-    <string name="abend">Abend</string>
-    <string name="aktion">Curry Queen</string>
-    <string name="heisstheke">Cafeteria Heiße Theke</string>
-    <string name="nmtisch">Cafeteria ab 14:30</string>
+    <string name="l1" translatable="false">Linie 1</string>
+    <string name="l2" translatable="false">Linie 2</string>
+    <string name="l3" translatable="false">Linie 3</string>
+    <string name="l45" translatable="false">Linie 4/5</string>
+    <string name="schnitzelbar" translatable="false">Schnitzelbar</string>
+    <string name="update" translatable="false">L6 Update</string>
+    <string name="abend" translatable="false">Abend</string>
+    <string name="aktion" translatable="false">Curry Queen</string>
+    <string name="heisstheke" translatable="false">Cafeteria Heiße Theke</string>
+    <string name="nmtisch" translatable="false">Cafeteria ab 14:30</string>
 
     <!-- Settings strings -->
     <string name="pref_priceGroup_label">Price Group</string>
@@ -49,39 +51,38 @@
     <string name="pref_priceGroup_pupil" translatable="false">pupil</string>
 
     <!-- DetailFragment strings -->
-    <string name="button_giveRating">Rate this meal</string>
-    <string name="button_foodMerge">Merge two meals</string>
-    <string name="button_takePicture">Take a photo</string>
-    <string name="ingredients">Ingredients:</string>
+    <string name="button_giveRating">Rate</string>
+    <string name="button_foodMerge">Merge</string>
+    <string name="button_takePicture">Upload photo</string>
+    <string name="ingredients">Additives: <xliff:g id="add">%1$s</xliff:g></string>
+    <string name="no_ingredients">Additives: none</string>
     <string name="global_rating">Average Rating:</string>
     <string name="user_rating">Your Rating:</string>
+    <string name="tag_bio">controlled biological cultivation</string>
+    <string name="tag_fish">marine stewardship council (msc) certified fish</string>
+    <string name="tag_pork">contains pork</string>
+    <string name="tag_cow">contains beef</string>
+    <string name="tag_cow_aw">contains beef (species-appropriate husbandry)</string>
+    <string name="tag_vegan">vegan dish</string>
+    <string name="tag_veg">vegetarian dish (no meat added)</string>
 
     <!-- Give Rating in DetailFragment strings -->
     <string name="dialog_giveRating">Rate this meal</string>
     <string name="confirm">Confirm</string>
     <string name="cancel">Cancel</string>
 
+    <string name="ok">OK</string>
+    <string name="merge_dialog_title">Merge meals</string>
+    <string name="merge_dialog_message">Please input the name of the second meal</string>
+
     <!-- Upload Picture in DetailActivity strings -->
     <string name="uploaded">Successfully uploaded</string>
 
-    <!-- Menus strings -->
+    <!-- Menu action bar strings -->
     <string name="action_settings">Settings</string>
     <string name="action_search">Search</string>
     <string name="action_legende">Infos</string>
-    <string name="action_about">About</string>
-    <string name="action_contact">Contact us</string>
-    <string name="action_liveCam">Live Cam</string>
 
 
-    <!-- LegendeFragment strings -->
-    <string name="legende_title">Legende Speisezusätze</string>
-    <string name="legende_cow"> - enthält Rindfleisch</string>
-    <string name="legende_cow_aw"> - enthält Rindfleisch aus artgerechter Tierhaltung</string>
-    <string name="legende_pork"> - enthält Schweinefleisch </string>
-    <string name="legende_veg"> - vegetarisches Gericht (ohne Fleischzusatz)</string>
-    <string name="legende_vegan"> - veganes Gericht</string>
-    <string name="legende_fish"> - MSC-zertifizierter Fisch</string>
-    <string name="legende_bio"> - kontrolliert biologischer Anbau mit EU Bio-Siegel</string>
-
-
+    <string name="additives">(1) - with colorant\n(2) - with preserving agents\n(3) - with antioxidant agent\n(4) - with flavor enhancer\n(5) - with phosphate\n(6) - surface waxed\n(7) - with sulphur\n(8) - blackened olives\n(9) - with sweetener\n(10) - can be laxative if overused\n(11) - contains phenylalanine\n(12) - can contain alcohol\n(14) - pressed meat\n(15) - with chocolate glaze\n(27) - pressed fish\n\nGl - gluten\nNu - nuts\nEi - eggs\nEr - peanuts\nSo - soya\nSn - mustard\nKr - crustaceans\nFi - fish\nML - milk / lactose\nSe - celery\nSf - sulphite\nSa - sesame\nLu - lupin\nWe - molluscs</string>
 </resources>

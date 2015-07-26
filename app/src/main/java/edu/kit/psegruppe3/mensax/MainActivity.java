@@ -115,8 +115,10 @@ public class MainActivity extends ActionBarActivity {
         public Fragment getItem(int position) {
             Calendar calendar = Calendar.getInstance();
             int currentDay = calendar.get(Calendar.DAY_OF_WEEK);
-            if (currentDay + position > 6) {
+            if (currentDay + position > Calendar.FRIDAY) {
                 calendar.add(Calendar.DATE, position + 2);
+            } else if (currentDay == Calendar.SUNDAY) {
+                calendar.add(Calendar.DATE, position + 1);
             } else {
                 calendar.add(Calendar.DATE, position);
             }
@@ -138,14 +140,14 @@ public class MainActivity extends ActionBarActivity {
             Calendar calendar = Calendar.getInstance();
             String dayOfWeek = "";
             int currentDay = calendar.get(Calendar.DAY_OF_WEEK);
-            int day = (currentDay + position);
-            if (day > Calendar.FRIDAY) {
-                day = day - Calendar.THURSDAY;
+            if (currentDay + position > Calendar.FRIDAY) {
                 calendar.add(Calendar.DATE, position + 2); //skip weekend
+            } else if (currentDay == Calendar.SUNDAY) {
+                calendar.add(Calendar.DATE, position + 1);
             } else {
                 calendar.add(Calendar.DATE, position);
             }
-
+            int day = calendar.get(Calendar.DAY_OF_WEEK);
             if (day == currentDay) {
                 dayOfWeek = context.getString(R.string.today);
             } else if (day == currentDay + 1) {

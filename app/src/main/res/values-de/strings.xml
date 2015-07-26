@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources
+    xmlns:xliff="http://schemas.android.com/apk/res-auto">
+    <string name="abend"></string>
+    <string name="action_legende">Legende</string>
+    <string name="additives">(1) - mit Farbstoff\n(2) - mit Konservierungsstoff\n(3) - mit Antioxidationsmittel\n(4) - mit Geschmacksverstärker\n(5) - mit Phosphat\n(6) - Oberfläche gewachst\n(7) - geschwefelt\n(8) - Oliven geschwärzt\n(9) - mit Süßungsmitteln\n(10) - kann bei übermäßigem Verzehr abführend wirken\n(11) - enthält eine Phenylalaninquelle\n(12) - kann Restalkohol enthalten\n(14) - aus Fleischstücken zusammengefügt\n(15) - mit kakaohaltiger Fettglasur\n(27) - aus Fischstücken zusammengefügt\n\nGl - Glutenhaltiges Getreide\nNu - Schalenfrüchte / Nüsse\nEi - Eier\nEr - Erdnüsse\nSo - Soja\nSn - Senf\nKr - Krebstiere\nFi - Fisch\nML - Milch / Laktose\nSe - Sellerie\nSf - Schwefeldioxid / Sulfit\nSa - Sesam\nLu - Lupine\nWe - Weichtiere</string>
+    <string name="button_foodMerge">Zusammenlegen</string>
+    <string name="button_giveRating">Bewerten</string>
+    <string name="button_takePicture">Foto hochladen</string>
+    <string name="cancel">Abbrechen</string>
+    <string name="confirm">OK</string>
+    <string name="dialog_giveRating">Gericht bewerten</string>
+    <string name="friday">Freitag</string>
+    <string name="global_rating">Durchschnittsbewertung:</string>
+    <string name="ingredients">Zusatzstoffe: <xliff:g id="add">%1$s</xliff:g></string>
+    <string name="merge_dialog_message">Bitte geben sie den Namen des zweiten Gerichts ein</string>
+    <string name="merge_dialog_title">Gerichte zusammenlegen</string>
+    <string name="monday">Montag</string>
+    <string name="no_ingredients">Zusatzstoffe: keine</string>
+    <string name="no_results">Keine Ergebnisse gefunden</string>
+    <string name="ok">OK</string>
+    <string name="pref_priceGroup_label">Preisgruppe</string>
+    <string name="pref_priceGroup_label_guest">Gäste</string>
+    <string name="pref_priceGroup_label_pupil">Schüler</string>
+    <string name="pref_priceGroup_label_staff">Bedienstete</string>
+    <string name="pref_priceGroup_label_students">Studenten</string>
+    <string name="search_hint">Suche nach Gericht</string>
+    <string name="tag_bio">kontrolliert biologischer Anbau mit EU Bio-Siegel</string>
+    <string name="tag_cow">enthält Rindfleisch</string>
+    <string name="tag_cow_aw">enthält Rindfleisch aus artgerechter Tierhaltung</string>
+    <string name="tag_fish">MSC-zertifizierter Fisch</string>
+    <string name="tag_veg">vegetarisches Gericht (ohne Fleischzusatz)</string>
+    <string name="tag_vegan">veganes Gericht</string>
+    <string name="tag_pork">enthält Schweinefleisch </string>
+    <string name="thursday">Donnerstag</string>
+    <string name="title_activity_detail">Gerichtdetails</string>
+    <string name="title_activity_searchable">Suchergebnisse</string>
+    <string name="title_activity_settings">Einstellungen</string>
+    <string name="today">Heute</string>
+    <string name="tomorrow">Morgen</string>
+    <string name="tuesday">Dienstag</string>
+    <string name="update"></string>
+    <string name="uploaded">Erfolgreich hochgeladen</string>
+    <string name="user_rating">Ihre Bewertung:</string>
+    <string name="wednesday">Mittwoch</string>
+    <string name="action_search">Suche</string>
+    <string name="action_settings">Einstellungen</string>
+</resources>

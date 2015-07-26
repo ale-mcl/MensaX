@@ -109,9 +109,36 @@ public class OfferListAdapter extends BaseExpandableListAdapter {
         }
         Offer offer = (Offer) getChild(groupPosition, childPosition);
 
-        //TODO: View second tag!
-        ImageView image = (ImageView) convertView.findViewById(R.id.firstTagDrawable);
-        image.setImageDrawable(getTagDrawable(offer));
+        ImageView firstTagDrawable = (ImageView) convertView.findViewById(R.id.firstTagDrawable);
+        ImageView secondTagDrawable = (ImageView) convertView.findViewById(R.id.secondTagDrawable);
+
+        boolean firstTagSet = false;
+        boolean secondTagSet = false;
+
+        int i = Meal.TAG_BIO;
+        while (i <= Meal.TAG_VEG) {
+            if (offer.getMeal().hasTag(i)) {
+                firstTagDrawable.setImageDrawable(Utility.getTagDrawable(mContext, i));
+                firstTagSet = true;
+                i++;
+                break;
+            }
+            i++;
+        }
+        while (i <= Meal.TAG_VEG) {
+            if (offer.getMeal().hasTag(i)) {
+                secondTagDrawable.setImageDrawable(Utility.getTagDrawable(mContext, i));
+                secondTagSet = true;
+                break;
+            }
+            i++;
+        }
+        if (!firstTagSet) {
+            firstTagDrawable.setImageDrawable(null);
+        }
+        if (!secondTagSet) {
+            secondTagDrawable.setImageDrawable(null);
+        }
 
         TextView textViewName = (TextView) convertView.findViewById(R.id.list_item_offer_textview_name);
         textViewName.setText(offer.getMeal().getName());
@@ -145,30 +172,6 @@ public class OfferListAdapter extends BaseExpandableListAdapter {
     @Override
     public boolean isChildSelectable(int groupPosition, int childPosition) {
         return true;
-    }
-
-
-    private Drawable getTagDrawable(Offer offer){
-        String uri;
-        if (offer.getMeal().hasTag(Meal.TAG_BIO)) {
-            uri = "@drawable/ic_meal_bio";
-        } else if (offer.getMeal().hasTag(Meal.TAG_COW_AW)) {
-            uri = "@drawable/ic_meal_cow_aw";
-        } else if (offer.getMeal().hasTag(Meal.TAG_PORK)) {
-            uri = "@drawable/ic_meal_pork";
-        } else if (offer.getMeal().hasTag(Meal.TAG_VEG)) {
-            uri = "@drawable/ic_meal_veg";
-        } else if (offer.getMeal().hasTag(Meal.TAG_VEGAN)) {
-            uri = "@drawable/ic_meal_vegan";
-        } else if (offer.getMeal().hasTag(Meal.TAG_FISH)) {
-            uri = "@drawable/ic_meal_fish";
-        } else if (offer.getMeal().hasTag(Meal.TAG_COW)) {
-            uri = "@drawable/ic_meal_cow";
-        } else {
-            return null;
-        }
-        int imageResource = mContext.getResources().getIdentifier(uri, null, mContext.getPackageName());
-        return mContext.getResources().getDrawable(imageResource);
     }
 
     private Line getLine(int position) {

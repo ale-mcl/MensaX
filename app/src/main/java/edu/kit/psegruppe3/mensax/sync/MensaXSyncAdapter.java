@@ -5,18 +5,13 @@ import android.accounts.AccountManager;
 import android.content.AbstractThreadedSyncAdapter;
 import android.content.ContentProviderClient;
 import android.content.ContentResolver;
-import android.content.ContentUris;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.SyncRequest;
 import android.content.SyncResult;
 import android.database.Cursor;
-import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.SystemClock;
-import android.provider.Settings;
-import android.text.format.Time;
 import android.util.Log;
 
 import org.json.JSONArray;
@@ -30,7 +25,6 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.Calendar;
-import java.util.GregorianCalendar;
 import java.util.Vector;
 
 import edu.kit.psegruppe3.mensax.R;
@@ -120,10 +114,6 @@ public class MensaXSyncAdapter extends AbstractThreadedSyncAdapter {
     }
 
     private void getMenu() {
-        Time dayTime = new Time();
-        dayTime.setToNow();
-
-        // we start at the day returned by local time. Otherwise this is a mess.
         Calendar calendar = Calendar.getInstance();
         int numDays = (calendar.get(Calendar.DAY_OF_WEEK) == Calendar.MONDAY) ? 4 : 6;
 
@@ -131,7 +121,6 @@ public class MensaXSyncAdapter extends AbstractThreadedSyncAdapter {
         // so that they can be closed in the finally block.
         HttpURLConnection urlConnection = null;
         BufferedReader reader = null;
-
         // Will contain the raw JSON response as a string.
         String menuJsonStr = null;
 

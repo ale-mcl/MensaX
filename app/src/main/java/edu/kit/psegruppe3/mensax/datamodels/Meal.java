@@ -23,7 +23,7 @@ public class Meal {
     private String ingredients;
     private double globalRating;
     private double userRating;
-    private Uri[] images;
+    private String[] images;
 
     public Meal(String name, int mealId) {
         this.name = name;
@@ -39,7 +39,7 @@ public class Meal {
         return mealId;
     }
 
-    public void setImages(Uri[] imageUris) {
+    public void setImages(String[] imageUris) {
         images = imageUris;
     }
 
@@ -69,15 +69,14 @@ public class Meal {
     }
 
     public int getImageCount() {
-        return images.length;
+        if (images != null) {
+            return images.length;
+        }
+        return 0;
     }
 
-    public Uri getImage(int position) {
-        if (position < getImageCount()) {
-            return images[position];
-        } else {
-            throw new ArrayIndexOutOfBoundsException();
-        }
+    public String[] getImages() {
+        return images;
     }
 
     public void setTag(int index, boolean value){
