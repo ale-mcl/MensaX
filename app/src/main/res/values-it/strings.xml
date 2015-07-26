@@ -45,4 +45,8 @@
     <string name="wednesday">Mercoledí</string>
     <string name="action_search">Ricerca</string>
     <string name="action_settings">Impostazioni</string>
+    <string name="title_activity_about">Sulla Mensa</string>
+    <string name="title_activity_contact">Contattaci</string>
+    <string name="action_about">Sulla Mensa</string>
+    <string name="action_contact">Contattaci</string>
 </resources>

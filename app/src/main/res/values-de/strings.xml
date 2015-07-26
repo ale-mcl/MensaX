@@ -45,4 +45,8 @@
     <string name="wednesday">Mittwoch</string>
     <string name="action_search">Suche</string>
     <string name="action_settings">Einstellungen</string>
+    <string name="title_activity_about">Über die Mensa</string>
+    <string name="title_activity_contact">Kontaktiere uns</string>
+    <string name="action_about">Über die Mensa</string>
+    <string name="action_contact">Kontaktiere uns</string>
 </resources>
