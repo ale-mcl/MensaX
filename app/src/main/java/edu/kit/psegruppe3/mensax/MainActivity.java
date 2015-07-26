@@ -20,14 +20,28 @@ import java.util.List;
 
 import edu.kit.psegruppe3.mensax.sync.MensaXSyncAdapter;
 
-
+/**
+ * The Main Activity of the app. Shows all offer of the week
+ *
+ * @author MensaX-group
+ * @version 1
+ */
 public class MainActivity extends ActionBarActivity {
 
+    /**
+     * The number of tabs in the TagAdapter, represents the number of days shown.
+     */
     static final int NUM_TABS = 5;
+    /**
+     * The date of a day in the adapter.
+     */
     static final String ARG_DATE = "date";
 
     private String mPriceGroup;
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -47,6 +61,9 @@ public class MainActivity extends ActionBarActivity {
 
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
@@ -54,6 +71,9 @@ public class MainActivity extends ActionBarActivity {
         return true;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle action bar item clicks here.
@@ -83,6 +103,9 @@ public class MainActivity extends ActionBarActivity {
         return super.onOptionsItemSelected(item);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     protected void onResume() {
         super.onResume();
@@ -99,15 +122,26 @@ public class MainActivity extends ActionBarActivity {
         }
     }
 
+    /**
+     * Class for the TabAdapter that shows the days of the week and the offers in them.
+     */
     public static class TabAdapter extends FragmentPagerAdapter {
 
         private Context context;
 
+        /**
+         * The constructor of the class
+         * @param fm the fragment manager of the activity
+         * @param context the activity
+         */
         public TabAdapter(FragmentManager fm, Context context) {
             super(fm);
             this.context = context;
         }
 
+        /**
+         * {@inheritDoc}
+         */
         @Override
         public Fragment getItem(int position) {
             Calendar calendar = Calendar.getInstance();
@@ -127,11 +161,17 @@ public class MainActivity extends ActionBarActivity {
             return f;
         }
 
+        /**
+         * {@inheritDoc}
+         */
         @Override
         public int getCount() {
             return NUM_TABS;
         }
 
+        /**
+         * {@inheritDoc}
+         */
         @Override
         public CharSequence getPageTitle(int position) {
             Calendar calendar = Calendar.getInstance();

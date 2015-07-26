@@ -9,11 +9,17 @@ import android.preference.PreferenceManager;
 
 
 /**
- * The Class for all Settings.
+ * The Class for the Settings.
+ *
+ * @author MensaX-group
+ * @version 1.0
  */
 public class SettingsActivity extends PreferenceActivity
         implements Preference.OnPreferenceChangeListener {
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -38,6 +44,9 @@ public class SettingsActivity extends PreferenceActivity
                         .getString(preference.getKey(), ""));
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public boolean onPreferenceChange(Preference preference, Object value) {
         String stringValue = value.toString();
