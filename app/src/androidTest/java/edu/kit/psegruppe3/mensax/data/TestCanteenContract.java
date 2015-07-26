@@ -15,7 +15,7 @@ public class TestCanteenContract extends AndroidTestCase {
     private static final String TEST_MEAL = "Sahnefruchtjoghurt";
 
     /**
-     * Test mensa offer function.
+     * Test mensa meal function.
      */
     public void testBuildMealWithName() {
         Uri mealUri = CanteenContract.MealEntry.buildMealWithMealNameUri(TEST_MEAL);

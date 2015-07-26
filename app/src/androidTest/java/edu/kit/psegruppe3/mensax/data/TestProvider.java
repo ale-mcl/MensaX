@@ -70,6 +70,7 @@ public class TestProvider extends AndroidTestCase {
      * Refactor this function to use the deleteAllRecordsFromProvider functionality.
      */
     public void deleteAllRecords() {
+
         deleteAllRecordsFromProvider();
     }
 
@@ -269,11 +270,6 @@ public class TestProvider extends AndroidTestCase {
 
         cursor.close();
     }
-
-    // Make sure we can still delete after adding/updating stuff
-    //
-    // It relies on insertions with testInsertReadProvider, so insert and
-    // query functionality must also be complete before this test can be used.
 
     /**
      * Make sure we can still delete after adding/updating stuff.
