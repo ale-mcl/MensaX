@@ -1,167 +1,144 @@
-<LinearLayout
+<ScrollView
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="fill_parent"
-    android:layout_height="fill_parent"
-    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
     android:background="?android:windowBackground"
     tools:context="edu.kit.psegruppe3.mensax.DetailFragment">
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
 
-    <TextView
-        android:id="@+id/mealName"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:fontFamily="sans-serif-condensed"
-        android:textColor="@color/Black"
-        android:textSize="30sp"
-        android:layout_marginBottom="20dp" />
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/DarkGray">
+            <Gallery
+                android:id="@+id/gallery1"
+                android:layout_width="match_parent"
+                android:layout_height="240dp" />
+        </FrameLayout>
 
-    <Gallery
-        android:id="@+id/gallery1"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="20dp" />
+        <TextView
+            android:id="@+id/mealName"
+            android:paddingTop="4dp"
+            android:paddingLeft="16dp"
+            android:paddingRight="16dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="sans-serif-condensed"
+            android:textColor="@color/Black"
+            android:textSize="20sp"
+            android:layout_marginBottom="20dp" />
 
+        <TextView
+            android:id="@+id/first_tag_textview"
+            android:paddingLeft="16dp"
+            android:paddingRight="16dp"
+            android:drawablePadding="8dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/Black"
+            android:fontFamily="sans-serif-condensed"
+            android:textSize="16sp" />
 
-    <TableLayout
-        xmlns:android="http://schemas.android.com/apk/res/android"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:stretchColumns="0">
+        <TextView
+            android:id="@+id/second_tag_textview"
+            android:paddingLeft="16dp"
+            android:paddingRight="16dp"
+            android:drawablePadding="8dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/Black"
+            android:fontFamily="sans-serif-condensed"
+            android:textSize="16sp" />
 
-        <TableRow>
-            <TextView
-                android:id="@+id/mealIngredients"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textSize="20sp"
-                android:text="@string/ingredients"
-                android:layout_marginBottom="10dp" />
+        <TextView
+            android:id="@+id/showIngredients"
+            android:paddingLeft="16dp"
+            android:paddingRight="16dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="sans-serif-condensed"
+            android:textSize="16sp"
+            android:layout_marginBottom="20dp"/>
 
-            <TextView
-                android:id="@+id/showIngredients"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:gravity="right"
-                android:textSize="20sp"
-                android:layout_marginBottom="10dp"/>
-        </TableRow>
+        <TextView
+            android:id="@+id/mealGlobalRating"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="sans-serif-condensed"
+            android:paddingLeft="16dp"
+            android:paddingRight="16dp"
+            android:textSize="16sp"
+            android:textColor="@color/Black"
+            android:text="@string/global_rating"
+            android:layout_marginBottom="10dp" />
 
-        <TableRow>
-            <TextView
-                android:id="@+id/mealGlobalRating"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textSize="20sp"
-                android:text="@string/global_rating"
-                android:layout_marginBottom="10dp" />
-
-            <RelativeLayout>
-            <RatingBar
-                android:id="@+id/showGlobalRating"
-                android:isIndicator="true"
-                android:numStars="5"
-                android:rating="2.5"
-                style = "?android:attr/ratingBarStyleSmall"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:gravity="right"
-                android:layout_alignParentRight="true"
-                android:layout_alignParentEnd="true"
-                android:textSize="20sp"/>
-            </RelativeLayout>
-        </TableRow>
-
-        <TableRow>
-            <TextView
-                android:id="@+id/mealUserRating"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textSize="20sp"
-                android:text="@string/user_rating"
-                android:layout_marginBottom="10dp"/>
-
-            <RelativeLayout>
-            <RatingBar
-                android:id="@+id/showUserRating"
-                android:isIndicator="true"
-                android:numStars="5"
-                android:rating="0"
-                style = "?android:attr/ratingBarStyleSmall"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:gravity="right"
-                android:layout_alignParentRight="true"
-                android:layout_alignParentEnd="true"
-                android:textSize="20sp"/>
-            </RelativeLayout>
-        </TableRow>
-
-        <TableRow>
-            <TextView
-                android:text=""
-                android:layout_weight=".25"
-                android:layout_width="0dip"
-                />
-            <Button
-                android:id="@+id/button_giveRating"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/button_giveRating"
-                android:layout_marginTop="35dp"/>
-            <TextView
-                android:text=""
-                android:layout_weight=".25"
-                android:layout_width="0dip"
-                />
-       </TableRow>
-
-        <TableRow>
-            <TextView
-                android:text=""
-                android:layout_weight=".25"
-                android:layout_width="0dip"
-                />
-            <Button
-                android:id="@+id/button_takePicture"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/button_takePicture"
-                android:drawableLeft="@drawable/ic_menu_camera" />
-            <TextView
-                android:text=""
-                android:layout_weight=".25"
-                android:layout_width="0dip"
-                />
-        </TableRow>
-
-        <TableRow>
-            <TextView
-                android:text=""
-                android:layout_weight=".25"
-                android:layout_width="0dip"
-                />
-            <Button
-                android:id="@+id/button_mergeMeal"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/button_foodMerge" />
-            <TextView
-                android:text=""
-                android:layout_weight=".25"
-                android:layout_width="0dip"
-                />
-        </TableRow>
-
-    </TableLayout>
+        <RatingBar
+            android:id="@+id/showGlobalRating"
+            android:isIndicator="true"
+            android:numStars="5"
+            style = "?android:attr/ratingBarStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:paddingBottom="16dp"/>
 
 
+        <TextView
+            android:id="@+id/mealUserRating"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="sans-serif-condensed"
+            android:paddingLeft="16dp"
+            android:paddingRight="16dp"
+            android:textSize="16sp"
+            android:textColor="@color/Black"
+            android:text="@string/user_rating"
+            android:layout_marginBottom="10dp"/>
+
+        <RatingBar
+            android:id="@+id/showUserRating"
+            android:isIndicator="true"
+            android:numStars="5"
+            style = "?android:attr/ratingBarStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:paddingBottom="16dp"/>
 
 
+        <Button
+            android:id="@+id/button_giveRating"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="48dp"
+            android:layout_marginRight="48dp"
+            android:text="@string/button_giveRating"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="32dp"/>
 
 
+        <Button
+            android:id="@+id/button_takePicture"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="48dp"
+            android:layout_marginRight="48dp"
+            android:text="@string/button_takePicture"
+            android:layout_gravity="center_horizontal" />
 
+        <Button
+            android:id="@+id/button_mergeMeal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="48dp"
+            android:layout_marginRight="48dp"
+            android:layout_gravity="center_horizontal"
+            android:text="@string/button_foodMerge" />
 
+    </LinearLayout>
 
-
-</LinearLayout>
+</ScrollView>

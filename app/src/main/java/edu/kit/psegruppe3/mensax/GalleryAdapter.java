@@ -33,12 +33,15 @@ public class GalleryAdapter extends BaseAdapter {
 
     // returns the number of images
     public int getCount() {
-        return bitmaps.size();
+        if (bitmaps.size() > 0) {
+            return bitmaps.size();
+        }
+        return 1;
     }
 
     // returns the ID of an item
     public Object getItem(int position) {
-        return position;
+        return bitmaps.get(position);
     }
 
     // returns the ID of an item
@@ -49,9 +52,12 @@ public class GalleryAdapter extends BaseAdapter {
     // returns an ImageView view
     public View getView(int position, View convertView, ViewGroup parent) {
         ImageView imageView = new ImageView(context);
-
-        imageView.setImageBitmap(bitmaps.get(position));
-        imageView.setLayoutParams(new Gallery.LayoutParams(600, 600));
+        if (bitmaps.size() == 0) {
+            imageView.setImageDrawable(context.getDrawable(R.drawable.no_image_available));
+        } else {
+            imageView.setImageBitmap((Bitmap) getItem(position));
+        }
+        imageView.setLayoutParams(new Gallery.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
         imageView.setBackgroundResource(itemBackground);
         return imageView;
     }
