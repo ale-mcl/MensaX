@@ -12,8 +12,7 @@ import android.test.AndroidTestCase;
  */
 public class TestCanteenContract extends AndroidTestCase {
 
-    // intentionally includes a slash to make sure Uri is getting quoted correctly
-    private static final String TEST_MEAL = "/Sahnefruchtjoghurt";
+    private static final String TEST_MEAL = "Sahnefruchtjoghurt";
 
     /**
      * Test mensa offer function.
