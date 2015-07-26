@@ -23,6 +23,7 @@ import android.widget.EditText;
 import android.widget.Gallery;
 import android.widget.RatingBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.android.gms.auth.GoogleAuthException;
 import com.google.android.gms.auth.GoogleAuthUtil;
@@ -132,8 +133,8 @@ public class DetailFragment extends Fragment {
         if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == getActivity().RESULT_OK) {
             Bitmap photo = (Bitmap) data.getExtras().get("data");
             String stringOfPhoto = BitMapToString(photo);
-            //UploadPictureTask uploadPictureTask = new UploadPictureTask();
-            //uploadPictureTask.execute(String.valueOf(meal.getMealId()), stringOfPhoto);
+            UploadPictureTask uploadPictureTask = new UploadPictureTask();
+            uploadPictureTask.execute(String.valueOf(meal.getMealId()), stringOfPhoto);
 
         } else if (requestCode == SearchableActivity.REQUEST_CODE && resultCode == getActivity().RESULT_OK) {
             if (data.hasExtra(DetailActivity.ARG_MEAL_ID)) {
@@ -284,10 +285,11 @@ public class DetailFragment extends Fragment {
                 response = urlConnection.getResponseCode();
             } catch (IOException e) {
                 Log.e(LOG_TAG, "Error ", e);
-                return null;
+                return response;
             } catch (JSONException e) {
                 Log.e(LOG_TAG, e.getMessage(), e);
                 e.printStackTrace();
+                return response;
             } finally {
                 if (urlConnection != null) {
                     urlConnection.disconnect();
@@ -302,6 +304,7 @@ public class DetailFragment extends Fragment {
             }
             return response;
         }
+
         private String getJsonString(String mealId, String userId, String image) throws JSONException {
             String imageJsonStr = "";
 
@@ -312,6 +315,16 @@ public class DetailFragment extends Fragment {
             imageJsonStr = imageString.toString();
 
             return imageJsonStr;
+        }
+
+        @Override
+        protected void onPostExecute(Integer response) {
+            if (response == HttpURLConnection.HTTP_OK) {
+                Toast.makeText(getActivity(), getString(R.string.toast_image_upload_succesfull), Toast.LENGTH_SHORT).show();
+            } else {
+                Toast.makeText(getActivity(), getString(R.string.toast_image_upload_failed), Toast.LENGTH_SHORT).show();
+            }
+            super.onPostExecute(response);
         }
     }
 
@@ -366,6 +379,7 @@ public class DetailFragment extends Fragment {
             } catch (JSONException e) {
                 Log.e(LOG_TAG, e.getMessage(), e);
                 e.printStackTrace();
+                return null;
             } finally {
                 if (urlConnection != null) {
                     urlConnection.disconnect();
@@ -386,6 +400,18 @@ public class DetailFragment extends Fragment {
             if (m != null) {
                 meal = m;
                 updateScreen(true);
+            } else {
+                AlertDialog.Builder adb = new AlertDialog.Builder(getActivity());
+                adb.setCancelable(false);
+                adb.setTitle(R.string.error_dialog_title);
+                adb.setMessage(R.string.error_dialog_message);
+                adb.setNeutralButton(R.string.ok, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        getActivity().finish();
+                    }
+                });
+                adb.show();
             }
             super.onPostExecute(m);
         }
@@ -501,10 +527,10 @@ public class DetailFragment extends Fragment {
         }
     }
 
-    private class RateMealTask extends AsyncTask<Integer, Void, Void> {
+    private class RateMealTask extends AsyncTask<Integer, Void, Integer> {
 
         @Override
-        protected Void doInBackground(Integer... params) {
+        protected Integer doInBackground(Integer... params) {
             if (params.length < 2) {
                 return null;
             }
@@ -512,6 +538,7 @@ public class DetailFragment extends Fragment {
             BufferedReader reader = null;
             OutputStreamWriter writer = null;
             String token = getToken();
+            int response = -1;
 
             try {
                 String output = getJsonString(params[0], params[1], token);
@@ -543,12 +570,14 @@ public class DetailFragment extends Fragment {
                 JSONObject ratings = data.getJSONObject(ServerApiContract.API_MEAL_RATINGS);
                 meal.setGlobalRating((int) (ratings.getDouble(ServerApiContract.API_GLOBAL_RATING)));
                 meal.setUserRating(ratings.getInt(ServerApiContract.API_USER_RATING));
+                response = urlConnection.getResponseCode();
             } catch (JSONException e){
                 Log.e(LOG_TAG, e.getMessage(), e);
                 e.printStackTrace();
+                return response;
             } catch (IOException e) {
                 Log.e(LOG_TAG, "Error ", e);
-                return null;
+                return response;
             } finally {
                 if (urlConnection != null) {
                     urlConnection.disconnect();
@@ -568,13 +597,18 @@ public class DetailFragment extends Fragment {
                     }
                 }
             }
-            return null;
+            return response;
         }
 
         @Override
-        protected void onPostExecute(Void aVoid) {
-            updateScreen(false);
-            super.onPostExecute(aVoid);
+        protected void onPostExecute(Integer response) {
+            if (response == HttpURLConnection.HTTP_OK) {
+                updateScreen(false);
+                Toast.makeText(getActivity(), getString(R.string.toast_rating_succesfull), Toast.LENGTH_SHORT).show();
+            } else {
+                Toast.makeText(getActivity(), getString(R.string.toast_rating_failed), Toast.LENGTH_SHORT).show();
+            }
+            super.onPostExecute(response);
         }
 
         private String getJsonString(int mealid, int value, String userid) throws JSONException {
@@ -621,9 +655,10 @@ public class DetailFragment extends Fragment {
             } catch (JSONException e){
                 Log.e(LOG_TAG, e.getMessage(), e);
                 e.printStackTrace();
+                return response;
             } catch (IOException e) {
                 Log.e(LOG_TAG, "Error ", e);
-                return null;
+                return response;
             } finally {
                 if (urlConnection != null) {
                     urlConnection.disconnect();
@@ -637,6 +672,16 @@ public class DetailFragment extends Fragment {
                 }
             }
             return response;
+        }
+
+        @Override
+        protected void onPostExecute(Integer response) {
+            if (response == HttpURLConnection.HTTP_OK) {
+                Toast.makeText(getActivity(), getString(R.string.toast_merge_succesfull), Toast.LENGTH_SHORT).show();
+            } else {
+                Toast.makeText(getActivity(), getString(R.string.toast_merge_failed), Toast.LENGTH_SHORT).show();
+            }
+            super.onPostExecute(response);
         }
 
         private String getJsonString(int fistMealId, int secondMealId, String userid) throws JSONException {
