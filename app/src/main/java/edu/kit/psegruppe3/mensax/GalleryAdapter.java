@@ -13,13 +13,21 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Created by ekremsenturk on 25.07.15.
+ * GalleryAdapter class that implements a Gallery view where the picture of the meals are shown.
+ * Extends BaseAdapter class
+ *
+ * @author MensaX-group
+ * @version 1.0
  */
 public class GalleryAdapter extends BaseAdapter {
     private Context context;
     private int itemBackground;
     private List<Bitmap> bitmaps = new ArrayList<>();
 
+    /**
+     * The Gallery adapter.
+     * @param c context of the activity
+     */
     public GalleryAdapter(Context c) {
         context = c;
         TypedArray a = context.obtainStyledAttributes(R.styleable.MyGallery);
@@ -27,11 +35,18 @@ public class GalleryAdapter extends BaseAdapter {
         a.recycle();
     }
 
+    /**
+     * Method to add a picture in form of bitmap to the ArrayList.
+     * @param bmp the bitmap object
+     */
     public void addBitmap(Bitmap bmp) {
         bitmaps.add(bmp);
     }
 
-    // returns the number of images
+    /**
+     * Method to get the size of the bitmap object in the ArrayList.
+     * @return int size of the bitmap
+     */
     public int getCount() {
         if (bitmaps.size() > 0) {
             return bitmaps.size();
@@ -39,17 +54,32 @@ public class GalleryAdapter extends BaseAdapter {
         return 1;
     }
 
-    // returns the ID of an item
+    /**
+     * Method to get the bitmap in a specific position in the ArrayList.
+     * @param position the position where to get the bitmap
+     * @return the bitmap object
+     */
     public Object getItem(int position) {
         return bitmaps.get(position);
     }
 
-    // returns the ID of an item
+    /**
+     * Method to get the id at a position in the ArrayList.
+     * Must be implementen from the BaseAdapter class.
+     * @param position the position to get
+     * @return the position
+     */
     public long getItemId(int position) {
         return position;
     }
 
-    // returns an ImageView view
+    /**
+     * Method to get the View on an image in the gallery
+     * @param position the position on the gallery
+     * @param convertView the rootView
+     * @param parent the view of the parent
+     * @return the view for the image to be shown in the gallery
+     */
     public View getView(int position, View convertView, ViewGroup parent) {
         ImageView imageView = new ImageView(context);
         if (bitmaps.size() == 0) {

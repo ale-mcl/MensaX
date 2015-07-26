@@ -11,10 +11,19 @@ import android.widget.TextView;
 import edu.kit.psegruppe3.mensax.data.CanteenContract;
 
 /**
- * Created by ekremsenturk on 24.07.15.
+ * Cursor adapter for the results of a search query.
+ *
+ * @author MensaX-group
+ * @version 1.0
  */
 public class SearchListAdapter extends CursorAdapter {
 
+    /**
+     * Constructor of the CursorAdapter
+     * @param context the context of the class
+     * @param c the cursor
+     * @param flags flags of the adapter
+     */
     public SearchListAdapter(Context context, Cursor c, int flags) {
         super(context, c, flags);
     }
@@ -30,6 +39,9 @@ public class SearchListAdapter extends CursorAdapter {
         }
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public View newView(Context context, Cursor cursor, ViewGroup parent) {
         View view = LayoutInflater.from(context).inflate(R.layout.list_item_search, parent, false);
@@ -40,7 +52,9 @@ public class SearchListAdapter extends CursorAdapter {
         return view;
     }
 
-
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void bindView(View view, Context context, Cursor cursor) {
 

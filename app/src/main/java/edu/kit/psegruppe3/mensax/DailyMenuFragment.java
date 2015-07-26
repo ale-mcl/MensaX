@@ -1,7 +1,6 @@
 package edu.kit.psegruppe3.mensax;
 
 import android.content.Intent;
-import android.content.SyncAdapterType;
 import android.database.Cursor;
 import android.net.Uri;
 import android.support.v4.app.Fragment;
@@ -32,9 +31,15 @@ public class DailyMenuFragment extends Fragment implements LoaderManager.LoaderC
 
     private static final int MENU_LOADER = 0;
 
+    /**
+     * Constructor of the class.
+     */
     public DailyMenuFragment() {
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         Bundle bundle = getArguments();
@@ -42,6 +47,9 @@ public class DailyMenuFragment extends Fragment implements LoaderManager.LoaderC
         super.onActivityCreated(savedInstanceState);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -76,6 +84,9 @@ public class DailyMenuFragment extends Fragment implements LoaderManager.LoaderC
         return rootView;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
         Long date = args.getLong(MainActivity.ARG_DATE);
@@ -93,6 +104,9 @@ public class DailyMenuFragment extends Fragment implements LoaderManager.LoaderC
                 sortOrder);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
         if (!data.moveToFirst()) {
@@ -145,10 +159,13 @@ public class DailyMenuFragment extends Fragment implements LoaderManager.LoaderC
             offerList.add(new Offer(meal, getLine(line), priceStudents, priceGuests, priceStaff, pricePupils));
         } while (data.moveToNext());
         Offer[] offers = offerList.toArray(new Offer[offerList.size()]);
-        mDailyMenu = new DailyMenu(0, offers);
+        mDailyMenu = new DailyMenu(offers);
         updateList();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void onLoaderReset(Loader<Cursor> loader) {
 

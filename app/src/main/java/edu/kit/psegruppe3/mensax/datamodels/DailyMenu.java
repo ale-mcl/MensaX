@@ -1,21 +1,27 @@
 package edu.kit.psegruppe3.mensax.datamodels;
 
-import java.util.ArrayList;
-
+/**
+ * Class Daily Menu that contains and manages offers objects.
+ *
+ * @author MensaX-group
+ * @version 1.0
+ */
 public class DailyMenu {
-    private long timestamp;
     private Offer[] offers;
 
-    public DailyMenu(long timestamp, Offer[] offers) {
-        this.timestamp = timestamp;
+    /**
+     * Constructor for the class.
+     * @param offers array of onjects
+     */
+    public DailyMenu(Offer[] offers) {
         this.offers = offers;
     }
 
-
-    public long getTimestamp() {
-        return timestamp;
-    }
-
+    /**
+     * Method to get a single offer.
+     * @param position the position of the offer in the array
+     * @return  the requested offer
+     */
     public Offer getOffer(int position) {
         if (position < offers.length) {
             return offers[position];
@@ -23,6 +29,10 @@ public class DailyMenu {
         return null;
     }
 
+    /**
+     * Method to get the ammount of offer objects.
+     * @return integer ammount of the object
+     */
     public int getOfferCount() {
         return offers.length;
     }

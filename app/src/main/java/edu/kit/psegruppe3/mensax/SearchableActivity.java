@@ -15,14 +15,26 @@ import android.widget.TextView;
 import edu.kit.psegruppe3.mensax.data.CanteenContract;
 
 /**
- * Activity that performs searches and present results.
+ * Activity that performs searches on the meal database and present results.
+ *
+ * @author MensaX-group
+ * @version 1.1
  */
 public class SearchableActivity extends ActionBarActivity {
 
+    /**
+     * CODE to determine if the search request is a merge request.
+     */
     public static final int REQUEST_CODE = 1337;
+    /**
+     * The argument parameter of the searched meal.
+     */
     public static final String ARG_SELECT_MEAL = "selectMeal";
     private SearchListAdapter mSearchListAdapter;
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -52,7 +64,6 @@ public class SearchableActivity extends ActionBarActivity {
         });
 
         // Get the intent, verify the action and get the query
-
         if (Intent.ACTION_SEARCH.equals(intent.getAction())) {
             String query = intent.getStringExtra(SearchManager.QUERY);
             doMySearch(query);
@@ -66,6 +77,9 @@ public class SearchableActivity extends ActionBarActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == android.R.id.home) {
@@ -75,6 +89,10 @@ public class SearchableActivity extends ActionBarActivity {
         return super.onOptionsItemSelected(item);
     }
 
+    /**
+     * Method that executes the search request.
+     * @param query the query of the search
+     */
     public void doMySearch(String query) {
         Cursor cursor = query(query);
         mSearchListAdapter.swapCursor(cursor);

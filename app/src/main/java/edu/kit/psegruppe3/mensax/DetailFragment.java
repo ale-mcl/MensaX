@@ -46,9 +46,15 @@ import edu.kit.psegruppe3.mensax.datamodels.Meal;
 
 /**
  * Fragment of the activity DetailActivity that shows all info about a meal.
+ *
+ * @author MensaX-group
+ * @version 1.0
  */
 public class DetailFragment extends Fragment {
 
+    /**
+     * Request code to capture a picture with a camera.
+     */
     static final int REQUEST_IMAGE_CAPTURE = 1;
 
     private final String LOG_TAG = DetailFragment.class.getSimpleName();
@@ -63,9 +69,15 @@ public class DetailFragment extends Fragment {
     private TextView firstTagTextView;
     private TextView secondTagTextView;
 
+    /**
+     * Constructor of the class.
+     */
     public DetailFragment() {
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -128,6 +140,9 @@ public class DetailFragment extends Fragment {
         return rootView;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == getActivity().RESULT_OK) {
@@ -317,6 +332,9 @@ public class DetailFragment extends Fragment {
             return imageJsonStr;
         }
 
+        /**
+         * {@inheritDoc}
+         */
         @Override
         protected void onPostExecute(Integer response) {
             if (getActivity() != null) {
@@ -334,6 +352,9 @@ public class DetailFragment extends Fragment {
 
         private final String LOG_TAG = FetchMealDataTask.class.getSimpleName();
 
+        /**
+         * {@inheritDoc}
+         */
         @Override
         protected Meal doInBackground(Integer... params) {
             if (params.length == 0) {
@@ -397,6 +418,9 @@ public class DetailFragment extends Fragment {
             return newMeal;
         }
 
+        /**
+         * {@inheritDoc}
+         */
         @Override
         protected void onPostExecute(Meal m) {
             if (getActivity() != null) {
@@ -479,6 +503,10 @@ public class DetailFragment extends Fragment {
     }
 
     private class DownloadPictureTask extends AsyncTask<String, Void, Bitmap[]> {
+
+        /**
+         * {@inheritDoc}
+         */
         @Override
         protected Bitmap[] doInBackground(String... params) {
             if (params.length == 0) {
@@ -519,6 +547,9 @@ public class DetailFragment extends Fragment {
             return bmps;
         }
 
+        /**
+         * {@inheritDoc}
+         */
         @Override
         protected void onPostExecute(Bitmap[] bmps) {
             GalleryAdapter galleryAdapter = new GalleryAdapter(getActivity());
@@ -534,6 +565,9 @@ public class DetailFragment extends Fragment {
 
     private class RateMealTask extends AsyncTask<Integer, Void, Integer> {
 
+        /**
+         * {@inheritDoc}
+         */
         @Override
         protected Integer doInBackground(Integer... params) {
             if (params.length < 2) {
@@ -605,6 +639,9 @@ public class DetailFragment extends Fragment {
             return response;
         }
 
+        /**
+         * {@inheritDoc}
+         */
         @Override
         protected void onPostExecute(Integer response) {
             if (getActivity() != null) {
@@ -633,6 +670,9 @@ public class DetailFragment extends Fragment {
 
     private class MergeMealTask extends AsyncTask<Integer, Void, Integer> {
 
+        /**
+         * {@inheritDoc}
+         */
         @Override
         protected Integer doInBackground(Integer... params) {
             if (params.length < 2) {
@@ -681,6 +721,9 @@ public class DetailFragment extends Fragment {
             return response;
         }
 
+        /**
+         * {@inheritDoc}
+         */
         @Override
         protected void onPostExecute(Integer response) {
             if (getActivity() != null) {

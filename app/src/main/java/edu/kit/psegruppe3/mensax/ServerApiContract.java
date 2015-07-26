@@ -6,16 +6,40 @@ import java.net.MalformedURLException;
 import java.net.URL;
 
 /**
- * Created by ekremsenturk on 25.07.15.
+ * Classes provides conventions for the comunication between client and server.
+ *
+ * @author MensaX-group
+ * @version 1.0
  */
 public class ServerApiContract {
+    /**
+     * The base URL of the API.
+     */
     public static final String BASE_URL = "https://i43pc164.ipd.kit.edu/PSESoSe15Gruppe3/mensa/api";
 
+    /**
+     * Path of the meal getter API.
+     */
     public static final String PATH_MEAL = "meal";
+    /**
+     * Path of the plan getter API.
+     */
     public static final String PATH_PLAN = "plan";
+    /**
+     * Path of the rate meal API.
+     */
     public static final String PATH_RATING = "rating";
+    /**
+     * Path of the merge meal API.
+     */
     public static final String PATH_MERGE = "merge";
+    /**
+     * Path of the names getter API.
+     */
     public static final String PATH_NAMES = "names";
+    /**
+     * Path of the upload image API.
+     */
     public static final String PATH_IMAGE = "image";
 
     // Strings for JSON
@@ -49,6 +73,12 @@ public class ServerApiContract {
     public static final String API_DATE = "timestamp";
     public static final String API_IMAGE =  "image";
 
+    /**
+     * Contruct URL for requests to the server with the give path.
+     * @param path path of the API
+     * @return the url of the API
+     * @throws MalformedURLException
+     */
     public static URL getURL(String path) throws MalformedURLException {
         Uri.Builder builtUri = Uri.parse(BASE_URL).buildUpon();
         switch (path) {
@@ -62,6 +92,14 @@ public class ServerApiContract {
         return new URL(builtUri.build().toString());
     }
 
+    /**
+     * Construct URL for the plan getter API
+     * @param path the path of the API
+     * @param timestamp1 start date of the requested plan
+     * @param timestamp2 end date of the requested plan
+     * @return URL of the API
+     * @throws MalformedURLException
+     */
     public static URL getURL(String path, long timestamp1, long timestamp2) throws MalformedURLException {
         if (!path.equals(PATH_PLAN)) {
             return getURL(path);

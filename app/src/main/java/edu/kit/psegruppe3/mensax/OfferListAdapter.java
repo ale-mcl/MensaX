@@ -2,7 +2,9 @@ package edu.kit.psegruppe3.mensax;
 
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.graphics.drawable.Drawable;
+import android.graphics.Color;
+import android.graphics.PorterDuff;
+import android.graphics.drawable.LayerDrawable;
 import android.preference.PreferenceManager;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -18,7 +20,10 @@ import edu.kit.psegruppe3.mensax.datamodels.Meal;
 import edu.kit.psegruppe3.mensax.datamodels.Offer;
 
 /**
- * ExpandableListAdapter that shows the daily menu.
+ * ExpandableListAdapter that shows the offer of a day, the daily menu.
+ *
+ * @author MensaX-group
+ * @version 1.0
  */
 public class OfferListAdapter extends BaseExpandableListAdapter {
 
@@ -26,16 +31,27 @@ public class OfferListAdapter extends BaseExpandableListAdapter {
     private DailyMenu mDailyMenu;
     private Context mContext;
 
+    /**
+     * Constructor of the offer list adapter.
+     * @param context the context of the activity
+     * @param dailyMenu the menu of a day
+     */
     public OfferListAdapter(Context context, DailyMenu dailyMenu) {
         mDailyMenu = dailyMenu;
         mContext = context;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public int getGroupCount() {
         return NUM_LINES;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public int getChildrenCount(int groupPosition) {
         int result = 0;
@@ -47,11 +63,17 @@ public class OfferListAdapter extends BaseExpandableListAdapter {
         return result;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Object getGroup(int groupPosition) {
         return getLine(groupPosition);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Object getChild(int groupPosition, int childPosition) {
         Line currentLine = getLine(groupPosition);
@@ -67,11 +89,17 @@ public class OfferListAdapter extends BaseExpandableListAdapter {
         return null;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public long getGroupId(int groupPosition) {
         return 0;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public long getChildId(int groupPosition, int childPosition) {
         Line currentLine = getLine(groupPosition);
@@ -87,11 +115,17 @@ public class OfferListAdapter extends BaseExpandableListAdapter {
         return 0;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public boolean hasStableIds() {
         return false;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public View getGroupView(int groupPosition, boolean isExpanded, View convertView, ViewGroup parent) {
         if (convertView == null) {
@@ -102,6 +136,9 @@ public class OfferListAdapter extends BaseExpandableListAdapter {
         return convertView;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public View getChildView(int groupPosition, int childPosition, boolean isLastChild, View convertView, ViewGroup parent) {
         if (convertView == null) {
@@ -161,11 +198,16 @@ public class OfferListAdapter extends BaseExpandableListAdapter {
         textViewPrice.setText(mContext.getString(R.string.price, price));
 
         RatingBar globalRating = (RatingBar) convertView.findViewById(R.id.list_item_offer_ratingbar);
+        LayerDrawable stars = (LayerDrawable) globalRating.getProgressDrawable();
+        stars.getDrawable(2).setColorFilter(Color.YELLOW, PorterDuff.Mode.SRC_ATOP);
         globalRating.setRating((float) offer.getMeal().getGlobalRating());
 
         return convertView;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public boolean isChildSelectable(int groupPosition, int childPosition) {
         return true;

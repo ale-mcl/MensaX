@@ -8,10 +8,19 @@ import android.preference.PreferenceManager;
 import edu.kit.psegruppe3.mensax.datamodels.Meal;
 
 /**
- * Created by ekremsenturk on 25.07.15.
+ * Utility class that provides often used methods.
+ *
+ * @author MensaX-group
+ * @version 1.0
  */
 public class Utility {
 
+    /**
+     * Metod to get the drawable of a Tag.
+     * @param context the activity
+     * @param tagIndex the indext of the Tag
+     * @return drawable object representig the Tag
+     */
     public static Drawable getTagDrawable(Context context, int tagIndex){
         String uri = null;
         switch (tagIndex) {
@@ -42,6 +51,12 @@ public class Utility {
         return context.getResources().getDrawable(imageResource);
     }
 
+    /**
+     * Method to get the string description of a Tag
+     * @param context the adctivity
+     * @param tagIndex the indext of the Tag
+     * @return string description of the Tag
+     */
     public static String getTagString(Context context, int tagIndex) {
         switch (tagIndex) {
             case Meal.TAG_BIO:

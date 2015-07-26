@@ -1,7 +1,10 @@
 package edu.kit.psegruppe3.mensax.datamodels;
 
 /**
- * Created by ekremsenturk on 20.06.15.
+ * Enum class whith all the different Lines avaible at the Mensa.
+ *
+ * @author MensaX-Group
+ * @version 1.0
  */
 public enum Line {
     l1,

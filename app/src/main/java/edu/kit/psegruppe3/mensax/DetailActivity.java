@@ -9,11 +9,23 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 
+/**
+ *Activity that shows the details about a meal.
+ *
+ * @author MensaX-group
+ * @version 1.0
+ */
 @SuppressWarnings("deprecation")
 public class DetailActivity extends ActionBarActivity {
 
+    /**
+     * The id of a meal
+     */
     static final String ARG_MEAL_ID = "mealId";
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         Intent intent = getIntent();
@@ -35,6 +47,9 @@ public class DetailActivity extends ActionBarActivity {
             }
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
@@ -42,6 +57,9 @@ public class DetailActivity extends ActionBarActivity {
         return true;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle action bar item clicks here.
@@ -79,13 +97,14 @@ public class DetailActivity extends ActionBarActivity {
         return super.onOptionsItemSelected(item);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void onBackPressed(){
         FragmentManager fm = getFragmentManager();
         if(fm.getBackStackEntryCount() > 0 && findViewById(R.id.legendeContainer).getVisibility() == View.VISIBLE) {
             findViewById(R.id.legendeContainer).setVisibility(View.GONE);
-            //recreate();
-            //fm.popBackStack();
         } else {
             super.onBackPressed();
         }

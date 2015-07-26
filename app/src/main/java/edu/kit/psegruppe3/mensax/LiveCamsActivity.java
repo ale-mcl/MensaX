@@ -7,10 +7,18 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.webkit.WebView;
 
-
+/**
+ * Activity that shows the Live Cams of the Mensa.
+ *
+ * @author MensaX-group
+ * @version 1.0
+ */
 public class LiveCamsActivity extends ActionBarActivity {
     private WebView webView;
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -19,9 +27,11 @@ public class LiveCamsActivity extends ActionBarActivity {
         webView = (WebView) findViewById(R.id.webView1);
         webView.getSettings().setJavaScriptEnabled(true);
         webView.loadUrl("http://www.studentenwerk-karlsruhe.de/de/essen/livecams/popup/?page=1");
-
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
@@ -29,6 +39,9 @@ public class LiveCamsActivity extends ActionBarActivity {
         return true;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle action bar item clicks here. The action bar will
@@ -58,5 +71,4 @@ public class LiveCamsActivity extends ActionBarActivity {
 
         return super.onOptionsItemSelected(item);
     }
-
 }
