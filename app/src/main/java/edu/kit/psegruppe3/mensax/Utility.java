@@ -1,7 +1,9 @@
 package edu.kit.psegruppe3.mensax;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.graphics.drawable.Drawable;
+import android.preference.PreferenceManager;
 
 import edu.kit.psegruppe3.mensax.datamodels.Meal;
 
@@ -58,5 +60,11 @@ public class Utility {
                 return context.getString(R.string.tag_veg);
             default: return null;
         }
+    }
+
+    public static String getPreferredPriceGroup(Context context) {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        return prefs.getString(context.getString(R.string.pref_priceGroup_key),
+                context.getString(R.string.pref_priceGroup_default));
     }
 }

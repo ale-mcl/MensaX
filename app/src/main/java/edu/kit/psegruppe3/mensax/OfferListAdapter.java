@@ -157,11 +157,8 @@ public class OfferListAdapter extends BaseExpandableListAdapter {
         } else if (priceGroup.equals(mContext.getString(R.string.pref_priceGroup_pupil)) ) {
             price = (float) offer.getPrice(3) / 100;
         }
-
-        String priceFloat = String.format("%.2f", price);
-        String real_price = priceFloat + "€";
         TextView textViewPrice = (TextView) convertView.findViewById(R.id.list_item_offer_textview_price);
-        textViewPrice.setText(real_price);
+        textViewPrice.setText(mContext.getString(R.string.price, price));
 
         RatingBar globalRating = (RatingBar) convertView.findViewById(R.id.list_item_offer_ratingbar);
         globalRating.setRating((float) offer.getMeal().getGlobalRating());

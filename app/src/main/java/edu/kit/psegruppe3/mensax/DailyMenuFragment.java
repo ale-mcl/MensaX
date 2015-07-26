@@ -154,6 +154,10 @@ public class DailyMenuFragment extends Fragment implements LoaderManager.LoaderC
 
     }
 
+    public void onPriceGroupChanged() {
+        getLoaderManager().restartLoader(MENU_LOADER, getArguments(), this);
+    }
+
     private void updateList() {
         final OfferListAdapter mainActivityFragmentAdapter = new OfferListAdapter(getActivity(), mDailyMenu);
 

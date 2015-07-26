@@ -1,6 +1,5 @@
 package edu.kit.psegruppe3.mensax;
 
-import android.app.FragmentTransaction;
 import android.content.Context;
 import android.content.Intent;
 import android.preference.PreferenceManager;
@@ -13,12 +12,11 @@ import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
-import android.view.ViewGroup;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 
 import edu.kit.psegruppe3.mensax.sync.MensaXSyncAdapter;
 
@@ -28,22 +26,22 @@ public class MainActivity extends ActionBarActivity {
     static final int NUM_TABS = 5;
     static final String ARG_DATE = "date";
 
-    private TabAdapter mAdapter;
-    private ViewPager mPager;
+    private String mPriceGroup;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        mPriceGroup = Utility.getPreferredPriceGroup(this);
         setContentView(R.layout.activity_main);
 
         PreferenceManager.setDefaultValues(this, R.xml.pref_general, false);
 
-        mAdapter = new TabAdapter(getSupportFragmentManager(), this);
-        mPager = (ViewPager) findViewById(R.id.pager);
-        mPager.setAdapter(mAdapter);
+        TabAdapter tabAdapter = new TabAdapter(getSupportFragmentManager(), this);
+        ViewPager pager = (ViewPager) findViewById(R.id.pager);
+        pager.setAdapter(tabAdapter);
 
         TabLayout tabLayout = (TabLayout) findViewById(R.id.tab_layout);
-        tabLayout.setupWithViewPager(mPager);
+        tabLayout.setupWithViewPager(pager);
 
         MensaXSyncAdapter.initializeSyncAdapter(this);
 
@@ -83,6 +81,22 @@ public class MainActivity extends ActionBarActivity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        String priceGroup = Utility.getPreferredPriceGroup(this);
+        if (priceGroup != null && !priceGroup.equals(mPriceGroup)) {
+            List<Fragment> dmfList = getSupportFragmentManager().getFragments();
+            for (int i = 0; i < dmfList.size(); i++) {
+                DailyMenuFragment dmf = (DailyMenuFragment) dmfList.get(i);
+                if (dmf != null) {
+                    dmf.onPriceGroupChanged();
+                }
+            }
+            mPriceGroup = priceGroup;
+        }
     }
 
     public static class TabAdapter extends FragmentPagerAdapter {
@@ -144,9 +158,9 @@ public class MainActivity extends ActionBarActivity {
                     case Calendar.FRIDAY: dayOfWeek = context.getString(R.string.friday);
                 }
             }
-            SimpleDateFormat dateFormat = new SimpleDateFormat("dd.MM");
+            SimpleDateFormat dateFormat = new SimpleDateFormat(context.getString(R.string.dateFormat));
             Date currentDate = calendar.getTime();
-            return dayOfWeek + " (" + dateFormat.format(currentDate) + ")";
+            return dayOfWeek + " " + dateFormat.format(currentDate);
         }
     }
 

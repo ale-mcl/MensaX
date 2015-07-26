@@ -319,10 +319,12 @@ public class DetailFragment extends Fragment {
 
         @Override
         protected void onPostExecute(Integer response) {
-            if (response == HttpURLConnection.HTTP_OK) {
-                Toast.makeText(getActivity(), getString(R.string.toast_image_upload_succesfull), Toast.LENGTH_SHORT).show();
-            } else {
-                Toast.makeText(getActivity(), getString(R.string.toast_image_upload_failed), Toast.LENGTH_SHORT).show();
+            if (getActivity() != null) {
+                if (response == HttpURLConnection.HTTP_OK) {
+                    Toast.makeText(getActivity(), getString(R.string.toast_image_upload_succesfull), Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(getActivity(), getString(R.string.toast_image_upload_failed), Toast.LENGTH_SHORT).show();
+                }
             }
             super.onPostExecute(response);
         }
@@ -397,22 +399,25 @@ public class DetailFragment extends Fragment {
 
         @Override
         protected void onPostExecute(Meal m) {
-            if (m != null) {
-                meal = m;
-                updateScreen(true);
-            } else {
-                AlertDialog.Builder adb = new AlertDialog.Builder(getActivity());
-                adb.setCancelable(false);
-                adb.setTitle(R.string.error_dialog_title);
-                adb.setMessage(R.string.error_dialog_message);
-                adb.setNeutralButton(R.string.ok, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        getActivity().finish();
-                    }
-                });
-                adb.show();
+            if (getActivity() != null) {
+                if (m != null) {
+                    meal = m;
+                    updateScreen(true);
+                } else {
+                    AlertDialog.Builder adb = new AlertDialog.Builder(getActivity());
+                    adb.setCancelable(false);
+                    adb.setTitle(R.string.error_dialog_title);
+                    adb.setMessage(R.string.error_dialog_message);
+                    adb.setNeutralButton(R.string.ok, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            getActivity().finish();
+                        }
+                    });
+                    adb.show();
+                }
             }
+
             super.onPostExecute(m);
         }
 
@@ -602,11 +607,13 @@ public class DetailFragment extends Fragment {
 
         @Override
         protected void onPostExecute(Integer response) {
-            if (response == HttpURLConnection.HTTP_OK) {
-                updateScreen(false);
-                Toast.makeText(getActivity(), getString(R.string.toast_rating_succesfull), Toast.LENGTH_SHORT).show();
-            } else {
-                Toast.makeText(getActivity(), getString(R.string.toast_rating_failed), Toast.LENGTH_SHORT).show();
+            if (getActivity() != null) {
+                if (response == HttpURLConnection.HTTP_OK) {
+                    updateScreen(false);
+                    Toast.makeText(getActivity(), getString(R.string.toast_rating_succesfull), Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(getActivity(), getString(R.string.toast_rating_failed), Toast.LENGTH_SHORT).show();
+                }
             }
             super.onPostExecute(response);
         }
@@ -676,10 +683,12 @@ public class DetailFragment extends Fragment {
 
         @Override
         protected void onPostExecute(Integer response) {
-            if (response == HttpURLConnection.HTTP_OK) {
-                Toast.makeText(getActivity(), getString(R.string.toast_merge_succesfull), Toast.LENGTH_SHORT).show();
-            } else {
-                Toast.makeText(getActivity(), getString(R.string.toast_merge_failed), Toast.LENGTH_SHORT).show();
+            if (getActivity() != null) {
+                if (response == HttpURLConnection.HTTP_OK) {
+                    Toast.makeText(getActivity(), getString(R.string.toast_merge_succesfull), Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(getActivity(), getString(R.string.toast_merge_failed), Toast.LENGTH_SHORT).show();
+                }
             }
             super.onPostExecute(response);
         }
