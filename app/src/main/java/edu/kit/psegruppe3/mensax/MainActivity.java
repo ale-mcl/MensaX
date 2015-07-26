@@ -14,6 +14,7 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -50,9 +51,15 @@ public class MainActivity extends ActionBarActivity {
 
     @Override
     public void onBackPressed() {
-        Intent intent = getIntent();
-        finish();
-        startActivity(intent);
+        if (findViewById(R.id.tab_layout).isShown() == false) {
+            //recreate();
+            Intent intent = getIntent();
+            finish();
+            startActivity(intent);
+
+        } else {
+            finish();
+        }
     }
 
     @Override
