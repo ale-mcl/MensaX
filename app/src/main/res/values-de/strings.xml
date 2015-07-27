@@ -58,6 +58,7 @@
     <string name="toast_image_upload_succesfull">Foto wurde erfolgreich hochgeladen</string>
     <string name="toast_merge_failed">Senden des Vorschlags fehlgeschlagen</string>
     <string name="toast_merge_succesfull">Vorschlag wurde gesendet</string>
-    <string name="toast_rating_failed">Bewertung erfolgreich</string>
-    <string name="toast_rating_succesfull">Bewertung fehlgeschlagen</string>
+    <string name="toast_rating_failed">Bewertung fehlgeschlagen</string>
+    <string name="toast_rating_succesfull">Bewertung erfolgreich</string>
+    <string name="pref_category_title">Allgemeine Einstellungen</string>
 </resources>

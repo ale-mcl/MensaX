@@ -41,6 +41,7 @@
     <string name="nmtisch" translatable="false">Cafeteria ab 14:30</string>
 
     <!-- Settings strings -->
+    <string name="pref_category_title">General Settings</string>
     <string name="pref_priceGroup_label">Price Group</string>
     <string name="pref_priceGroup_key" translatable="false">price_group</string>
     <string name="pref_priceGroup_default" translatable="false">student</string>
