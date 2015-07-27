@@ -14,7 +14,6 @@ import android.webkit.WebView;
  * @version 1.0
  */
 public class LiveCamsActivity extends ActionBarActivity {
-    private WebView webView;
 
     /**
      * {@inheritDoc}
@@ -24,7 +23,7 @@ public class LiveCamsActivity extends ActionBarActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_livecam);
 
-        webView = (WebView) findViewById(R.id.webView1);
+        WebView webView = (WebView) findViewById(R.id.webView1);
         webView.getSettings().setJavaScriptEnabled(true);
         webView.loadUrl("http://www.studentenwerk-karlsruhe.de/de/essen/livecams/popup/?page=1");
     }

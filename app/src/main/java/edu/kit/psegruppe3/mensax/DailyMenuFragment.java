@@ -185,26 +185,27 @@ public class DailyMenuFragment extends Fragment implements LoaderManager.LoaderC
     }
 
     private Line getLine(String line) {
-        if (line.equals("l1")) {
-            return Line.l1;
-        } else if (line.equals("l2")) {
-            return Line.l2;
-        } else if (line.equals("l3")) {
-            return Line.l3;
-        } else if (line.equals("l45")) {
-            return Line.l45;
-        } else if (line.equals("schnitzelbar")) {
-            return Line.schnitzelbar;
-        } else if (line.equals("update")) {
-            return Line.update;
-        } else if (line.equals("abend")) {
-            return Line.abend;
-        } else if (line.equals("aktion")) {
-            return Line.aktion;
-        } else if (line.equals("heisstheke")) {
-            return Line.heisstheke;
-        } else {
-            return Line.nmtisch;
+        switch (line) {
+            case "l1":
+                return Line.l1;
+            case "l2":
+                return Line.l2;
+            case "l3":
+                return Line.l3;
+            case "l45":
+                return Line.l45;
+            case "schnitzelbar":
+                return Line.schnitzelbar;
+            case "update":
+                return Line.update;
+            case "abend":
+                return Line.abend;
+            case "aktion":
+                return Line.aktion;
+            case "heisstheke":
+                return Line.heisstheke;
+            default:
+                return Line.nmtisch;
         }
     }
 }

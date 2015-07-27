@@ -2,6 +2,7 @@ package edu.kit.psegruppe3.mensax;
 
 import android.accounts.Account;
 import android.accounts.AccountManager;
+import android.app.Activity;
 import android.app.SearchManager;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -64,7 +65,6 @@ public class DetailFragment extends Fragment {
     private TextView txtIngredients;
     private RatingBar globalRating;
     private RatingBar userRating;
-    private GalleryAdapter galleryAdapter;
     private Gallery gallery;
     private TextView firstTagTextView;
     private TextView secondTagTextView;
@@ -145,13 +145,13 @@ public class DetailFragment extends Fragment {
      */
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == getActivity().RESULT_OK) {
+        if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == Activity.RESULT_OK) {
             Bitmap photo = (Bitmap) data.getExtras().get("data");
             String stringOfPhoto = BitMapToString(photo);
             UploadPictureTask uploadPictureTask = new UploadPictureTask();
             uploadPictureTask.execute(String.valueOf(meal.getMealId()), stringOfPhoto);
 
-        } else if (requestCode == SearchableActivity.REQUEST_CODE && resultCode == getActivity().RESULT_OK) {
+        } else if (requestCode == SearchableActivity.REQUEST_CODE && resultCode == Activity.RESULT_OK) {
             if (data.hasExtra(DetailActivity.ARG_MEAL_ID)) {
                 int mealId = data.getIntExtra(DetailActivity.ARG_MEAL_ID, 0);
                 MergeMealTask mergeMealTask = new MergeMealTask();
@@ -164,8 +164,7 @@ public class DetailFragment extends Fragment {
         ByteArrayOutputStream baos=new ByteArrayOutputStream();
         bitmap.compress(Bitmap.CompressFormat.PNG, 100, baos);
         byte [] b=baos.toByteArray();
-        String temp=Base64.encodeToString(b, Base64.DEFAULT);
-        return temp;
+        return Base64.encodeToString(b, Base64.DEFAULT);
     }
 
     private void updateScreen(boolean downloadImages) {
@@ -198,7 +197,7 @@ public class DetailFragment extends Fragment {
 
         txtMealName.setText(meal.getName());
 
-        if (!meal.getIngredients().equals("[]")) {
+        if (!meal.getIngredients().equals("[]")) { //no additives
             txtIngredients.setText(getString(R.string.ingredients, meal.getIngredients()));
         } else {
             txtIngredients.setText(getString(R.string.no_ingredients));
@@ -212,9 +211,7 @@ public class DetailFragment extends Fragment {
         final String scope = "audience:server:client_id:785844054287-7hge652kf27md81acog9vg1u0nk9so83.apps.googleusercontent.com";
         try {
             String email = getGoogleEmailAdress();
-            String token = GoogleAuthUtil.getToken(getActivity(), email, scope);
-            Log.d(LOG_TAG, "Token: " + token);
-            return token;
+            return GoogleAuthUtil.getToken(getActivity(), email, scope);
         } catch (IOException e) {
             Log.d(LOG_TAG, "Error");
         } catch (UserRecoverableAuthException e ) {
@@ -291,8 +288,6 @@ public class DetailFragment extends Fragment {
                 urlConnection.setRequestProperty("Content-Type", "application/json; charset=UTF-8");
                 urlConnection.setRequestMethod("POST");
                 urlConnection.connect();
-
-                Log.d("doInBackground(Request)", output);
 
                 writer = new OutputStreamWriter(urlConnection.getOutputStream());
                 writer.write(output);
@@ -379,8 +374,6 @@ public class DetailFragment extends Fragment {
                 urlConnection.setRequestMethod("POST");
                 urlConnection.connect();
 
-                Log.d("doInBackground(Request)", output);
-
                 writer = new OutputStreamWriter(urlConnection.getOutputStream());
                 writer.write(output);
                 writer.flush();
@@ -393,7 +386,6 @@ public class DetailFragment extends Fragment {
                 while ((line = reader.readLine()) != null) {
                     result.append(line);
                 }
-                Log.d("doInBackground(Resp)", result.toString());
 
                 newMeal = getMealDataFromJson(result.toString());
             } catch (IOException e) {
@@ -589,8 +581,6 @@ public class DetailFragment extends Fragment {
                 urlConnection.setRequestMethod("POST");
                 urlConnection.connect();
 
-                //Log.d("doInBackground(Request)", output);
-
                 writer = new OutputStreamWriter(urlConnection.getOutputStream());
                 writer.write(output);
                 writer.flush();
@@ -603,13 +593,13 @@ public class DetailFragment extends Fragment {
                 while ((line = reader.readLine()) != null) {
                     result.append(line);
                 }
-                //Log.d("doInBackground(Resp)", result.toString());
                 JSONObject newMeal = new JSONObject(result.toString());
                 JSONObject data = newMeal.getJSONObject(ServerApiContract.API_MEAL_DATA);
                 JSONObject ratings = data.getJSONObject(ServerApiContract.API_MEAL_RATINGS);
                 meal.setGlobalRating((int) (ratings.getDouble(ServerApiContract.API_GLOBAL_RATING)));
                 meal.setUserRating(ratings.getInt(ServerApiContract.API_USER_RATING));
                 response = urlConnection.getResponseCode();
+
             } catch (JSONException e){
                 Log.e(LOG_TAG, e.getMessage(), e);
                 e.printStackTrace();
