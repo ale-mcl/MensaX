@@ -52,4 +52,13 @@
     <string name="action_liveCam">Live Cams</string>
     <string name="title_activity_live_cams">Live Cams</string>
     <string name="mensaTimes">Pranzo\nLun. - Ven. 11:00 - 14:00\nCurry-Queen\nLun. - Ven. 11:00 - 14:30\nVne. 11:00 - 14:00\nCena alla Caffeteria all´ Adenauerring\nLun. - Mar. 16:00 - 19:30\n\nIndirizzo:\nAdenauerring 7, 76131 Karlsruhe\nTelefono 0721 6909-230</string>
+    <string name="toast_image_upload_failed">Errore durante l´upload della foto</string>
+    <string name="toast_image_upload_succesfull">Foto uplodata con successo</string>
+    <string name="toast_merge_failed">Errore durante l´nvio del suggerimento </string>
+    <string name="toast_merge_succesfull">Suggerimento inviato con successo</string>
+    <string name="toast_rating_failed">Errore durante la valutazione.</string>
+    <string name="toast_rating_succesfull">Valutazione effettuata con successo.</string>
+    <string name="pref_category_title">Impostazioni generali</string>
+    <string name="error_dialog_title">Errore</string>
+    <string name="error_dialog_message">Errore durante il caricamento delle informazioni sul piatto. Contralla la tua connessione internet e riprova.</string>
 </resources>
