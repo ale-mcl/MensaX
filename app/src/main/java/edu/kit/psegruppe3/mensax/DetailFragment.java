@@ -58,6 +58,9 @@ public class DetailFragment extends Fragment {
      */
     static final int REQUEST_IMAGE_CAPTURE = 1;
 
+    private static final int IMAGE_WIDTH = 1080;
+    private static final int IMAGE_HEIGHT = 720;
+
     private final String LOG_TAG = DetailFragment.class.getSimpleName();
 
     private Meal meal;
@@ -99,42 +102,48 @@ public class DetailFragment extends Fragment {
         Button btnGiveRating = (Button) rootView.findViewById(R.id.button_giveRating);
         btnGiveRating.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                AlertDialog.Builder rankDialog;
-                rankDialog = new AlertDialog.Builder(getActivity());
-                LayoutInflater inflater = getActivity().getLayoutInflater();
-                View dialogView = inflater.inflate(R.layout.dialog_give_rating, null);
-                rankDialog.setView(dialogView);
-                rankDialog.setCancelable(true);
-                rankDialog.setTitle(R.string.dialog_giveRating);
-                final RatingBar ratingBar = (RatingBar) dialogView.findViewById(R.id.dialog_ratingbar);
-                rankDialog.setPositiveButton(R.string.confirm, new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id) {
-                        int newRating = (int) ratingBar.getRating();
-                        RateMealTask rateMealTask = new RateMealTask();
-                        rateMealTask.execute(meal.getMealId(), newRating);
-                    }
-                });
-                rankDialog.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id) {
-                        dialog.cancel();
-                    }
-                });
-                rankDialog.show();
+                if (meal != null) {
+                    AlertDialog.Builder rankDialog;
+                    rankDialog = new AlertDialog.Builder(getActivity());
+                    LayoutInflater inflater = getActivity().getLayoutInflater();
+                    View dialogView = inflater.inflate(R.layout.dialog_give_rating, null);
+                    rankDialog.setView(dialogView);
+                    rankDialog.setCancelable(true);
+                    rankDialog.setTitle(R.string.dialog_giveRating);
+                    final RatingBar ratingBar = (RatingBar) dialogView.findViewById(R.id.dialog_ratingbar);
+                    rankDialog.setPositiveButton(R.string.confirm, new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int id) {
+                            int newRating = (int) ratingBar.getRating();
+                            RateMealTask rateMealTask = new RateMealTask();
+                            rateMealTask.execute(meal.getMealId(), newRating);
+                        }
+                    });
+                    rankDialog.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int id) {
+                            dialog.cancel();
+                        }
+                    });
+                    rankDialog.show();
+                }
             }
         });
 
         Button btnTakePicture = (Button) rootView.findViewById(R.id.button_takePicture);
         btnTakePicture.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                startActivityForResult(intent, REQUEST_IMAGE_CAPTURE);
+                if (meal != null) {
+                    Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                    startActivityForResult(intent, REQUEST_IMAGE_CAPTURE);
+                }
             }
         });
 
         Button btnMergeMeal = (Button) rootView.findViewById(R.id.button_mergeMeal);
         btnMergeMeal.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                askSearchQuery();
+                if (meal != null) {
+                    askSearchQuery();
+                }
             }
         });
         return rootView;
@@ -147,7 +156,7 @@ public class DetailFragment extends Fragment {
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == Activity.RESULT_OK) {
             Bitmap photo = (Bitmap) data.getExtras().get("data");
-            String stringOfPhoto = BitMapToString(photo);
+            String stringOfPhoto = bitmapToString(photo);
             UploadPictureTask uploadPictureTask = new UploadPictureTask();
             uploadPictureTask.execute(String.valueOf(meal.getMealId()), stringOfPhoto);
 
@@ -160,10 +169,11 @@ public class DetailFragment extends Fragment {
         }
     }
 
-    private String BitMapToString(Bitmap bitmap){
-        ByteArrayOutputStream baos=new ByteArrayOutputStream();
-        bitmap.compress(Bitmap.CompressFormat.PNG, 100, baos);
-        byte [] b=baos.toByteArray();
+    private String bitmapToString(Bitmap bitmap) {
+        Bitmap resized = Bitmap.createScaledBitmap(bitmap, IMAGE_WIDTH, IMAGE_HEIGHT, true);
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        resized.compress(Bitmap.CompressFormat.PNG, 100, baos);
+        byte [] b = baos.toByteArray();
         return Base64.encodeToString(b, Base64.DEFAULT);
     }
 
