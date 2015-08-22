@@ -1,11 +1,16 @@
 package edu.kit.psegruppe3.mensax;
 
+import android.app.Activity;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
+import android.support.v7.app.AlertDialog;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.webkit.WebView;
+import android.webkit.WebViewClient;
 
 /**
  * Activity that shows the Live Cams of the Mensa.
@@ -15,6 +20,9 @@ import android.webkit.WebView;
  */
 public class LiveCamsActivity extends ActionBarActivity {
 
+    private final String CAMSURL = "http://www.studentenwerk-karlsruhe.de/de/essen/livecams/popup/?page=1";
+    public static Activity activity;
+
     /**
      * {@inheritDoc}
      */
@@ -23,9 +31,28 @@ public class LiveCamsActivity extends ActionBarActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_livecam);
 
-        WebView webView = (WebView) findViewById(R.id.webView1);
+        activity = this;
+        final WebView webView = (WebView) findViewById(R.id.webView1);
         webView.getSettings().setJavaScriptEnabled(true);
-        webView.loadUrl("http://www.studentenwerk-karlsruhe.de/de/essen/livecams/popup/?page=1");
+
+        webView.setWebViewClient(new WebViewClient(){
+            @Override
+            public void onReceivedError(WebView view, int errorCode, String description, String failingUrl) {
+                webView.setVisibility(View.INVISIBLE);
+                AlertDialog.Builder adb = new AlertDialog.Builder(activity);
+                adb.setCancelable(false);
+                adb.setTitle(R.string.error_dialog_title);
+                adb.setMessage(R.string.error_dialog_message_livecams);
+                adb.setNeutralButton(R.string.ok, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        activity.finish();
+                    }
+                });
+                adb.show();
+            }
+        });
+        webView.loadUrl(CAMSURL);
     }
 
     /**

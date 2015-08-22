@@ -61,4 +61,5 @@
     <string name="toast_rating_failed">Bewertung fehlgeschlagen</string>
     <string name="toast_rating_succesfull">Bewertung erfolgreich</string>
     <string name="pref_category_title">Allgemeine Einstellungen</string>
+    <string name="error_dialog_message_livecams">Es konnte keine Verbindung zu den Live Cams hergestellt werden. Überprüfen sie ihre Internetverbindung und versuchen sie es erneut.</string>
 </resources>
