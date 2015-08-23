@@ -55,17 +55,17 @@ public class TestOfferListAdapter extends AndroidTestCase {
     }
 
     public void testAmmountChilds() {
-        int childCount1 = testOfferListAdapter.getChildrenCount(1);
+        int childCount1 = testOfferListAdapter.getChildrenCount(0);
         assertEquals(1, childCount1);
-        int childCount2 = testOfferListAdapter.getChildrenCount(2);
+        int childCount2 = testOfferListAdapter.getChildrenCount(1);
         assertEquals(1, childCount2);
-        int childCount3 = testOfferListAdapter.getChildrenCount(3);
+        int childCount3 = testOfferListAdapter.getChildrenCount(2);
         assertEquals(1, childCount3);
     }
 
     public void testChildId() {
         long childId = testOfferListAdapter.getChildId(1,1);
-        assertEquals(1, childId);
+        assertEquals(0, childId);
     }
 
     @Override
