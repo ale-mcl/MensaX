@@ -102,7 +102,7 @@ public class DetailFragment extends Fragment {
         Button btnGiveRating = (Button) rootView.findViewById(R.id.button_giveRating);
         btnGiveRating.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                if (meal != null) {
+                if (meal != null && getGoogleEmailAdress() != null) {
                     AlertDialog.Builder rankDialog;
                     rankDialog = new AlertDialog.Builder(getActivity());
                     LayoutInflater inflater = getActivity().getLayoutInflater();
@@ -124,6 +124,8 @@ public class DetailFragment extends Fragment {
                         }
                     });
                     rankDialog.show();
+                } else if (meal != null) {
+                    showNoGoogleAccDialog();
                 }
             }
         });
@@ -131,9 +133,11 @@ public class DetailFragment extends Fragment {
         Button btnTakePicture = (Button) rootView.findViewById(R.id.button_takePicture);
         btnTakePicture.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                if (meal != null) {
+                if (meal != null && getGoogleEmailAdress() != null) {
                     Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
                     startActivityForResult(intent, REQUEST_IMAGE_CAPTURE);
+                } else if (meal != null) {
+                    showNoGoogleAccDialog();
                 }
             }
         });
@@ -141,8 +145,10 @@ public class DetailFragment extends Fragment {
         Button btnMergeMeal = (Button) rootView.findViewById(R.id.button_mergeMeal);
         btnMergeMeal.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                if (meal != null) {
+                if (meal != null && getGoogleEmailAdress() != null) {
                     askSearchQuery();
+                } else if (meal != null) {
+                    showNoGoogleAccDialog();
                 }
             }
         });
@@ -221,7 +227,9 @@ public class DetailFragment extends Fragment {
         final String scope = "audience:server:client_id:785844054287-7hge652kf27md81acog9vg1u0nk9so83.apps.googleusercontent.com";
         try {
             String email = getGoogleEmailAdress();
-            return GoogleAuthUtil.getToken(getActivity(), email, scope);
+            if (email != null) {
+                return GoogleAuthUtil.getToken(getActivity(), email, scope);
+            }
         } catch (IOException e) {
             Log.d(LOG_TAG, "Error");
         } catch (UserRecoverableAuthException e ) {
@@ -230,6 +238,19 @@ public class DetailFragment extends Fragment {
             Log.d(LOG_TAG, "Error");
         }
         return null;
+    }
+
+    private void showNoGoogleAccDialog() {
+        AlertDialog.Builder adb = new AlertDialog.Builder(getActivity());
+        adb.setTitle(R.string.no_google_acc_dialog_title);
+        adb.setMessage(R.string.no_google_acc_dialog_message);
+        adb.setNeutralButton(R.string.ok, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.cancel();
+            }
+        });
+        adb.create().show();
     }
 
     private void sendSearchRequest(String query) {
