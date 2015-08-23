@@ -56,7 +56,7 @@ public class DetailFragment extends Fragment {
     /**
      * Request code to capture a picture with a camera.
      */
-    static final int REQUEST_IMAGE_CAPTURE = 1;
+    private static final int REQUEST_IMAGE_CAPTURE = 1;
 
     private static final int IMAGE_WIDTH = 1080;
     private static final int IMAGE_HEIGHT = 720;
@@ -326,7 +326,7 @@ public class DetailFragment extends Fragment {
         }
 
         private String getJsonString(String mealId, String userId, String image) throws JSONException {
-            String imageJsonStr = "";
+            String imageJsonStr;
 
             JSONObject imageString = new JSONObject();
             imageString.put(ServerApiContract.API_MEAL_ID, mealId);
@@ -416,6 +416,13 @@ public class DetailFragment extends Fragment {
                         Log.e(LOG_TAG, "Error closing stream", e);
                     }
                 }
+                if (writer != null) {
+                    try {
+                        writer.close();
+                    } catch (final IOException e) {
+                        Log.e(LOG_TAG, "Error closing stream", e);
+                    }
+                }
             }
             return newMeal;
         }
@@ -448,7 +455,7 @@ public class DetailFragment extends Fragment {
         }
 
         private Meal getMealDataFromJson(String jsonStr) throws JSONException {
-            Meal newMeal = null;
+            Meal newMeal;
 
             JSONObject meal = new JSONObject(jsonStr);
             JSONObject data = meal.getJSONObject(ServerApiContract.API_MEAL_DATA);
@@ -493,7 +500,7 @@ public class DetailFragment extends Fragment {
         }
 
         private String getJsonString(int mealId, String userId) throws JSONException {
-            String requestJsonStr = "";
+            String requestJsonStr;
 
             JSONObject request = new JSONObject();
             request.put(ServerApiContract.API_MEAL_ID, mealId);
@@ -656,7 +663,7 @@ public class DetailFragment extends Fragment {
         }
 
         private String getJsonString(int mealid, int value, String userid) throws JSONException {
-            String ratingJsonStr = "";
+            String ratingJsonStr;
 
             JSONObject rating = new JSONObject();
             rating.put(ServerApiContract.API_MEAL_ID, mealid);
@@ -737,7 +744,7 @@ public class DetailFragment extends Fragment {
         }
 
         private String getJsonString(int fistMealId, int secondMealId, String userid) throws JSONException {
-            String ratingJsonStr = "";
+            String ratingJsonStr;
 
             JSONObject rating = new JSONObject();
             rating.put(ServerApiContract.API_USER_ID, userid);

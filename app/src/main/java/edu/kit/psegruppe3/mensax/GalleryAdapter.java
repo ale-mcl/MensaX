@@ -83,7 +83,8 @@ public class GalleryAdapter extends BaseAdapter {
     public View getView(int position, View convertView, ViewGroup parent) {
         ImageView imageView = new ImageView(context);
         if (bitmaps.size() == 0) {
-            imageView.setImageDrawable(context.getDrawable(R.drawable.no_image_available));
+            int imageResource = context.getResources().getIdentifier("@drawable/no_image_available", null, context.getPackageName());
+            imageView.setImageDrawable(context.getResources().getDrawable(imageResource));
         } else {
             imageView.setImageBitmap((Bitmap) getItem(position));
         }

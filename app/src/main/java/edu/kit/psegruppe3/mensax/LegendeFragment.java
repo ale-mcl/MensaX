@@ -21,13 +21,7 @@ public class LegendeFragment extends Fragment {
         // Required empty public constructor
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-    }
+
 
     /**
      * {@inheritDoc}

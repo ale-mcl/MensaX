@@ -31,7 +31,7 @@ public class MainActivity extends ActionBarActivity {
     /**
      * The number of tabs in the TagAdapter, represents the number of days shown.
      */
-    static final int NUM_TABS = 5;
+    private static final int NUM_TABS = 5;
     /**
      * The date of a day in the adapter.
      */

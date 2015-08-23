@@ -73,7 +73,7 @@ public class MensaXSyncAdapter extends AbstractThreadedSyncAdapter {
         BufferedReader reader = null;
 
         // Will contain the raw JSON response as a string.
-        String mealNamesJsonStr = null;
+        String mealNamesJsonStr;
 
         try {
             URL url = ServerApiContract.getURL(ServerApiContract.PATH_NAMES);
@@ -135,7 +135,7 @@ public class MensaXSyncAdapter extends AbstractThreadedSyncAdapter {
         HttpURLConnection urlConnection = null;
         BufferedReader reader = null;
         // Will contain the raw JSON response as a string.
-        String menuJsonStr = null;
+        String menuJsonStr;
 
         try {
             calendar.set(Calendar.HOUR_OF_DAY, 0);
@@ -196,148 +196,138 @@ public class MensaXSyncAdapter extends AbstractThreadedSyncAdapter {
     }
 
     private void getMealNamesFromJson(String mealNamesJsonStr) throws JSONException {
-        try {
-            JSONArray list = new JSONArray(mealNamesJsonStr);
-            Vector<ContentValues> cVVector = new Vector<ContentValues>(list.length());
-            for (int i = 0; i < list.length(); i++) {
-                JSONObject item = list.getJSONObject(i);
-                String name = item.getString(ServerApiContract.API_MEAL_NAME);
-                int id = item.getInt(ServerApiContract.API_MEAL_ID);
-                Cursor mealCursor = getContext().getContentResolver().query(
-                        CanteenContract.MealEntry.CONTENT_URI,
-                        new String[]{CanteenContract.MealEntry._ID},
-                        CanteenContract.MealEntry.COLUMN_MEAL_NAME + " = ?",
-                        new String[]{name},
-                        null);
-                if (!mealCursor.moveToFirst()) {
-                    ContentValues mealValues = new ContentValues();
-                    mealValues.put(CanteenContract.MealEntry.COLUMN_MEAL_NAME, name);
-                    mealValues.put(CanteenContract.MealEntry.COLUMN_MEAL_ID, id);
-                    cVVector.add(mealValues);
-                }
-
-                mealCursor.close();
+        JSONArray list = new JSONArray(mealNamesJsonStr);
+        Vector<ContentValues> cVVector = new Vector<ContentValues>(list.length());
+        for (int i = 0; i < list.length(); i++) {
+            JSONObject item = list.getJSONObject(i);
+            String name = item.getString(ServerApiContract.API_MEAL_NAME);
+            int id = item.getInt(ServerApiContract.API_MEAL_ID);
+            Cursor mealCursor = getContext().getContentResolver().query(
+                    CanteenContract.MealEntry.CONTENT_URI,
+                    new String[]{CanteenContract.MealEntry._ID},
+                    CanteenContract.MealEntry.COLUMN_MEAL_NAME + " = ?",
+                    new String[]{name},
+                    null);
+            if (!mealCursor.moveToFirst()) {
+                ContentValues mealValues = new ContentValues();
+                mealValues.put(CanteenContract.MealEntry.COLUMN_MEAL_NAME, name);
+                mealValues.put(CanteenContract.MealEntry.COLUMN_MEAL_ID, id);
+                cVVector.add(mealValues);
             }
 
-            // add to database
-            if ( cVVector.size() > 0 ) {
-                ContentValues[] cvArray = new ContentValues[cVVector.size()];
-                cVVector.toArray(cvArray);
-                getContext().getContentResolver().bulkInsert(CanteenContract.MealEntry.CONTENT_URI, cvArray);
-            }
-
-            Log.d(LOG_TAG, cVVector.size() + " Meals Inserted");
-        } catch (JSONException e) {
-            Log.e(LOG_TAG, e.getMessage(), e);
-            e.printStackTrace();
+            mealCursor.close();
         }
+
+        // add to database
+        if ( cVVector.size() > 0 ) {
+            ContentValues[] cvArray = new ContentValues[cVVector.size()];
+            cVVector.toArray(cvArray);
+            getContext().getContentResolver().bulkInsert(CanteenContract.MealEntry.CONTENT_URI, cvArray);
+        }
+
+        Log.d(LOG_TAG, cVVector.size() + " Meals Inserted");
     }
 
     private void getMenuDataFromJson(String menuJsonStr, long endDate) throws JSONException {
         final int TRUE = 1;
         final int FALSE = 0;
 
-        try {
-            JSONArray menuJson = new JSONArray(menuJsonStr);
-            Vector<ContentValues> cVVector = new Vector<ContentValues>(menuJson.length());
-            for (int i = 0; i < menuJson.length(); i++) {
-                String mealName;
-                String ingredients;
-                String line;
-                long mealKey;
-                long date;
-                double globalRating;
-                int tagBio;
-                int tagFish;
-                int tagPork;
-                int tagCow;
-                int tagCowAw;
-                int tagVegan;
-                int tagVeg;
-                int priceStudents;
-                int priceStaff;
-                int priceGuests;
-                int pricePupils;
+        JSONArray menuJson = new JSONArray(menuJsonStr);
+        Vector<ContentValues> cVVector = new Vector<ContentValues>(menuJson.length());
+        for (int i = 0; i < menuJson.length(); i++) {
+            String mealName;
+            String ingredients;
+            String line;
+            long mealKey;
+            long date;
+            double globalRating;
+            int tagBio;
+            int tagFish;
+            int tagPork;
+            int tagCow;
+            int tagCowAw;
+            int tagVegan;
+            int tagVeg;
+            int priceStudents;
+            int priceStaff;
+            int priceGuests;
+            int pricePupils;
 
-                JSONObject offer = menuJson.getJSONObject(i);
-                JSONObject meal = offer.getJSONObject(ServerApiContract.API_MEAL);
-                JSONObject data = meal.getJSONObject(ServerApiContract.API_MEAL_DATA);
-                JSONObject prices = offer.getJSONObject(ServerApiContract.API_PRICES);
-                JSONObject tags = data.getJSONObject(ServerApiContract.API_MEAL_TAG);
-                JSONObject ratings = data.getJSONObject(ServerApiContract.API_MEAL_RATINGS);
+            JSONObject offer = menuJson.getJSONObject(i);
+            JSONObject meal = offer.getJSONObject(ServerApiContract.API_MEAL);
+            JSONObject data = meal.getJSONObject(ServerApiContract.API_MEAL_DATA);
+            JSONObject prices = offer.getJSONObject(ServerApiContract.API_PRICES);
+            JSONObject tags = data.getJSONObject(ServerApiContract.API_MEAL_TAG);
+            JSONObject ratings = data.getJSONObject(ServerApiContract.API_MEAL_RATINGS);
 
-                mealName = meal.getString(ServerApiContract.API_MEAL_NAME);
-                globalRating = ratings.getDouble(ServerApiContract.API_GLOBAL_RATING);
-                tagBio = (tags.getBoolean(ServerApiContract.API_TAG_BIO)) ? TRUE : FALSE;
-                tagFish = (tags.getBoolean(ServerApiContract.API_TAG_FISH)) ? TRUE : FALSE;
-                tagPork = (tags.getBoolean(ServerApiContract.API_TAG_PORK)) ? TRUE : FALSE;
-                tagCow = (tags.getBoolean(ServerApiContract.API_TAG_COW)) ? TRUE : FALSE;
-                tagCowAw = (tags.getBoolean(ServerApiContract.API_TAG_COW_AW)) ? TRUE : FALSE;
-                tagVegan = (tags.getBoolean(ServerApiContract.API_TAG_VEGAN)) ? TRUE : FALSE;
-                tagVeg = (tags.getBoolean(ServerApiContract.API_TAG_VEG)) ? TRUE : FALSE;
-                ingredients = tags.getString(ServerApiContract.API_MEAL_INGREDIENTS);
+            mealName = meal.getString(ServerApiContract.API_MEAL_NAME);
+            globalRating = ratings.getDouble(ServerApiContract.API_GLOBAL_RATING);
+            tagBio = (tags.getBoolean(ServerApiContract.API_TAG_BIO)) ? TRUE : FALSE;
+            tagFish = (tags.getBoolean(ServerApiContract.API_TAG_FISH)) ? TRUE : FALSE;
+            tagPork = (tags.getBoolean(ServerApiContract.API_TAG_PORK)) ? TRUE : FALSE;
+            tagCow = (tags.getBoolean(ServerApiContract.API_TAG_COW)) ? TRUE : FALSE;
+            tagCowAw = (tags.getBoolean(ServerApiContract.API_TAG_COW_AW)) ? TRUE : FALSE;
+            tagVegan = (tags.getBoolean(ServerApiContract.API_TAG_VEGAN)) ? TRUE : FALSE;
+            tagVeg = (tags.getBoolean(ServerApiContract.API_TAG_VEG)) ? TRUE : FALSE;
+            ingredients = tags.getString(ServerApiContract.API_MEAL_INGREDIENTS);
 
-                Cursor mealCursor = getContext().getContentResolver().query(
-                        CanteenContract.MealEntry.CONTENT_URI,
-                        new String[]{CanteenContract.MealEntry._ID},
-                        CanteenContract.MealEntry.COLUMN_MEAL_NAME + " = ?",
-                        new String[]{mealName},
-                        null);
+            Cursor mealCursor = getContext().getContentResolver().query(
+                    CanteenContract.MealEntry.CONTENT_URI,
+                    new String[]{CanteenContract.MealEntry._ID},
+                    CanteenContract.MealEntry.COLUMN_MEAL_NAME + " = ?",
+                    new String[]{mealName},
+                    null);
 
-                if (!mealCursor.moveToFirst()) {
-                    return;
-                }
-                int mealKeyIndex = mealCursor.getColumnIndex(CanteenContract.MealEntry._ID);
-                mealKey = mealCursor.getLong(mealKeyIndex);
-                mealCursor.close();
-
-                line = offer.getString(ServerApiContract.API_LINE);
-                date = offer.getLong(ServerApiContract.API_DATE) * 1000;
-                priceStudents = (int) (prices.getDouble(ServerApiContract.API_PRICE_STUDENTS) * 100);
-                priceGuests = (int) (prices.getDouble(ServerApiContract.API_PRICE_GUESTS) * 100);
-                priceStaff = (int) (prices.getDouble(ServerApiContract.API_PRICE_STAFF) * 100);
-                pricePupils = (int) (prices.getDouble(ServerApiContract.API_PRICE_PUPILS) * 100);
-
-                ContentValues offerValues = new ContentValues();
-                offerValues.put(CanteenContract.OfferEntry.COLUMN_DATE, date);
-                offerValues.put(CanteenContract.OfferEntry.COLUMN_MEAL_KEY, mealKey);
-                offerValues.put(CanteenContract.OfferEntry.COLUMN_LINE, line);
-                offerValues.put(CanteenContract.OfferEntry.COLUMN_PRICE_STUDENTS, priceStudents);
-                offerValues.put(CanteenContract.OfferEntry.COLUMN_PRICE_GUESTS, priceGuests);
-                offerValues.put(CanteenContract.OfferEntry.COLUMN_PRICE_STAFF, priceStaff);
-                offerValues.put(CanteenContract.OfferEntry.COLUMN_PRICE_PUPILS, pricePupils);
-                offerValues.put(CanteenContract.OfferEntry.COLUMN_GLOBAL_RATING, globalRating);
-                offerValues.put(CanteenContract.OfferEntry.COLUMN_TAG_BIO, tagBio);
-                offerValues.put(CanteenContract.OfferEntry.COLUMN_TAG_FISH, tagFish);
-                offerValues.put(CanteenContract.OfferEntry.COLUMN_TAG_PORK, tagPork);
-                offerValues.put(CanteenContract.OfferEntry.COLUMN_TAG_COW, tagCow);
-                offerValues.put(CanteenContract.OfferEntry.COLUMN_TAG_COW_AW, tagCowAw);
-                offerValues.put(CanteenContract.OfferEntry.COLUMN_TAG_VEGAN, tagVegan);
-                offerValues.put(CanteenContract.OfferEntry.COLUMN_TAG_VEG, tagVeg);
-                offerValues.put(CanteenContract.OfferEntry.COLUMN_INGREDIENTS, ingredients);
-                cVVector.add(offerValues);
+            if (!mealCursor.moveToFirst()) {
+                return;
             }
+            int mealKeyIndex = mealCursor.getColumnIndex(CanteenContract.MealEntry._ID);
+            mealKey = mealCursor.getLong(mealKeyIndex);
+            mealCursor.close();
 
-            int inserted = 0;
-            int deleted = 0;
-            // add to database
-            if ( cVVector.size() > 0 ) {
-                ContentValues[] cvArray = new ContentValues[cVVector.size()];
-                cVVector.toArray(cvArray);
+            line = offer.getString(ServerApiContract.API_LINE);
+            date = offer.getLong(ServerApiContract.API_DATE) * 1000;
+            priceStudents = (int) (prices.getDouble(ServerApiContract.API_PRICE_STUDENTS) * 100);
+            priceGuests = (int) (prices.getDouble(ServerApiContract.API_PRICE_GUESTS) * 100);
+            priceStaff = (int) (prices.getDouble(ServerApiContract.API_PRICE_STAFF) * 100);
+            pricePupils = (int) (prices.getDouble(ServerApiContract.API_PRICE_PUPILS) * 100);
 
-
-                deleted = getContext().getContentResolver().delete(CanteenContract.OfferEntry.CONTENT_URI,
-                        CanteenContract.OfferEntry.COLUMN_DATE + " <= ?",
-                        new String[]{Long.toString(endDate)});
-
-                inserted =  getContext().getContentResolver().bulkInsert(CanteenContract.OfferEntry.CONTENT_URI, cvArray);
-            }
-
-            Log.d(LOG_TAG, "Sync Complete. " + inserted + " Offers Inserted and " + deleted + "Offers deleted");
-        } catch (JSONException e) {
-            Log.e(LOG_TAG, e.getMessage(), e);
-            e.printStackTrace();
+            ContentValues offerValues = new ContentValues();
+            offerValues.put(CanteenContract.OfferEntry.COLUMN_DATE, date);
+            offerValues.put(CanteenContract.OfferEntry.COLUMN_MEAL_KEY, mealKey);
+            offerValues.put(CanteenContract.OfferEntry.COLUMN_LINE, line);
+            offerValues.put(CanteenContract.OfferEntry.COLUMN_PRICE_STUDENTS, priceStudents);
+            offerValues.put(CanteenContract.OfferEntry.COLUMN_PRICE_GUESTS, priceGuests);
+            offerValues.put(CanteenContract.OfferEntry.COLUMN_PRICE_STAFF, priceStaff);
+            offerValues.put(CanteenContract.OfferEntry.COLUMN_PRICE_PUPILS, pricePupils);
+            offerValues.put(CanteenContract.OfferEntry.COLUMN_GLOBAL_RATING, globalRating);
+            offerValues.put(CanteenContract.OfferEntry.COLUMN_TAG_BIO, tagBio);
+            offerValues.put(CanteenContract.OfferEntry.COLUMN_TAG_FISH, tagFish);
+            offerValues.put(CanteenContract.OfferEntry.COLUMN_TAG_PORK, tagPork);
+            offerValues.put(CanteenContract.OfferEntry.COLUMN_TAG_COW, tagCow);
+            offerValues.put(CanteenContract.OfferEntry.COLUMN_TAG_COW_AW, tagCowAw);
+            offerValues.put(CanteenContract.OfferEntry.COLUMN_TAG_VEGAN, tagVegan);
+            offerValues.put(CanteenContract.OfferEntry.COLUMN_TAG_VEG, tagVeg);
+            offerValues.put(CanteenContract.OfferEntry.COLUMN_INGREDIENTS, ingredients);
+            cVVector.add(offerValues);
         }
+
+        int inserted = 0;
+        int deleted = 0;
+        // add to database
+        if ( cVVector.size() > 0 ) {
+            ContentValues[] cvArray = new ContentValues[cVVector.size()];
+            cVVector.toArray(cvArray);
+
+
+            deleted = getContext().getContentResolver().delete(CanteenContract.OfferEntry.CONTENT_URI,
+                    CanteenContract.OfferEntry.COLUMN_DATE + " <= ?",
+                    new String[]{Long.toString(endDate)});
+
+            inserted =  getContext().getContentResolver().bulkInsert(CanteenContract.OfferEntry.CONTENT_URI, cvArray);
+        }
+
+        Log.d(LOG_TAG, "Sync Complete. " + inserted + " Offers Inserted and " + deleted + "Offers deleted");
     }
 
     /**

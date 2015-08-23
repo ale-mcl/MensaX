@@ -130,17 +130,6 @@ public class Meal {
     }
 
     /**
-     * Method to get the amount of images for a meal.
-     * @return amount of images for a meal
-     */
-    public int getImageCount() {
-        if (images != null) {
-            return images.length;
-        }
-        return 0;
-    }
-
-    /**
      * Method to get the String that cointains the urls to all pictures of a meal.
      * @return string with urls.
      */

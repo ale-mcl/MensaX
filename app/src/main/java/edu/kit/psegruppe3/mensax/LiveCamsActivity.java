@@ -21,7 +21,6 @@ import android.webkit.WebViewClient;
 public class LiveCamsActivity extends ActionBarActivity {
 
     private final String CAMSURL = "http://www.studentenwerk-karlsruhe.de/de/essen/livecams/popup/?page=1";
-    public static Activity activity;
 
     /**
      * {@inheritDoc}
@@ -31,7 +30,6 @@ public class LiveCamsActivity extends ActionBarActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_livecam);
 
-        activity = this;
         final WebView webView = (WebView) findViewById(R.id.webView1);
         webView.getSettings().setJavaScriptEnabled(true);
 
@@ -39,14 +37,14 @@ public class LiveCamsActivity extends ActionBarActivity {
             @Override
             public void onReceivedError(WebView view, int errorCode, String description, String failingUrl) {
                 webView.setVisibility(View.INVISIBLE);
-                AlertDialog.Builder adb = new AlertDialog.Builder(activity);
+                AlertDialog.Builder adb = new AlertDialog.Builder(LiveCamsActivity.this);
                 adb.setCancelable(false);
                 adb.setTitle(R.string.error_dialog_title);
                 adb.setMessage(R.string.error_dialog_message_livecams);
                 adb.setNeutralButton(R.string.ok, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        activity.finish();
+                        LiveCamsActivity.this.finish();
                     }
                 });
                 adb.show();

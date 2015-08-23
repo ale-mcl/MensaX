@@ -186,13 +186,13 @@ public class OfferListAdapter extends BaseExpandableListAdapter {
 
         float price = 0;
         if (priceGroup.equals(mContext.getString(R.string.pref_priceGroup_student))) {
-            price = (float) offer.getPrice(0) / 100;
+            price = (float) offer.getPrice(Offer.PRICE_STUDENTS) / 100;
         } else if (priceGroup.equals(mContext.getString(R.string.pref_priceGroup_guest))) {
-            price = (float) offer.getPrice(1) / 100;
+            price = (float) offer.getPrice(Offer.PRICE_GUESTS) / 100;
         } else if (priceGroup.equals(mContext.getString(R.string.pref_priceGroup_staff))) {
-            price = (float) offer.getPrice(2) / 100;
+            price = (float) offer.getPrice(Offer.PRICE_STAFF) / 100;
         } else if (priceGroup.equals(mContext.getString(R.string.pref_priceGroup_pupil)) ) {
-            price = (float) offer.getPrice(3) / 100;
+            price = (float) offer.getPrice(Offer.PRICE_PUPILS) / 100;
         }
         TextView textViewPrice = (TextView) convertView.findViewById(R.id.list_item_offer_textview_price);
         textViewPrice.setText(mContext.getString(R.string.price, price));

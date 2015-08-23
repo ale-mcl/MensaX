@@ -5,6 +5,7 @@ import android.app.SearchManager;
 import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
 import android.view.MenuItem;
 import android.view.View;
@@ -74,7 +75,10 @@ public class SearchableActivity extends ActionBarActivity {
             emptyTextView.setVisibility(View.VISIBLE);
         }
 
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        ActionBar actionBar = getSupportActionBar();
+        if (actionBar != null) {
+            actionBar.setDisplayHomeAsUpEnabled(true);
+        }
     }
 
     /**
@@ -93,7 +97,7 @@ public class SearchableActivity extends ActionBarActivity {
      * Method that executes the search request.
      * @param query the query of the search
      */
-    public void doMySearch(String query) {
+    private void doMySearch(String query) {
         Cursor cursor = query(query);
         mSearchListAdapter.swapCursor(cursor);
     }

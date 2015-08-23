@@ -22,7 +22,7 @@ public class Utility {
      * @return drawable object representing the Tag
      */
     public static Drawable getTagDrawable(Context context, int tagIndex){
-        String uri = null;
+        String uri;
         switch (tagIndex) {
             case Meal.TAG_BIO:
                 uri = "@drawable/ic_meal_bio";
