@@ -62,4 +62,6 @@
     <string name="error_dialog_title">Errore</string>
     <string name="error_dialog_message">Errore durante il caricamento delle informazioni sul piatto. Contralla la tua connessione internet e riprova.</string>
     <string name="error_dialog_message_livecams">Il sito delle videocamere non é online oppure non sei connesso. Controlla e riprova.</string>
+    <string name="no_google_acc_dialog_message">Per usare questa funzione é necessario un account Google.</string>
+    <string name="no_google_acc_dialog_title">Nessun account Google trovato.</string>
 </resources>
