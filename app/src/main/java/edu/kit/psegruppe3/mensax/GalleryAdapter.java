@@ -65,7 +65,7 @@ public class GalleryAdapter extends BaseAdapter {
 
     /**
      * Method to get the id at a position in the ArrayList.
-     * Must be implementen from the BaseAdapter class.
+     * Must be implemented from the BaseAdapter class.
      * @param position the position to get
      * @return the position
      */

@@ -35,7 +35,7 @@ public class Offer {
     /**
      * Constructor of an Offer object
      * @param meal the meal of the offer
-     * @param line the line in which the meal is avaible
+     * @param line the line in which the meal is available
      * @param priceStudents the price for the students
      * @param priceGuests the price for the guests
      * @param priceStaff the price for the staff members
@@ -74,7 +74,7 @@ public class Offer {
     }
 
     /**
-     * Method to get the line in which an offer is avaible
+     * Method to get the line in which an offer is available
      * @return the line parameter
      */
     public Line getLine() {

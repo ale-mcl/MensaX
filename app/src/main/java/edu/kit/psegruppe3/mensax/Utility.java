@@ -16,10 +16,10 @@ import edu.kit.psegruppe3.mensax.datamodels.Meal;
 public class Utility {
 
     /**
-     * Metod to get the drawable of a Tag.
+     * Method to get the drawable of a Tag.
      * @param context the activity
-     * @param tagIndex the indext of the Tag
-     * @return drawable object representig the Tag
+     * @param tagIndex the index of the Tag
+     * @return drawable object representing the Tag
      */
     public static Drawable getTagDrawable(Context context, int tagIndex){
         String uri = null;
@@ -53,8 +53,8 @@ public class Utility {
 
     /**
      * Method to get the string description of a Tag
-     * @param context the adctivity
-     * @param tagIndex the indext of the Tag
+     * @param context the activity
+     * @param tagIndex the index of the Tag
      * @return string description of the Tag
      */
     public static String getTagString(Context context, int tagIndex) {

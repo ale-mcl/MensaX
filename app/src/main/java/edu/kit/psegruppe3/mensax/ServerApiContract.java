@@ -6,7 +6,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 
 /**
- * Classes provides conventions for the comunication between client and server.
+ * Classes provides conventions for the communication between client and server.
  *
  * @author MensaX-group
  * @version 1.0

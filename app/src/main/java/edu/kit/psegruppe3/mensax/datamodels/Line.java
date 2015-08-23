@@ -1,7 +1,7 @@
 package edu.kit.psegruppe3.mensax.datamodels;
 
 /**
- * Enum class whith all the different Lines avaible at the Mensa.
+ * Enum class with all the different Lines available at the Mensa.
  *
  * @author MensaX-Group
  * @version 1.0
