@@ -84,6 +84,8 @@
     <string name="toast_merge_failed">Failed to send merge proposal</string>
 
     <!-- Error strings -->
+    <string name="no_google_acc_dialog_title">No Google Account found</string>
+    <string name="no_google_acc_dialog_message">A Google Account is required in order to use this function.</string>
     <string name="error_dialog_title">Error</string>
     <string name="error_dialog_message">Failed to load meal data. Check your internet connection and try again.</string>
     <string name="error_dialog_message_livecams">The Live Cams website it currently down or your connection is missing. Please check your connection and try again later.</string>
