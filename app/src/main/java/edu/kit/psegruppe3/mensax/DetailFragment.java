@@ -173,13 +173,18 @@ public class DetailFragment extends Fragment {
             if (data.hasExtra(DetailActivity.ARG_MEAL_ID)) {
                 int mealId = data.getIntExtra(DetailActivity.ARG_MEAL_ID, 0);
                 MergeMealTask mergeMealTask = new MergeMealTask();
-                mergeMealTask.execute(meal.getMealId(), mealId);
+                mergeMealTask.execute(specificMealId, mealId);
             }
         }
     }
 
     private String bitmapToString(Bitmap bitmap) {
-        Bitmap resized = Bitmap.createScaledBitmap(bitmap, IMAGE_WIDTH, IMAGE_HEIGHT, true);
+        Bitmap resized;
+        if (bitmap.getWidth() > bitmap.getHeight()) {
+            resized = Bitmap.createScaledBitmap(bitmap, IMAGE_WIDTH, IMAGE_HEIGHT, true);
+        } else {
+            resized = Bitmap.createScaledBitmap(bitmap, IMAGE_HEIGHT, IMAGE_WIDTH, true);
+        }
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         resized.compress(Bitmap.CompressFormat.PNG, 100, baos);
         byte [] b = baos.toByteArray();
