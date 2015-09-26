@@ -71,6 +71,7 @@ public class DetailFragment extends Fragment {
     private Gallery gallery;
     private TextView firstTagTextView;
     private TextView secondTagTextView;
+    private int specificMealId;
 
     /**
      * Constructor of the class.
@@ -87,6 +88,8 @@ public class DetailFragment extends Fragment {
         final View rootView =  inflater.inflate(R.layout.fragment_detail, container, false);
 
         Integer[] mealId = {getArguments().getInt(DetailActivity.ARG_MEAL_ID)};
+
+        specificMealId = getArguments().getInt(DetailActivity.ARG_MEAL_ID);
 
         gallery = (Gallery) rootView.findViewById(R.id.gallery1);
         txtMealName = (TextView) rootView.findViewById(R.id.mealName);
@@ -164,7 +167,7 @@ public class DetailFragment extends Fragment {
             Bitmap photo = (Bitmap) data.getExtras().get("data");
             String stringOfPhoto = bitmapToString(photo);
             UploadPictureTask uploadPictureTask = new UploadPictureTask();
-            uploadPictureTask.execute(String.valueOf(meal.getMealId()), stringOfPhoto);
+            uploadPictureTask.execute(String.valueOf(specificMealId), stringOfPhoto);
 
         } else if (requestCode == SearchableActivity.REQUEST_CODE && resultCode == Activity.RESULT_OK) {
             if (data.hasExtra(DetailActivity.ARG_MEAL_ID)) {
